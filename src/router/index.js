@@ -75,7 +75,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Admin',
       icon: 'peoples',
-      roles: ['admin', 'editor']
+      roles: ['administrator']
     },
     children: [
       {
@@ -85,7 +85,7 @@ export const asyncRoutes = [
         meta: {
           title: 'Department',
           icon: 'user',
-          roles: ['admin']
+          roles: ['administrator']
         }
       },
       {
@@ -95,7 +95,7 @@ export const asyncRoutes = [
         meta: {
           title: 'User',
           icon: 'user',
-          roles: ['admin']
+          roles: ['administrator', 'manager']
         }
       },
       {
@@ -105,7 +105,7 @@ export const asyncRoutes = [
         meta: {
           title: 'Role',
           icon: 'eye-open',
-          roles: ['admin']
+          roles: ['administrator']
         }
       },
       {
@@ -115,7 +115,7 @@ export const asyncRoutes = [
         meta: {
           title: 'Authority',
           icon: 'lock',
-          roles: ['admin']
+          roles: ['administrator']
         }
       }
     ]
@@ -128,7 +128,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Policy',
       icon: 'peoples',
-      roles: ['admin', 'editor']
+      roles: ['administrator', 'officer']
     },
     children: [
       {
@@ -138,7 +138,7 @@ export const asyncRoutes = [
         meta: {
           title: 'Insured',
           icon: 'user',
-          roles: ['admin', 'editor']
+          roles: ['administrator', 'officer']
         }
       },
       {
@@ -148,7 +148,7 @@ export const asyncRoutes = [
         meta: {
           title: 'Policy',
           icon: 'user',
-          roles: ['admin', 'editor']
+          roles: ['administrator', 'officer']
         }
       }
     ]
