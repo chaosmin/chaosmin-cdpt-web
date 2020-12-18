@@ -8,7 +8,7 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         添加
       </el-button>
-      <el-checkbox v-model="showGmtInfo" class="filter-item" style="margin-left: 10px;">
+      <el-checkbox v-model="showModifyInfo" class="filter-item" style="margin-left: 10px;">
         显示更新情况
       </el-checkbox>
     </div>
@@ -27,22 +27,27 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.loginName')">
+      <el-table-column label="登录名">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.loginName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.username')" align="center">
+      <el-table-column label="机构" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.department }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="用户名" align="center">
         <template slot-scope="{row}">
           <span>{{ row.username }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.phone')" width="110" align="center">
+      <el-table-column label="手机号" width="110" align="center">
         <template slot-scope="{row}">
           <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.email')" align="center">
+      <el-table-column label="电子邮箱" align="center">
         <template slot-scope="{row}">
           <span>{{ row.email }}</span>
         </template>
@@ -52,31 +57,31 @@
           <span>{{ row.roles[0] }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.createTime')" width="140" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('base.creator')" width="100" align="center">
-        <template slot-scope="{row}">
-          <span style="color:red;">{{ row.creator }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="showGmtInfo" :label="$t('base.updateTime')" width="140" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="showGmtInfo" :label="$t('base.updater')" width="100" align="center">
-        <template slot-scope="{row}">
-          <span style="color:red;">{{ row.updater }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('base.status')" class-name="status-col" width="80">
+      <el-table-column label="状态" class-name="status-col" width="80">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status | valueFilter }}
           </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" width="140" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建人" width="100" align="center">
+        <template slot-scope="{row}">
+          <span style="color:red;">{{ row.creator }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column v-if="showModifyInfo" label="更新时间" width="140" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column v-if="showModifyInfo" label="更新人" width="100" align="center">
+        <template slot-scope="{row}">
+          <span style="color:red;">{{ row.updater }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('base.actions')" align="left" width="150" class-name="small-padding fixed-width">
@@ -161,7 +166,8 @@ export default {
   },
   data() {
     return {
-      showGmtInfo: false,
+      // 是否展示修改信息
+      showModifyInfo: false,
       tableKey: 0,
       list: null,
       total: 0,

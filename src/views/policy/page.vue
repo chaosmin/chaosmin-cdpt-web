@@ -41,22 +41,22 @@
           <span>{{ row.loginName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.createTime')" width="150px" align="center">
+      <el-table-column label="创建时间" width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.creator')" width="110px" align="center">
+      <el-table-column label="创建人" width="110px" align="center">
         <template slot-scope="{row}">
           <span style="color:red;">{{ row.creator }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.updateTime')" width="150px" align="center">
+      <el-table-column label="更新时间" width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.updater')" width="110px" align="center">
+      <el-table-column label="更新人" width="110px" align="center">
         <template slot-scope="{row}">
           <span style="color:red;">{{ row.updater }}</span>
         </template>

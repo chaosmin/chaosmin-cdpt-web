@@ -39,31 +39,31 @@
           <span>{{ row.numberOfPeople }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.createTime')" width="140" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('base.creator')" width="100" align="center">
-        <template slot-scope="{row}">
-          <span style="color:red;">{{ row.creator }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('base.updateTime')" width="140" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('base.updater')" width="100" align="center">
-        <template slot-scope="{row}">
-          <span style="color:red;">{{ row.updater }}</span>
-        </template>
-      </el-table-column>
       <el-table-column :label="$t('base.status')" class-name="status-col" width="80">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status | valueFilter }}
           </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" width="140" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建人" width="100" align="center">
+        <template slot-scope="{row}">
+          <span style="color:red;">{{ row.creator }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" width="140" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新人" width="100" align="center">
+        <template slot-scope="{row}">
+          <span style="color:red;">{{ row.updater }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('base.actions')" align="left" width="82px" class-name="small-padding fixed-width">
