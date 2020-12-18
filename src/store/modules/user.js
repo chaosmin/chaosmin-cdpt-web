@@ -8,7 +8,8 @@ const state = {
   avatar: '',
   department: '',
   introduction: '',
-  roles: []
+  roles: [],
+  isAdmin: false
 }
 
 const mutations = {
@@ -26,6 +27,9 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_IS_ADMIN: (state, isAdmin) => {
+    state.isAdmin = isAdmin
   },
   SET_DEPARTMENT: (state, department) => {
     state.department = department
@@ -58,6 +62,7 @@ const actions = {
           reject('getInfo: roles must be a non-null array!')
         }
         commit('SET_ROLES', roles)
+        commit('SET_IS_ADMIN', (roles[0] === 'administrator'))
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)

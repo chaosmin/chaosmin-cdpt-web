@@ -75,7 +75,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Admin',
       icon: 'peoples',
-      roles: ['administrator']
+      roles: ['administrator', 'manager']
     },
     children: [
       {

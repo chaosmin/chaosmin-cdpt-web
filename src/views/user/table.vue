@@ -32,7 +32,7 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.loginName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="机构" align="center">
+      <el-table-column v-if="isAdmin" label="机构" align="center">
         <template slot-scope="{row}">
           <span>{{ row.department }}</span>
         </template>
@@ -54,7 +54,7 @@
       </el-table-column>
       <el-table-column label="角色" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.roles[0] }}</span>
+          <span>{{ row.role }}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" class-name="status-col" width="80">
@@ -104,6 +104,24 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
+        <el-form-item v-if="isAdmin" label="所属机构" prop="departmentId">
+          <el-select
+            v-model="temp.departmentId"
+            filterable
+            autocomplete
+            reserve-keyword
+            placeholder="请选择"
+            style="width: 200px"
+            :disabled="dialogStatus==='update'"
+          >
+            <el-option
+              v-for="item in departmentOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="登录名" prop="loginName">
           <el-input v-model="temp.loginName" :disabled="dialogStatus==='update'" />
         </el-form-item>
@@ -115,6 +133,22 @@
         </el-form-item>
         <el-form-item label="电子邮箱" prop="email">
           <el-input v-model="temp.email" />
+        </el-form-item>
+        <el-form-item v-if="isAdmin" label="角色" prop="roleId">
+          <el-select
+            v-model="temp.roleId"
+            filterable
+            reserve-keyword
+            placeholder="请选择"
+            style="width: 200px"
+          >
+            <el-option
+              v-for="item in roleOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -131,6 +165,8 @@
 
 <script>
 import { fetchUser, createUser, updateUser } from '@/api/users'
+import { fetchDepartment } from '@/api/departments'
+import { fetchRole } from '@/api/roles'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -166,12 +202,16 @@ export default {
   },
   data() {
     return {
+      isAdmin: this.$store.getters.isAdmin,
+      departmentOptions: [],
+      roleOptions: [],
       // 是否展示修改信息
       showModifyInfo: false,
       tableKey: 0,
       list: null,
       total: 0,
       listLoading: true,
+      optionsLoading: true,
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
@@ -180,11 +220,13 @@ export default {
       },
       temp: {
         id: undefined,
+        departmentId: undefined,
         username: undefined,
         loginName: undefined,
         phone: undefined,
         email: undefined,
-        status: undefined
+        status: undefined,
+        roleId: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -194,14 +236,20 @@ export default {
       },
       dialogPvVisible: false,
       rules: {
-        loginName: [{ required: true, message: 'loginName is required', trigger: 'change' }],
-        username: [{ required: true, message: 'username is required', trigger: 'change' }]
+        departmentId: [{ required: true, message: '请选择用户所属机构', trigger: 'change' }],
+        loginName: [{ required: true, message: '请输入登录名', trigger: 'change' }],
+        username: [{ required: true, message: '请输入用户名', trigger: 'change' }],
+        roleId: [{ required: true, message: '请选择用户所属角色', trigger: 'change' }]
       },
       downloadLoading: false
     }
   },
   created() {
     this.getList()
+  },
+  mounted() {
+    this.loadDepartmentOptions()
+    this.loadRoleOptions()
   },
   methods: {
     getList() {
@@ -211,7 +259,7 @@ export default {
         this.total = response.data.total
         setTimeout(() => {
           this.listLoading = false
-        }, 1000)
+        }, 750)
       })
     },
     handleFilter() {
@@ -221,13 +269,14 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        departmentId: this.$store.getters.department,
+        departmentId: undefined,
         username: undefined,
         loginName: undefined,
         password: undefined,
         phone: undefined,
         email: undefined,
-        status: undefined
+        status: undefined,
+        roleId: undefined
       }
     },
     handleCreate() {
@@ -242,7 +291,11 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.temp.password = '123456'
-          this.temp.departmentId = this.$store.getters.department
+          if (!this.isAdmin) {
+            // 非超管创建的用户, 机构为创建者同机构, 角色为出单员
+            this.temp.departmentId = this.$store.getters.department
+            this.temp.roleId = 3
+          }
           createUser(this.temp).then(() => {
             this.dialogFormVisible = false
             this.$notify({
@@ -269,8 +322,6 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           updateUser(this.temp.id, this.temp).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -278,6 +329,8 @@ export default {
               type: 'success',
               duration: 2000
             })
+          }).then(() => {
+            this.handleFilter()
           })
         }
       })
@@ -335,6 +388,34 @@ export default {
         })
       }).then(() => {
         this.handleFilter()
+      })
+    },
+    loadDepartmentOptions() {
+      const listQuery = {}
+      listQuery.P_NUM = 1
+      listQuery.P_SIZE = 500
+      this.optionsLoading = true
+      fetchDepartment(listQuery).then(response => {
+        this.departmentOptions = response.data.records.map(item => {
+          return { value: `${item.id}`, label: `${item.name}` }
+        })
+        setTimeout(() => {
+          this.optionsLoading = false
+        }, 750)
+      })
+    },
+    loadRoleOptions() {
+      const listQuery = {}
+      listQuery.P_NUM = 1
+      listQuery.P_SIZE = 500
+      this.optionsLoading = true
+      fetchRole(listQuery).then(response => {
+        this.roleOptions = response.data.records.map(item => {
+          return { value: `${item.id}`, label: `${item.name}` }
+        })
+        setTimeout(() => {
+          this.optionsLoading = false
+        }, 750)
       })
     }
   }
