@@ -66,28 +66,8 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.actions')" align="left" width="160px" class-name="small-padding fixed-width">
+      <el-table-column :label="$t('base.actions')" align="left" width="82px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-popover placement="right" trigger="click">
-            <el-select
-              v-model="managerId"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请选择"
-              :remote-method="findUsers"
-              :loading="loading"
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-            <el-button style="margin-left: 5px;" @click="setManager(row.id)">确认</el-button>
-            <el-button slot="reference" size="mini" type="primary">设置主管</el-button>
-          </el-popover>
           <el-popconfirm title="您确定激活该机构吗?" @onConfirm="modifyStatus(row.id,1)">
             <el-button v-if="row.status===0" slot="reference" size="mini" type="success" style="margin-left: 5px;">激活</el-button>
           </el-popconfirm>
@@ -126,7 +106,6 @@
 
 <script>
 import { fetchDepartment, createDepartment, updateDepartment } from '@/api/departments'
-import { fetchUser, updateUser } from '@/api/users'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -162,8 +141,6 @@ export default {
   },
   data() {
     return {
-      options: [],
-      managerId: undefined,
       loading: false,
       tableKey: 0,
       list: null,
@@ -283,41 +260,6 @@ export default {
       }).then(() => {
         this.handleFilter()
       })
-    },
-    setManager(departmentId) {
-      if (this.managerId !== undefined) {
-        const user = {}
-        user.departmentId = departmentId
-        user.roleIds = [2]
-        updateUser(this.managerId, user).then(() => {
-          this.managerId = undefined
-          this.$notify({
-            title: '成功',
-            message: '设置成功',
-            type: 'success',
-            duration: 2000
-          })
-        })
-      }
-    },
-    findUsers(query) {
-      if (query !== '') {
-        this.loading = true
-        const listQuery = {}
-        listQuery.P_NUM = 1
-        listQuery.P_SIZE = 10
-        listQuery.LIKE_username = query
-        fetchUser(listQuery).then(response => {
-          this.options = response.data.records.map(item => {
-            return { value: `${item.id}`, label: `${item.username}` }
-          })
-          setTimeout(() => {
-            this.loading = false
-          }, 1000)
-        })
-      } else {
-        this.options = []
-      }
     }
   }
 }
