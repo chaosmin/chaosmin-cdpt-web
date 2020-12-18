@@ -1,16 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.LIKE_username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.LIKE_name" placeholder="名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         添加
       </el-button>
-      <el-checkbox v-model="showGmtInfo" class="filter-item" style="margin-left: 10px;">
-        显示更新情况
-      </el-checkbox>
     </div>
 
     <el-table
@@ -27,29 +24,19 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.loginName')">
+      <el-table-column label="编码">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.loginName }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.code }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.username')" align="center">
+      <el-table-column label="名称" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
+          <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.phone')" width="110" align="center">
+      <el-table-column label="机构人数" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.phone }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('user.email')" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.email }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="角色" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.roles[0] }}</span>
+          <span>{{ row.numberOfPeople }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('base.createTime')" width="140" align="center">
@@ -62,12 +49,12 @@
           <span style="color:red;">{{ row.creator }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="showGmtInfo" :label="$t('base.updateTime')" width="140" align="center">
+      <el-table-column :label="$t('base.updateTime')" width="140" align="center">
         <template slot-scope="{row}">
           <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="showGmtInfo" :label="$t('base.updater')" width="100" align="center">
+      <el-table-column :label="$t('base.updater')" width="100" align="center">
         <template slot-scope="{row}">
           <span style="color:red;">{{ row.updater }}</span>
         </template>
@@ -79,18 +66,37 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.actions')" align="left" width="150" class-name="small-padding fixed-width">
+      <el-table-column :label="$t('base.actions')" align="left" width="160px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="handleReset(row)">重置</el-button>
-          <el-button v-if="row.status===0" size="mini" type="success" @click="handleModifyStatus(row,1)">
-            激活
-          </el-button>
-          <el-button v-if="row.status===1" size="mini" type="danger" @click="handleModifyStatus(row, 2)">
-            锁定
-          </el-button>
-          <el-button v-if="row.status===3" size="mini" type="info" @click="handleModifyStatus(row,3)">
-            解锁
-          </el-button>
+          <el-popover placement="right" trigger="click">
+            <el-select
+              v-model="managerId"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请选择"
+              :remote-method="findUsers"
+              :loading="loading"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+            <el-button style="margin-left: 5px;" @click="setManager(row.id)">确认</el-button>
+            <el-button slot="reference" size="mini" type="primary">设置主管</el-button>
+          </el-popover>
+          <el-popconfirm title="您确定激活该机构吗?" @onConfirm="modifyStatus(row.id,1)">
+            <el-button v-if="row.status===0" slot="reference" size="mini" type="success" style="margin-left: 5px;">激活</el-button>
+          </el-popconfirm>
+          <el-popconfirm title="您确定锁定该机构及名下所有用户吗?" @onConfirm="modifyStatus(row.id,3)">
+            <el-button v-if="row.status===1" slot="reference" size="mini" type="danger" style="margin-left: 5px;">锁定</el-button>
+          </el-popconfirm>
+          <el-popconfirm title="您确定解锁该机构吗？" @onConfirm="modifyStatus(row.id,1)">
+            <el-button v-if="row.status===3" slot="reference" size="mini" type="warning" style="margin-left: 5px;">解锁</el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -99,17 +105,11 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
-        <el-form-item label="登录名" prop="loginName">
-          <el-input v-model="temp.loginName" :disabled="dialogStatus==='update'" />
+        <el-form-item label="编码" prop="code">
+          <el-input v-model="temp.code" :disabled="dialogStatus==='update'" />
         </el-form-item>
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" :disabled="dialogStatus==='update'" />
-        </el-form-item>
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="temp.phone" />
-        </el-form-item>
-        <el-form-item label="电子邮箱" prop="email">
-          <el-input v-model="temp.email" />
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="temp.name" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -125,7 +125,8 @@
 </template>
 
 <script>
-import { fetchUser, createUser, updateUser } from '@/api/users'
+import { fetchDepartment, createDepartment, updateDepartment } from '@/api/departments'
+import { fetchUser, updateUser } from '@/api/users'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -161,7 +162,9 @@ export default {
   },
   data() {
     return {
-      showGmtInfo: false,
+      options: [],
+      managerId: undefined,
+      loading: false,
       tableKey: 0,
       list: null,
       total: 0,
@@ -169,15 +172,12 @@ export default {
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
-        LIKE_username: undefined,
-        EQ_departmentId: this.$store.getters.department
+        LIKE_name: undefined
       },
       temp: {
         id: undefined,
-        username: undefined,
-        loginName: undefined,
-        phone: undefined,
-        email: undefined,
+        code: undefined,
+        name: undefined,
         status: undefined
       },
       dialogFormVisible: false,
@@ -188,10 +188,9 @@ export default {
       },
       dialogPvVisible: false,
       rules: {
-        loginName: [{ required: true, message: 'loginName is required', trigger: 'change' }],
-        username: [{ required: true, message: 'username is required', trigger: 'change' }]
-      },
-      downloadLoading: false
+        code: [{ required: true, message: 'code is required', trigger: 'change' }],
+        name: [{ required: true, message: 'name is required', trigger: 'change' }]
+      }
     }
   },
   created() {
@@ -200,7 +199,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchUser(this.listQuery).then(response => {
+      fetchDepartment(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         setTimeout(() => {
@@ -215,12 +214,8 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        departmentId: this.$store.getters.department,
-        username: undefined,
-        loginName: undefined,
-        password: undefined,
-        phone: undefined,
-        email: undefined,
+        code: undefined,
+        name: undefined,
         status: undefined
       }
     },
@@ -235,9 +230,8 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.password = '123456'
-          this.temp.departmentId = this.$store.getters.department
-          createUser(this.temp).then(() => {
+          createDepartment(this.temp).then(() => {
+            this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -262,7 +256,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          updateUser(this.temp.id, this.temp).then(() => {
+          updateDepartment(this.temp.id, this.temp).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -276,51 +270,10 @@ export default {
         }
       })
     },
-    handleReset(row) {
-      this.$confirm('确认重置该用户密码?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.resetPassword(row.id)
-      })
-    },
-    resetPassword(id) {
-      this.resetTemp()
-      this.temp.password = '123456'
-      updateUser(id, this.temp).then(() => {
-        this.$notify({
-          title: '成功',
-          message: '重置成功',
-          type: 'success',
-          duration: 2000
-        })
-      })
-    },
-    handleModifyStatus(row, status) {
-      let message, st
-      if (status === 1) {
-        message = '确认要激活该用户?'
-        st = 1
-      } else if (status === 2) {
-        message = '确认要锁定该用户?'
-        st = 3
-      } else {
-        message = '确认要解锁该用户?'
-        st = 1
-      }
-      this.$confirm(message, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.modifyStatus(row.id, st)
-      })
-    },
     modifyStatus(id, status) {
       this.resetTemp()
       this.temp.status = status
-      updateUser(id, this.temp).then(() => {
+      updateDepartment(id, this.temp).then(() => {
         this.$notify({
           title: '成功',
           message: '操作成功',
@@ -330,6 +283,41 @@ export default {
       }).then(() => {
         this.handleFilter()
       })
+    },
+    setManager(departmentId) {
+      if (this.managerId !== undefined) {
+        const user = {}
+        user.departmentId = departmentId
+        user.roleIds = [2]
+        updateUser(this.managerId, user).then(() => {
+          this.managerId = undefined
+          this.$notify({
+            title: '成功',
+            message: '设置成功',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      }
+    },
+    findUsers(query) {
+      if (query !== '') {
+        this.loading = true
+        const listQuery = {}
+        listQuery.P_NUM = 1
+        listQuery.P_SIZE = 10
+        listQuery.LIKE_username = query
+        fetchUser(listQuery).then(response => {
+          this.options = response.data.records.map(item => {
+            return { value: `${item.id}`, label: `${item.username}` }
+          })
+          setTimeout(() => {
+            this.loading = false
+          }, 1000)
+        })
+      } else {
+        this.options = []
+      }
     }
   }
 }

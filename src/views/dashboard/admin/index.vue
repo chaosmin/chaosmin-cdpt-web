@@ -39,13 +39,11 @@
 </template>
 
 <script>
-// import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
 import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
-import TransactionTable from './components/TransactionTable'
 
 const lineChartData = {
   newVisitis: {
@@ -74,8 +72,7 @@ export default {
     LineChart,
     RaddarChart,
     PieChart,
-    BarChart,
-    TransactionTable
+    BarChart
   },
   data() {
     return {
