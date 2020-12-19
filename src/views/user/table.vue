@@ -108,8 +108,6 @@
           <el-select
             v-model="temp.departmentId"
             filterable
-            autocomplete
-            reserve-keyword
             placeholder="请选择"
             style="width: 200px"
             :disabled="dialogStatus==='update'"
@@ -138,7 +136,6 @@
           <el-select
             v-model="temp.roleId"
             filterable
-            reserve-keyword
             placeholder="请选择"
             style="width: 200px"
           >
@@ -397,7 +394,7 @@ export default {
       this.optionsLoading = true
       fetchDepartment(listQuery).then(response => {
         this.departmentOptions = response.data.records.map(item => {
-          return { value: `${item.id}`, label: `${item.name}` }
+          return { value: item.id, label: `${item.name}` }
         })
         setTimeout(() => {
           this.optionsLoading = false
@@ -411,7 +408,7 @@ export default {
       this.optionsLoading = true
       fetchRole(listQuery).then(response => {
         this.roleOptions = response.data.records.map(item => {
-          return { value: `${item.id}`, label: `${item.name}` }
+          return { value: item.id, label: `${item.name}` }
         })
         setTimeout(() => {
           this.optionsLoading = false
