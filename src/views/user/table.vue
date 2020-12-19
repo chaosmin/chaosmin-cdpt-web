@@ -245,8 +245,10 @@ export default {
     this.getList()
   },
   mounted() {
-    this.loadDepartmentOptions()
-    this.loadRoleOptions()
+    if (this.isAdmin) {
+      this.loadDepartmentOptions()
+      this.loadRoleOptions()
+    }
   },
   methods: {
     getList() {
