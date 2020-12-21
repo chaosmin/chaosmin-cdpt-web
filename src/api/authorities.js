@@ -8,6 +8,13 @@ export function fetchAuthority(query) {
   })
 }
 
+export function fetchTree() {
+  return request({
+    url: '/v1/api/authorities/tree',
+    method: 'GET'
+  })
+}
+
 export function createAuthority(data) {
   return request({
     url: '/v1/api/authorities',

@@ -41,7 +41,7 @@
       </el-table-column>
       <el-table-column :label="$t('base.actions')" align="left" width="85px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="handleReset(row)">分配权限</el-button>
+          <el-button size="mini" type="primary" @click="handleAssignAuthorities(row.id)">分配权限</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -69,11 +69,32 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="分配权限" :visible.sync="assignFormVisible">
+      <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
+        <el-tree
+          ref="tree"
+          :data="authorities"
+          show-checkbox
+          node-key="authorityId"
+          accordion
+        />
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="assignFormVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="assignAuthorities()">
+          确认
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchRole, createRole } from '@/api/roles'
+import { fetchRole, getOneRole, createRole, updateRole } from '@/api/roles'
+import { fetchTree } from '@/api/authorities'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -83,6 +104,7 @@ export default {
   directives: { waves },
   data() {
     return {
+      authorities: [],
       tableKey: 0,
       list: null,
       total: 0,
@@ -99,6 +121,7 @@ export default {
         priority: undefined
       },
       dialogFormVisible: false,
+      assignFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: 'Edit',
@@ -114,6 +137,9 @@ export default {
   created() {
     this.getList()
   },
+  mounted() {
+    this.getAuthorities()
+  },
   methods: {
     getList() {
       this.listLoading = true
@@ -123,6 +149,11 @@ export default {
         setTimeout(() => {
           this.listLoading = false
         }, 1000)
+      })
+    },
+    getAuthorities() {
+      fetchTree().then(response => {
+        this.authorities = response.data
       })
     },
     handleFilter() {
@@ -160,6 +191,28 @@ export default {
             this.handleFilter()
           })
         }
+      })
+    },
+    handleAssignAuthorities(id) {
+      this.resetTemp()
+      this.temp.id = id
+      getOneRole(id).then(response => {
+        this.$refs['tree'].setCheckedKeys(response.data.authorityIds)
+        setTimeout(() => {
+        }, 1000)
+      })
+      this.assignFormVisible = true
+    },
+    assignAuthorities() {
+      this.temp.authorityIds = this.$refs['tree'].getCheckedKeys()
+      updateRole(this.temp.id, this.temp).then(() => {
+        this.assignFormVisible = false
+        this.$notify({
+          title: '成功',
+          message: '设置成功',
+          type: 'success',
+          duration: 2000
+        })
       })
     }
   }
