@@ -79,12 +79,22 @@ export const asyncRoutes = [
     },
     children: [
       {
+        path: '/partners',
+        component: () => import('@/views/partner/table'),
+        name: 'Partner',
+        meta: {
+          title: 'Partner',
+          icon: 'el-icon-suitcase',
+          roles: ['administrator']
+        }
+      },
+      {
         path: '/departments',
         component: () => import('@/views/department/table'),
         name: 'Department',
         meta: {
           title: 'Department',
-          icon: 'user',
+          icon: 'tree',
           roles: ['administrator']
         }
       },
@@ -121,13 +131,56 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/product',
+    component: Layout,
+    alwaysShow: true,
+    name: 'ProductCenter',
+    meta: {
+      title: 'ProductCenter',
+      icon: 'el-icon-collection',
+      roles: ['administrator', 'officer']
+    },
+    children: [
+      {
+        path: '/products',
+        component: () => import('@/views/policy/insured'),
+        name: 'Product',
+        meta: {
+          title: 'Product',
+          icon: 'component',
+          roles: ['administrator', 'officer']
+        }
+      },
+      {
+        path: '/plans',
+        component: () => import('@/views/policy/insured'),
+        name: 'Plan',
+        meta: {
+          title: 'Plan',
+          icon: 'list',
+          roles: ['administrator', 'officer']
+        }
+      },
+      {
+        path: '/knowledge',
+        component: () => import('@/views/policy/insured'),
+        name: 'Knowledge',
+        meta: {
+          title: 'Knowledge',
+          icon: 'documentation',
+          roles: ['administrator', 'officer']
+        }
+      }
+    ]
+  },
+  {
     path: '/policy',
     component: Layout,
     alwaysShow: true,
-    name: 'Policy',
+    name: 'PolicyMgmt',
     meta: {
-      title: 'Policy',
-      icon: 'peoples',
+      title: 'PolicyMgmt',
+      icon: 'el-icon-document-copy',
       roles: ['administrator', 'officer']
     },
     children: [
@@ -137,7 +190,7 @@ export const asyncRoutes = [
         name: 'Insured',
         meta: {
           title: 'Insured',
-          icon: 'user',
+          icon: 'el-icon-document-add',
           roles: ['administrator', 'officer']
         }
       },
@@ -147,7 +200,17 @@ export const asyncRoutes = [
         name: 'Policy',
         meta: {
           title: 'Policy',
-          icon: 'user',
+          icon: 'el-icon-document-checked',
+          roles: ['administrator', 'officer']
+        }
+      },
+      {
+        path: '/orders',
+        component: () => import('@/views/policy/page'),
+        name: 'Order',
+        meta: {
+          title: 'Order',
+          icon: 'el-icon-document',
           roles: ['administrator', 'officer']
         }
       }

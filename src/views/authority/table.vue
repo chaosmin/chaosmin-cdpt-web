@@ -52,7 +52,7 @@
           <span>{{ row.url }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.actions')" align="left" width="75px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="75px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-popconfirm title="您确定删除该权限吗?" @onConfirm="deleteData(row.id)">
             <el-button slot="reference" size="mini" type="danger">删除</el-button>

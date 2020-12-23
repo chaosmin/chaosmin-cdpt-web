@@ -26,7 +26,7 @@
       </el-table-column>
       <el-table-column label="编码">
         <template slot-scope="{row}">
-          <span class="link-type">{{ row.code }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.code }}</span>
         </template>
       </el-table-column>
       <el-table-column label="名称" align="center">
@@ -34,16 +34,27 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="优先级" align="center">
+      <el-table-column label="创建时间" width="140" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.priority }}</span>
+          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="85px" class-name="small-padding fixed-width">
+      <el-table-column label="创建人" width="100" align="center">
         <template slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="handleAssignAuthorities(row.id)">分配权限</el-button>
+          <span style="color:red;">{{ row.creator }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="更新时间" width="140" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新人" width="100" align="center">
+        <template slot-scope="{row}">
+          <span style="color:red;">{{ row.updater }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="left" width="82px" class-name="small-padding fixed-width" />
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.P_NUM" :limit.sync="listQuery.P_SIZE" @pagination="getList" />
@@ -51,13 +62,13 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
         <el-form-item label="编码" prop="code">
-          <el-input v-model="temp.code" />
+          <el-input v-model="temp.code" :disabled="dialogStatus==='update'" />
         </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="优先级" prop="priority">
-          <el-input v-model="temp.priority" />
+        <el-form-item label="保司公钥" prop="name">
+          <el-input v-model="temp.publicKey" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -69,32 +80,11 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <el-dialog title="分配权限" :visible.sync="assignFormVisible">
-      <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
-        <el-tree
-          ref="tree"
-          :data="authorities"
-          show-checkbox
-          node-key="authorityId"
-          accordion
-        />
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="assignFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="assignAuthorities()">
-          确认
-        </el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchRole, getOneRole, createRole, updateRole } from '@/api/roles'
-import { fetchTree } from '@/api/authorities'
+import { fetchPartner, createPartner, updatePartner } from '@/api/partners'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -104,7 +94,7 @@ export default {
   directives: { waves },
   data() {
     return {
-      authorities: [],
+      loading: false,
       tableKey: 0,
       list: null,
       total: 0,
@@ -118,10 +108,9 @@ export default {
         id: undefined,
         code: undefined,
         name: undefined,
-        priority: undefined
+        publicKey: undefined
       },
       dialogFormVisible: false,
-      assignFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: 'Edit',
@@ -137,23 +126,15 @@ export default {
   created() {
     this.getList()
   },
-  mounted() {
-    this.getAuthorities()
-  },
   methods: {
     getList() {
       this.listLoading = true
-      fetchRole(this.listQuery).then(response => {
+      fetchPartner(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         setTimeout(() => {
           this.listLoading = false
         }, 1000)
-      })
-    },
-    getAuthorities() {
-      fetchTree().then(response => {
-        this.authorities = response.data
       })
     },
     handleFilter() {
@@ -165,7 +146,7 @@ export default {
         id: undefined,
         code: undefined,
         name: undefined,
-        priority: undefined
+        status: undefined
       }
     },
     handleCreate() {
@@ -179,7 +160,8 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createRole(this.temp).then(() => {
+          createPartner(this.temp).then(() => {
+            this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -193,26 +175,29 @@ export default {
         }
       })
     },
-    handleAssignAuthorities(id) {
-      this.resetTemp()
-      this.temp.id = id
-      getOneRole(id).then(response => {
-        this.$refs['tree'].setCheckedKeys(response.data.authorityIds)
-        setTimeout(() => {
-        }, 1000)
+    handleUpdate(row) {
+      this.temp = Object.assign({}, row)
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
       })
-      this.assignFormVisible = true
     },
-    assignAuthorities() {
-      this.temp.authorityIds = this.$refs['tree'].getCheckedKeys()
-      updateRole(this.temp.id, this.temp).then(() => {
-        this.assignFormVisible = false
-        this.$notify({
-          title: '成功',
-          message: '设置成功',
-          type: 'success',
-          duration: 2000
-        })
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          updatePartner(this.temp.id, this.temp).then(() => {
+            const index = this.list.findIndex(v => v.id === this.temp.id)
+            this.list.splice(index, 1, this.temp)
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '更新成功',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
       })
     }
   }

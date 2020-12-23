@@ -68,7 +68,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.actions')" align="left" width="215" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="215" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit

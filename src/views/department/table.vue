@@ -66,7 +66,7 @@
           <span style="color:red;">{{ row.updater }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.actions')" align="left" width="82px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="82px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-popconfirm title="您确定激活该机构吗?" @onConfirm="modifyStatus(row.id,1)">
             <el-button v-if="row.status===0" slot="reference" size="mini" type="success" style="margin-left: 5px;">激活</el-button>

@@ -3,12 +3,19 @@ export default {
     dashboard: '首页',
     profile: '个人中心',
     Admin: '系统管理',
+    Partner: '保司管理',
     Department: '机构管理',
     User: '用户管理',
     Role: '角色管理',
     Authority: '权限管理',
+    PolicyMgmt: '保单服务',
+    Insured: '投保',
     Policy: '保单管理',
-    Insured: '投保'
+    Order: '订单管理',
+    ProductCenter: '产品中心',
+    Product: '产品管理',
+    Plan: '计划管理',
+    Knowledge: '知识库'
   },
   navbar: {
     logOut: '退出登录',

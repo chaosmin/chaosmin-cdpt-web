@@ -84,7 +84,7 @@
           <span style="color:red;">{{ row.updater }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('base.actions')" align="left" width="150" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handleReset(row)">重置</el-button>
           <el-button v-if="row.status===0" size="mini" type="success" @click="handleModifyStatus(row,1)">
