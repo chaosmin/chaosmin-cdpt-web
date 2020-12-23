@@ -142,6 +142,16 @@ export const asyncRoutes = [
     },
     children: [
       {
+        path: '/productCategories',
+        component: () => import('@/views/policy/insured'),
+        name: 'ProductCategory',
+        meta: {
+          title: 'ProductCategory',
+          icon: 'el-icon-crop',
+          roles: ['administrator', 'officer']
+        }
+      },
+      {
         path: '/products',
         component: () => import('@/views/policy/insured'),
         name: 'Product',
@@ -211,6 +221,29 @@ export const asyncRoutes = [
         meta: {
           title: 'Order',
           icon: 'el-icon-document',
+          roles: ['administrator', 'officer']
+        }
+      }
+    ]
+  },
+  {
+    path: '/report',
+    component: Layout,
+    alwaysShow: true,
+    name: 'Report',
+    meta: {
+      title: 'Report',
+      icon: 'el-icon-tickets',
+      roles: ['administrator', 'officer']
+    },
+    children: [
+      {
+        path: '/debitNotes',
+        component: () => import('@/views/policy/insured'),
+        name: 'DebitNote',
+        meta: {
+          title: 'DebitNote',
+          icon: 'el-icon-wallet',
           roles: ['administrator', 'officer']
         }
       }

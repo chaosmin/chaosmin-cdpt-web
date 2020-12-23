@@ -13,9 +13,12 @@ export default {
     Policy: '保单管理',
     Order: '订单管理',
     ProductCenter: '产品中心',
+    ProductCategory: '产品大类',
     Product: '产品管理',
     Plan: '计划管理',
-    Knowledge: '知识库'
+    Knowledge: '知识库',
+    Report: '报表管理',
+    DebitNote: '应收账单'
   },
   navbar: {
     logOut: '退出登录',
