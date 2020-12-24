@@ -84,21 +84,21 @@
           <span style="color:red;">{{ row.updater }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="150" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="138px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handleReset(row)">重置</el-button>
-          <el-popconfirm title="您确定激活该用户吗?" @onConfirm="modifyStatus(row.id,'VALID')">
-            <el-button v-if="row.status==='INIT'" slot="reference" size="mini" type="success" style="margin-left: 5px;">
+          <el-popconfirm v-if="row.status==='INIT'" title="您确定激活该用户吗?" @onConfirm="modifyStatus(row,'VALID')">
+            <el-button slot="reference" size="mini" type="success" style="margin-left: 5px;">
               激活
             </el-button>
           </el-popconfirm>
-          <el-popconfirm title="您确定锁定该用户吗?" @onConfirm="modifyStatus(row.id,'FROZEN')">
-            <el-button v-if="row.status==='VALID'" slot="reference" size="mini" type="danger" style="margin-left: 5px;">
+          <el-popconfirm v-if="row.status==='VALID'" title="您确定锁定该用户吗?" @onConfirm="modifyStatus(row,'FROZEN')">
+            <el-button slot="reference" size="mini" type="danger" style="margin-left: 5px;">
               锁定
             </el-button>
           </el-popconfirm>
-          <el-popconfirm title="您确定解锁该用户吗？" @onConfirm="modifyStatus(row.id,'VALID')">
-            <el-button v-if="row.status==='FROZEN'" slot="reference" size="mini" type="warning" style="margin-left: 5px;">
+          <el-popconfirm v-if="row.status==='FROZEN'" title="您确定解锁该用户吗？" @onConfirm="modifyStatus(row,'VALID')">
+            <el-button slot="reference" size="mini" type="warning" style="margin-left: 5px;">
               解锁
             </el-button>
           </el-popconfirm>
@@ -360,18 +360,17 @@ export default {
         })
       })
     },
-    modifyStatus(id, status) {
+    modifyStatus(row, status) {
       this.resetTemp()
       this.temp.status = status
-      updateUser(id, this.temp).then(() => {
+      updateUser(row.id, this.temp).then(() => {
+        row.status = status
         this.$notify({
           title: '成功',
           message: '操作成功',
           type: 'success',
           duration: 2000
         })
-      }).then(() => {
-        this.handleFilter()
       })
     },
     loadDepartmentOptions() {

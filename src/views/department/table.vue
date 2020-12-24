@@ -68,11 +68,11 @@
       </el-table-column>
       <el-table-column label="操作" align="left" width="82px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-popconfirm title="您确定锁定该机构及名下所有用户吗?" @onConfirm="modifyStatus(row.id,'INVALID')">
-            <el-button v-if="row.status==='VALID'" slot="reference" size="mini" type="danger">锁定</el-button>
+          <el-popconfirm v-if="row.status==='VALID'" title="您确定锁定该机构及名下所有用户吗?" @onConfirm="modifyStatus(row,'INVALID')">
+            <el-button slot="reference" size="mini" type="danger" style="margin-left: 5px;">锁定</el-button>
           </el-popconfirm>
-          <el-popconfirm title="您确定解锁该机构吗？" @onConfirm="modifyStatus(row.id,'VALID')">
-            <el-button v-if="row.status==='INVALID'" slot="reference" size="mini" type="warning" style="margin-left: 5px;">解锁</el-button>
+          <el-popconfirm v-if="row.status==='INVALID'" title="您确定解锁该机构吗？" @onConfirm="modifyStatus(row,'VALID')">
+            <el-button slot="reference" size="mini" type="warning" style="margin-left: 5px;">解锁</el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -240,18 +240,17 @@ export default {
         }
       })
     },
-    modifyStatus(id, status) {
+    modifyStatus(row, status) {
       this.resetTemp()
       this.temp.status = status
-      updateDepartment(id, this.temp).then(() => {
+      updateDepartment(row.id, this.temp).then(() => {
+        row.status = status
         this.$notify({
           title: '成功',
           message: '操作成功',
           type: 'success',
           duration: 2000
         })
-      }).then(() => {
-        this.handleFilter()
       })
     }
   }
