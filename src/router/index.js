@@ -142,16 +142,6 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: '/productCategories',
-        component: () => import('@/views/product/table'),
-        name: 'ProductCategory',
-        meta: {
-          title: 'ProductCategory',
-          icon: 'el-icon-crop',
-          roles: ['administrator', 'officer']
-        }
-      },
-      {
         path: '/products',
         component: () => import('@/views/product/table'),
         name: 'Product',
