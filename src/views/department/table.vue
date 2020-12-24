@@ -68,14 +68,11 @@
       </el-table-column>
       <el-table-column label="操作" align="left" width="82px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-popconfirm title="您确定激活该机构吗?" @onConfirm="modifyStatus(row.id,1)">
-            <el-button v-if="row.status===0" slot="reference" size="mini" type="success" style="margin-left: 5px;">激活</el-button>
+          <el-popconfirm title="您确定锁定该机构及名下所有用户吗?" @onConfirm="modifyStatus(row.id,'INVALID')">
+            <el-button v-if="row.status==='VALID'" slot="reference" size="mini" type="danger">锁定</el-button>
           </el-popconfirm>
-          <el-popconfirm title="您确定锁定该机构及名下所有用户吗?" @onConfirm="modifyStatus(row.id,3)">
-            <el-button v-if="row.status===1" slot="reference" size="mini" type="danger" style="margin-left: 5px;">锁定</el-button>
-          </el-popconfirm>
-          <el-popconfirm title="您确定解锁该机构吗？" @onConfirm="modifyStatus(row.id,1)">
-            <el-button v-if="row.status===3" slot="reference" size="mini" type="warning" style="margin-left: 5px;">解锁</el-button>
+          <el-popconfirm title="您确定解锁该机构吗？" @onConfirm="modifyStatus(row.id,'VALID')">
+            <el-button v-if="row.status==='INVALID'" slot="reference" size="mini" type="warning" style="margin-left: 5px;">解锁</el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -110,10 +107,8 @@ import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 const statusTypeOptions = [
-  { key: '0', display_name: '初始化' },
-  { key: '1', display_name: '可用' },
-  { key: '2', display_name: '不可用' },
-  { key: '3', display_name: '锁定' }
+  { key: 'VALID', display_name: '可用' },
+  { key: 'INVALID', display_name: '不可用' }
 ]
 
 const statusTypeKeyValue = statusTypeOptions.reduce((acc, cur) => {
@@ -128,10 +123,8 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        '0': 'info',
-        '1': 'success',
-        '2': 'danger',
-        '3': 'danger'
+        'VALID': 'success',
+        'INVALID': 'danger'
       }
       return statusMap[status]
     },

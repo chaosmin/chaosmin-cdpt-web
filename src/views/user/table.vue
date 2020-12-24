@@ -87,15 +87,21 @@
       <el-table-column label="操作" align="left" width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handleReset(row)">重置</el-button>
-          <el-button v-if="row.status===0" size="mini" type="success" @click="handleModifyStatus(row,1)">
-            激活
-          </el-button>
-          <el-button v-if="row.status===1" size="mini" type="danger" @click="handleModifyStatus(row, 2)">
-            锁定
-          </el-button>
-          <el-button v-if="row.status===3" size="mini" type="info" @click="handleModifyStatus(row,3)">
-            解锁
-          </el-button>
+          <el-popconfirm title="您确定激活该用户吗?" @onConfirm="modifyStatus(row.id,'VALID')">
+            <el-button v-if="row.status==='INIT'" slot="reference" size="mini" type="success" style="margin-left: 5px;">
+              激活
+            </el-button>
+          </el-popconfirm>
+          <el-popconfirm title="您确定锁定该用户吗?" @onConfirm="modifyStatus(row.id,'FROZEN')">
+            <el-button v-if="row.status==='VALID'" slot="reference" size="mini" type="danger" style="margin-left: 5px;">
+              锁定
+            </el-button>
+          </el-popconfirm>
+          <el-popconfirm title="您确定解锁该用户吗？" @onConfirm="modifyStatus(row.id,'VALID')">
+            <el-button v-if="row.status==='FROZEN'" slot="reference" size="mini" type="warning" style="margin-left: 5px;">
+              解锁
+            </el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -168,10 +174,10 @@ import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 const statusTypeOptions = [
-  { key: '0', display_name: '初始化' },
-  { key: '1', display_name: '可用' },
-  { key: '2', display_name: '不可用' },
-  { key: '3', display_name: '锁定' }
+  { key: 'INIT', display_name: '初始化' },
+  { key: 'VALID', display_name: '可用' },
+  { key: 'INVALID', display_name: '不可用' },
+  { key: 'FROZEN', display_name: '锁定' }
 ]
 
 const statusTypeKeyValue = statusTypeOptions.reduce((acc, cur) => {
@@ -186,10 +192,10 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        '0': 'info',
-        '1': 'success',
-        '2': 'danger',
-        '3': 'danger'
+        'INIT': 'info',
+        'VALID': 'success',
+        'INVALID': 'danger',
+        'FROZEN': 'danger'
       }
       return statusMap[status]
     },
@@ -202,7 +208,6 @@ export default {
       isAdmin: this.$store.getters.isAdmin,
       departmentOptions: [],
       roleOptions: [],
-      // 是否展示修改信息
       showModifyInfo: false,
       tableKey: 0,
       list: null,
@@ -353,26 +358,6 @@ export default {
           type: 'success',
           duration: 2000
         })
-      })
-    },
-    handleModifyStatus(row, status) {
-      let message, st
-      if (status === 1) {
-        message = '确认要激活该用户?'
-        st = 1
-      } else if (status === 2) {
-        message = '确认要锁定该用户?'
-        st = 3
-      } else {
-        message = '确认要解锁该用户?'
-        st = 1
-      }
-      this.$confirm(message, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.modifyStatus(row.id, st)
       })
     },
     modifyStatus(id, status) {
