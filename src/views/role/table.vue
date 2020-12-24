@@ -94,7 +94,7 @@
 
 <script>
 import { fetchRole, getOneRole, createRole, updateRole } from '@/api/roles'
-import { fetchTree } from '@/api/authorities'
+import { fetchAuthorityTree } from '@/api/authorities'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -152,7 +152,7 @@ export default {
       })
     },
     getAuthorities() {
-      fetchTree().then(response => {
+      fetchAuthorityTree().then(response => {
         this.authorities = response.data
       })
     },

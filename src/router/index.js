@@ -143,7 +143,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '/productCategories',
-        component: () => import('@/views/policy/insured'),
+        component: () => import('@/views/product/table'),
         name: 'ProductCategory',
         meta: {
           title: 'ProductCategory',
@@ -153,7 +153,7 @@ export const asyncRoutes = [
       },
       {
         path: '/products',
-        component: () => import('@/views/policy/insured'),
+        component: () => import('@/views/product/table'),
         name: 'Product',
         meta: {
           title: 'Product',

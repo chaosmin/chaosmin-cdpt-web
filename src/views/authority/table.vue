@@ -54,7 +54,7 @@
       </el-table-column>
       <el-table-column label="操作" align="left" width="75px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-popconfirm title="您确定删除该权限吗?" @onConfirm="deleteData(row.id)">
+          <el-popconfirm title="您确定删除该权限吗?" @onConfirm="deleteData(row)">
             <el-button slot="reference" size="mini" type="danger">删除</el-button>
           </el-popconfirm>
         </template>
@@ -249,8 +249,10 @@ export default {
         }
       })
     },
-    deleteData(id) {
-      deleteAuthority(id).then(() => {
+    deleteData(row) {
+      deleteAuthority(row.id).then(() => {
+        const index = this.list.indexOf(row)
+        this.list.splice(index, 1)
         this.$notify({
           title: '成功',
           message: '删除成功',
