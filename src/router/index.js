@@ -142,13 +142,23 @@ export const asyncRoutes = [
     },
     children: [
       {
+        path: '/product-categories',
+        component: () => import('@/views/product-category/table'),
+        name: 'ProductCategory',
+        meta: {
+          title: 'ProductCategory',
+          icon: 'el-icon-crop',
+          roles: ['administrator']
+        }
+      },
+      {
         path: '/products',
         component: () => import('@/views/product/table'),
         name: 'Product',
         meta: {
           title: 'Product',
           icon: 'component',
-          roles: ['administrator', 'officer']
+          roles: ['administrator']
         }
       },
       {
@@ -158,7 +168,7 @@ export const asyncRoutes = [
         meta: {
           title: 'Plan',
           icon: 'list',
-          roles: ['administrator', 'officer']
+          roles: ['administrator']
         }
       },
       {
@@ -168,7 +178,7 @@ export const asyncRoutes = [
         meta: {
           title: 'Knowledge',
           icon: 'documentation',
-          roles: ['administrator', 'officer']
+          roles: ['administrator']
         }
       }
     ]
