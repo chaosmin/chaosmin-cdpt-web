@@ -36,7 +36,7 @@
       </el-table-column>
       <el-table-column label="机构人数" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.numberOfPeople }}</span>
+          <span>{{ row.numberOfUser }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('base.status')" class-name="status-col" width="80">
@@ -146,6 +146,7 @@ export default {
       },
       temp: {
         id: undefined,
+        numberOfUser: undefined,
         code: undefined,
         name: undefined,
         status: undefined
