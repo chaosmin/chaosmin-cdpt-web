@@ -163,7 +163,7 @@ export const asyncRoutes = [
       },
       {
         path: '/plans',
-        component: () => import('@/views/policy/insured'),
+        component: () => import('@/views/product-plan/table'),
         name: 'Plan',
         meta: {
           title: 'Plan',

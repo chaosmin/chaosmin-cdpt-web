@@ -1,11 +1,32 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.ALIKE_productName" placeholder="产品名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_partnerName" placeholder="保司名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_productName" placeholder="产品名称" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
+        清空
+      </el-button>
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
+      <el-upload
+        v-waves
+        action="http://localhost:8080/v1/api/products/file"
+        :headers="{'Authorization': 'Bearer ' + this.$store.getters.token}"
+        class="filter-item"
+        style="margin-top: 10px;"
+        accept=".xlsx,.xls"
+        :show-file-list="false"
+        :on-progress="uploadProgress"
+        :on-success="uploadSuccess"
+        :on-error="uploadError"
+      >
+        <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-upload">
+          点击上传
+        </el-button>
+      </el-upload>
     </div>
+    <el-divider content-position="left">保险产品</el-divider>
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -57,10 +78,9 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="225px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="152px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini" type="primary">查看计划</el-button>
-          <el-button size="mini" type="primary" style="margin-left: 5px;">查看特约</el-button>
+          <el-button size="mini" type="primary" @click="goTo(row.productName)">查看计划</el-button>
           <el-popconfirm v-if="row.status==='DISABLED'" title="您确定启用该产品吗?" @onConfirm="modifyStatus(row,'ENABLED')">
             <el-button slot="reference" size="mini" type="success" style="margin-left: 5px;">
               启用
@@ -77,23 +97,8 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.P_NUM" :limit.sync="listQuery.P_SIZE" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
-        <el-form-item label="所属大类" prop="categoryId">
-          <el-select
-            v-model="categoryId"
-            filterable
-            placeholder="请选择"
-            style="width: 200px"
-          >
-            <el-option
-              v-for="item in categories"
-              :key="item.categoryId"
-              :label="item.label"
-              :value="item.categoryId"
-            />
-          </el-select>
-        </el-form-item>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="customWidth">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 700px; margin-left:80px;">
         <el-form-item label="产品编码" prop="productCode">
           <el-input v-model="temp.productCode" :disabled="dialogStatus==='update'" />
         </el-form-item>
@@ -105,6 +110,9 @@
         </el-form-item>
         <el-form-item label="产品描述" prop="productDesc">
           <el-input v-model="temp.productDesc" />
+        </el-form-item>
+        <el-form-item label="投保须知" prop="notice" style="margin-bottom: 30px;">
+          <Tinymce ref="editor" v-model="temp.noticeText" :height="400" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -120,7 +128,7 @@
 </template>
 
 <script>
-import { fetchCategoryTree, updateCategory } from '@/api/product-categories'
+import Tinymce from '@/components/Tinymce'
 import { fetchProduct, updateProduct } from '@/api/products'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
@@ -137,7 +145,7 @@ const statusTypeKeyValue = statusTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Tinymce, Pagination },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -153,7 +161,7 @@ export default {
   },
   data() {
     return {
-      categories: [],
+      uploading: undefined,
       categoryId: undefined,
       loading: false,
       tableKey: 0,
@@ -163,6 +171,7 @@ export default {
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
+        ALIKE_partnerName: undefined,
         ALIKE_productName: undefined
       },
       temp: {
@@ -173,7 +182,9 @@ export default {
         productName: undefined,
         productSubName: undefined,
         productDesc: undefined,
-        numberOfPlan: undefined
+        numberOfPlan: undefined,
+        noticeText: undefined,
+        noticeShort: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -189,10 +200,8 @@ export default {
     }
   },
   created() {
+    this.listQuery.ALIKE_productName = this.$route.params.productName
     this.getList()
-  },
-  mounted() {
-    this.getCategories()
   },
   methods: {
     getList() {
@@ -205,14 +214,14 @@ export default {
         }, 1000)
       })
     },
-    getCategories() {
-      fetchCategoryTree().then(response => {
-        this.categories = response.data
-      })
-    },
     handleFilter() {
       this.listQuery.P_NUM = 1
       this.getList()
+    },
+    resetQuery() {
+      this.listQuery.ALIKE_partnerName = undefined
+      this.listQuery.ALIKE_productName = undefined
+      this.handleFilter()
     },
     resetTemp() {
       this.temp = {
@@ -233,7 +242,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          updateCategory(this.temp.id, this.temp).then(() => {
+          updateProduct(this.temp.id, this.temp).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -259,12 +268,45 @@ export default {
           duration: 2000
         })
       })
+    },
+    uploadProgress() {
+      this.uploading = this.$loading({
+        lock: true,
+        text: '拼命上传中',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+    },
+    uploadSuccess() {
+      this.handleFilter()
+      this.uploading.close()
+      this.$notify({
+        title: '成功',
+        message: '上传成功',
+        type: 'success',
+        duration: 2000
+      })
+    },
+    uploadError() {
+      this.uploading.close()
+      this.$notify({
+        title: '失败',
+        message: '上传失败',
+        type: 'danger',
+        duration: 2000
+      })
+    },
+    goTo(productName) {
+      this.$router.push({ name: 'Plan', params: { productName: productName }})
     }
   }
 }
 </script>
 
 <style>
+.customWidth{
+  width:74%;
+}
 .custom-tree-node {
   flex: 1;
   display: flex;

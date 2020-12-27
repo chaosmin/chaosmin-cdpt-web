@@ -26,12 +26,12 @@
       </el-table-column>
       <el-table-column label="编码">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.code }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.partnerCode }}</span>
         </template>
       </el-table-column>
       <el-table-column label="名称" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span>{{ row.partnerName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" width="140" align="center">
@@ -106,8 +106,8 @@ export default {
       },
       temp: {
         id: undefined,
-        code: undefined,
-        name: undefined,
+        partnerCode: undefined,
+        partnerName: undefined,
         publicKey: undefined
       },
       dialogFormVisible: false,
@@ -144,8 +144,8 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        code: undefined,
-        name: undefined,
+        partnerCode: undefined,
+        partnerName: undefined,
         status: undefined
       }
     },
