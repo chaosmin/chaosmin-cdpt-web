@@ -23,11 +23,6 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/auth-redirect',
-    component: () => import('@/views/login/auth-redirect'),
-    hidden: true
-  },
-  {
     path: '/404',
     component: () => import('@/views/error-page/404'),
     hidden: true
@@ -44,7 +39,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/dashboard/index')), 'dashboard'),
         name: 'Dashboard',
         meta: { title: 'dashboard', icon: 'dashboard', affix: true }
       }
@@ -58,7 +53,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/profile/index'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/profile/index')), 'Profile'),
         name: 'Profile',
         meta: { title: 'Profile', icon: 'user', noCache: true }
       }
@@ -80,7 +75,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '/partners',
-        component: () => import('@/views/partner/table'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/partner/table')), 'Partner'),
         name: 'Partner',
         meta: {
           title: 'Partner',
@@ -90,7 +85,7 @@ export const asyncRoutes = [
       },
       {
         path: '/departments',
-        component: () => import('@/views/department/table'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/department/table')), 'Department'),
         name: 'Department',
         meta: {
           title: 'Department',
@@ -100,7 +95,7 @@ export const asyncRoutes = [
       },
       {
         path: '/users',
-        component: () => import('@/views/user/table'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/user/table')), 'User'),
         name: 'User',
         meta: {
           title: 'User',
@@ -110,7 +105,7 @@ export const asyncRoutes = [
       },
       {
         path: '/roles',
-        component: () => import('@/views/role/table'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/role/table')), 'Role'),
         name: 'Role',
         meta: {
           title: 'Role',
@@ -120,7 +115,7 @@ export const asyncRoutes = [
       },
       {
         path: '/authorities',
-        component: () => import('@/views/authority/table'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/authority/table')), 'Authority'),
         name: 'Authority',
         meta: {
           title: 'Authority',
@@ -143,7 +138,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '/product-categories',
-        component: () => import('@/views/product-category/table'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/product-category/table')), 'ProductCategory'),
         name: 'ProductCategory',
         meta: {
           title: 'ProductCategory',
@@ -153,7 +148,7 @@ export const asyncRoutes = [
       },
       {
         path: '/products',
-        component: () => import('@/views/product/table'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/product/table')), 'Product'),
         name: 'Product',
         meta: {
           title: 'Product',
@@ -163,7 +158,7 @@ export const asyncRoutes = [
       },
       {
         path: '/plans',
-        component: () => import('@/views/product-plan/table'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/product-plan/table')), 'Plan'),
         name: 'Plan',
         meta: {
           title: 'Plan',
@@ -173,7 +168,6 @@ export const asyncRoutes = [
       },
       {
         path: '/knowledge',
-        component: () => import('@/views/policy/insured'),
         name: 'Knowledge',
         meta: {
           title: 'Knowledge',
@@ -196,7 +190,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '/insured',
-        component: () => import('@/views/policy/insured'),
+        component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
         name: 'Insured',
         meta: {
           title: 'Insured',
@@ -206,7 +200,6 @@ export const asyncRoutes = [
       },
       {
         path: '/policies',
-        component: () => import('@/views/policy/page'),
         name: 'Policy',
         meta: {
           title: 'Policy',
@@ -216,7 +209,6 @@ export const asyncRoutes = [
       },
       {
         path: '/orders',
-        component: () => import('@/views/policy/page'),
         name: 'Order',
         meta: {
           title: 'Order',
@@ -239,7 +231,6 @@ export const asyncRoutes = [
     children: [
       {
         path: '/debitNotes',
-        component: () => import('@/views/policy/insured'),
         name: 'DebitNote',
         meta: {
           title: 'DebitNote',
