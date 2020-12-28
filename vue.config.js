@@ -8,7 +8,7 @@ function resolve(dir) {
 
 const name = defaultSettings.title || 'vue Element Admin'
 
-const port = process.env.port || process.env.npm_config_port || 9527 // dev port
+const port = process.env.port || process.env.npm_config_port || 9527
 
 module.exports = {
   publicPath: './',
