@@ -71,10 +71,11 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="250px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="320px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="goToProduct(row.productName)">查看产品</el-button>
           <el-button size="mini" type="primary" style="margin-left: 5px;" @click="goToLiability(row.planCode)">查看责任</el-button>
+          <el-button size="mini" type="primary" style="margin-left: 5px;" @click="goToRateTable(row.planCode)">查看费率表</el-button>
           <el-popconfirm v-if="row.status==='DISABLED'" title="您确定启用该计划吗？" @onConfirm="modifyStatus(row,'ENABLED')">
             <el-button slot="reference" size="mini" type="success" style="margin-left: 5px;">
               生效
@@ -277,7 +278,10 @@ export default {
       this.$router.push({ name: 'Product', params: { productName: productName }})
     },
     goToLiability(planCode) {
-      this.$router.push({ name: 'Liability', params: { planCode: planCode }})
+      this.$router.push({ name: 'Liability', params: { productPlanCode: planCode }})
+    },
+    goToRateTable(planCode) {
+      this.$router.push({ name: 'Liability', params: { productPlanCode: planCode }})
     }
   }
 }

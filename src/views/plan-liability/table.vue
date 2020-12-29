@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.EQ_planCode" placeholder="计划编码" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.EQ_productPlanCode" placeholder="计划编码" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.ALIKE_liabilityCategory" placeholder="责任大类" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.ALIKE_liabilityName" placeholder="责任内容" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
@@ -128,7 +128,7 @@ export default {
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
-        EQ_planCode: undefined,
+        EQ_productPlanCode: undefined,
         ALIKE_liabilityCategory: undefined,
         ALIKE_liabilityName: undefined
       },
@@ -155,7 +155,7 @@ export default {
     }
   },
   created() {
-    this.listQuery.EQ_planCode = this.$route.params.planCode
+    this.listQuery.EQ_productPlanCode = this.$route.params.productPlanCode
     this.getList()
   },
   methods: {
@@ -174,7 +174,7 @@ export default {
       this.getList()
     },
     resetQuery() {
-      this.listQuery.EQ_planCode = undefined
+      this.listQuery.EQ_productPlanCode = undefined
       this.listQuery.ALIKE_liabilityCategory = undefined
       this.listQuery.ALIKE_liabilityName = undefined
       this.handleFilter()
