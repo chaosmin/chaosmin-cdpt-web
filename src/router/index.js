@@ -165,6 +165,16 @@ export const asyncRoutes = [
           icon: 'list',
           roles: ['administrator']
         }
+      },
+      {
+        path: '/plan-liabilities',
+        component: resolve => require.ensure([], () => resolve(require('@/views/plan-liability/table')), 'Liability'),
+        name: 'Liability',
+        meta: {
+          title: 'Liability',
+          icon: 'el-icon-paperclip',
+          roles: ['administrator']
+        }
       }
     ]
   },

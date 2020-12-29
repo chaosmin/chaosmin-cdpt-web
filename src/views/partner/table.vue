@@ -61,13 +61,13 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
-        <el-form-item label="编码" prop="code">
-          <el-input v-model="temp.code" :disabled="dialogStatus==='update'" />
+        <el-form-item label="编码" prop="partnerCode">
+          <el-input v-model="temp.partnerCode" :disabled="dialogStatus==='update'" />
         </el-form-item>
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="temp.name" />
+        <el-form-item label="名称" prop="partnerName">
+          <el-input v-model="temp.partnerName" />
         </el-form-item>
-        <el-form-item label="保司公钥" prop="name">
+        <el-form-item label="保司公钥" prop="publicKey">
           <el-input v-model="temp.publicKey" />
         </el-form-item>
       </el-form>
@@ -118,8 +118,8 @@ export default {
       },
       dialogPvVisible: false,
       rules: {
-        code: [{ required: true, message: 'code is required', trigger: 'change' }],
-        name: [{ required: true, message: 'name is required', trigger: 'change' }]
+        partnerCode: [{ required: true, message: 'code is required', trigger: 'change' }],
+        partnerName: [{ required: true, message: 'name is required', trigger: 'change' }]
       }
     }
   },

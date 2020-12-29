@@ -23,19 +23,14 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="大类编码" align="center">
+      <el-table-column label="一级大类" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.categoryCode }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.categoryName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="父类名称" align="center">
+      <el-table-column label="二级大类" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.parentName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="大类名称" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.categoryName }}</span>
+          <span>{{ row.categorySubName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="排序" align="center">
@@ -60,14 +55,11 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
-        <el-form-item label="分类编码" prop="categoryCode">
-          <el-input v-model="temp.categoryCode" :disabled="dialogStatus==='update'" />
-        </el-form-item>
-        <el-form-item label="父类名称" prop="parentName">
-          <el-input v-model="temp.parentName" />
-        </el-form-item>
-        <el-form-item label="分类名称" prop="categoryName">
+        <el-form-item label="一级大类" prop="categoryName">
           <el-input v-model="temp.categoryName" />
+        </el-form-item>
+        <el-form-item label="二级大类" prop="categorySubName">
+          <el-input v-model="temp.categorySubName" />
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input v-model="temp.sort" />
@@ -135,9 +127,8 @@ export default {
       },
       temp: {
         id: undefined,
-        parentName: undefined,
-        categoryCode: undefined,
         categoryName: undefined,
+        categorySubName: undefined,
         sort: undefined,
         isShow: undefined
       },
@@ -149,9 +140,8 @@ export default {
       },
       dialogPvVisible: false,
       rules: {
-        parentName: [{ required: true, message: '父类名称不能为空', trigger: 'change' }],
-        categoryCode: [{ required: true, message: '产品大类代码不能为空', trigger: 'change' }],
-        categoryName: [{ required: true, message: '产品大类名称不能为空', trigger: 'change' }]
+        categoryName: [{ required: true, message: '一级大类不能为空', trigger: 'change' }],
+        categorySubName: [{ required: true, message: '二级大类不能为空', trigger: 'change' }]
       }
     }
   },

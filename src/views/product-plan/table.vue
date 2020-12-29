@@ -59,7 +59,7 @@
           <span>{{ row.currency }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="默认佣金比例" align="center">
+      <el-table-column label="默认佣金比例(%)" align="center">
         <template slot-scope="{row}">
           <span>{{ row.defaultCommissionRatio }}</span>
         </template>
@@ -71,9 +71,10 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="152px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="250px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="goTo(row.productName)">查看产品</el-button>
+          <el-button size="mini" type="primary" style="margin-left: 5px;" @click="goToLiability(row.planCode)">查看责任</el-button>
           <el-popconfirm v-if="row.status==='ENABLED'" title="您确定禁用该计划吗?" @onConfirm="modifyStatus(row,'DISABLED')">
             <el-button slot="reference" size="mini" type="danger" style="margin-left: 5px;">
               禁用
@@ -274,6 +275,9 @@ export default {
     },
     goTo(productName) {
       this.$router.push({ name: 'Product', params: { productName: productName }})
+    },
+    goToLiability(planCode) {
+      this.$router.push({ name: 'Liability', params: { planCode: planCode }})
     }
   }
 }
