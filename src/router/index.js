@@ -133,7 +133,7 @@ export const asyncRoutes = [
     meta: {
       title: 'ProductCenter',
       icon: 'el-icon-collection',
-      roles: ['administrator', 'officer']
+      roles: ['administrator']
     },
     children: [
       {
@@ -185,26 +185,16 @@ export const asyncRoutes = [
     meta: {
       title: 'PolicyMgmt',
       icon: 'el-icon-document-copy',
-      roles: ['administrator', 'officer']
+      roles: ['administrator', 'manager', 'officer']
     },
     children: [
-      {
-        path: '/insured',
-        component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
-        name: 'Insured',
-        meta: {
-          title: 'Insured',
-          icon: 'el-icon-document-add',
-          roles: ['administrator', 'officer']
-        }
-      },
       {
         path: '/policies',
         name: 'Policy',
         meta: {
           title: 'Policy',
           icon: 'el-icon-document-checked',
-          roles: ['administrator', 'officer']
+          roles: ['administrator', 'manager', 'officer']
         }
       },
       {
@@ -213,10 +203,20 @@ export const asyncRoutes = [
         meta: {
           title: 'Order',
           icon: 'el-icon-document',
-          roles: ['administrator', 'officer']
+          roles: ['administrator', 'manager', 'officer']
         }
       }
     ]
+  },
+  {
+    path: '/insured',
+    component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
+    name: 'Insured',
+    meta: {
+      title: 'Insured',
+      icon: 'el-icon-document-add',
+      roles: ['administrator', 'officer']
+    }
   },
   {
     path: '/report',
@@ -226,7 +226,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Report',
       icon: 'el-icon-tickets',
-      roles: ['administrator', 'officer']
+      roles: ['administrator']
     },
     children: [
       {
@@ -235,7 +235,7 @@ export const asyncRoutes = [
         meta: {
           title: 'DebitNote',
           icon: 'el-icon-wallet',
-          roles: ['administrator', 'officer']
+          roles: ['administrator']
         }
       }
     ]
