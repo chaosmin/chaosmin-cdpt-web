@@ -8,13 +8,6 @@ export function fetchCategory(query) {
   })
 }
 
-export function fetchCategoryTree() {
-  return request({
-    url: '/v1/api/product-categories/tree',
-    method: 'GET'
-  })
-}
-
 export function createCategory(data) {
   return request({
     url: '/v1/api/product-categories',

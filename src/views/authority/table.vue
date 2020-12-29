@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-select v-model="listQuery.EQ_httpMethod" clearable placeholder="请选择" style="width: 200px;" class="filter-item" @change="handleFilter">
+      <el-select v-model="listQuery.EQ_httpMethod" clearable placeholder="请选择" style="width: 180px;" class="filter-item" @change="handleFilter">
         <el-option
           v-for="item in httpMethodOptions"
           :key="item.value"

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.EQ_planCode" placeholder="计划编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.EQ_planCode" placeholder="计划编码" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.ALIKE_liabilityCategory" placeholder="责任大类" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.ALIKE_liabilityName" placeholder="责任内容" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
@@ -10,6 +10,9 @@
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
+      <el-checkbox v-model="showRemarkInfo" class="filter-item" style="margin-left: 10px;">
+        显示备注
+      </el-checkbox>
     </div>
     <el-divider content-position="left">产品责任</el-divider>
     <el-table
@@ -21,11 +24,6 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column v-if="false" label="ID" prop="id" sortable="custom" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="所属计划" align="center" width="100px">
         <template slot-scope="{row}">
           <span>{{ row.planCode }}</span>
@@ -41,7 +39,7 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.liabilityName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="责任备注" align="center">
+      <el-table-column v-if="showRemarkInfo" label="责任备注" align="center">
         <template slot-scope="{row}">
           <span>{{ row.liabilityRemark }}</span>
         </template>
@@ -56,7 +54,7 @@
           <span>{{ row.amount }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="责任金额备注" align="center">
+      <el-table-column v-if="showRemarkInfo" label="责任金额备注" align="center">
         <template slot-scope="{row}">
           <span>{{ row.amountRemark }}</span>
         </template>
@@ -65,7 +63,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.P_NUM" :limit.sync="listQuery.P_SIZE" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 450px; margin-left:80px;">
         <el-form-item label="计划编码" prop="planCode">
           <el-input v-model="temp.planCode" disabled />
         </el-form-item>
@@ -105,34 +103,13 @@ import { fetchLiability, updateLiability } from '@/api/liabilities'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
-const statusTypeOptions = [
-  { key: 'ENABLED', display_name: '可用' },
-  { key: 'DISABLED', display_name: '禁用' }
-]
-
-const statusTypeKeyValue = statusTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
-
 export default {
   name: 'ComplexTable',
   components: { Pagination },
   directives: { waves },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        'ENABLED': 'success',
-        'DISABLED': 'danger'
-      }
-      return statusMap[status]
-    },
-    valueFilter(type) {
-      return statusTypeKeyValue[type]
-    }
-  },
   data() {
     return {
+      showRemarkInfo: false,
       loading: false,
       tableKey: 0,
       list: null,

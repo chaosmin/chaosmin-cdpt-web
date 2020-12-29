@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.LIKE_name" placeholder="名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.LIKE_name" placeholder="保司名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -9,7 +9,7 @@
         添加
       </el-button>
     </div>
-
+    <el-divider content-position="left">保险公司</el-divider>
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -54,7 +54,6 @@
           <span style="color:red;">{{ row.updater }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="82px" class-name="small-padding fixed-width" />
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.P_NUM" :limit.sync="listQuery.P_SIZE" @pagination="getList" />

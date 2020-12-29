@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.ALIKE_productName" placeholder="产品名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_productName" placeholder="产品名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -9,6 +9,7 @@
         添加
       </el-button>
     </div>
+    <el-divider content-position="left">产品大类</el-divider>
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -46,8 +47,8 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="left" width="82px" class-name="small-padding fixed-width">
-        <template>
-          <el-button size="mini" type="primary">查看产品</el-button>
+        <template slot-scope="{row}">
+          <el-button size="mini" type="primary" @click="goToProduct(row.id)">查看产品</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -223,6 +224,9 @@ export default {
           })
         }
       })
+    },
+    goToProduct(categoryId) {
+      this.$router.push({ name: 'Product', params: { productCategoryId: categoryId }})
     }
   }
 }

@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.ALIKE_productName" placeholder="所属产品" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_productName" placeholder="所属产品" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.ALIKE_planCode" placeholder="计划编码" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.ALIKE_planName" placeholder="计划名称" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.EQ_status" placeholder="状态" style="width: 200px;margin-left: 10px;" class="filter-item" @change="handleFilter">
+      <el-select v-model="listQuery.EQ_productPlan_status" placeholder="状态" style="width: 100px;margin-left: 10px;" class="filter-item" @change="handleFilter">
         <el-option
           v-for="item in statusOptions"
           :key="item.value"
@@ -59,9 +59,9 @@
           <span>{{ row.currency }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="默认佣金比例(%)" align="center">
+      <el-table-column label="默认佣金比例" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.defaultCommissionRatio }}</span>
+          <span>{{ row.defaultCommissionRatio }}%</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" align="center">
@@ -73,16 +73,16 @@
       </el-table-column>
       <el-table-column label="操作" align="left" width="250px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="goTo(row.productName)">查看产品</el-button>
+          <el-button size="mini" type="primary" @click="goToProduct(row.productName)">查看产品</el-button>
           <el-button size="mini" type="primary" style="margin-left: 5px;" @click="goToLiability(row.planCode)">查看责任</el-button>
-          <el-popconfirm v-if="row.status==='ENABLED'" title="您确定禁用该计划吗?" @onConfirm="modifyStatus(row,'DISABLED')">
-            <el-button slot="reference" size="mini" type="danger" style="margin-left: 5px;">
-              禁用
+          <el-popconfirm v-if="row.status==='DISABLED'" title="您确定启用该计划吗？" @onConfirm="modifyStatus(row,'ENABLED')">
+            <el-button slot="reference" size="mini" type="success" style="margin-left: 5px;">
+              生效
             </el-button>
           </el-popconfirm>
-          <el-popconfirm v-if="row.status==='DISABLED'" title="您确定启用该计划吗？" @onConfirm="modifyStatus(row,'ENABLED')">
-            <el-button slot="reference" size="mini" type="warning" style="margin-left: 5px;">
-              启用
+          <el-popconfirm v-if="row.status==='ENABLED'" title="您确定禁用该计划吗?" @onConfirm="modifyStatus(row,'DISABLED')">
+            <el-button slot="reference" size="mini" type="danger" style="margin-left: 5px;">
+              失效
             </el-button>
           </el-popconfirm>
         </template>
@@ -101,7 +101,7 @@
         <el-form-item label="主险保额" prop="primaryCoverage">
           <el-input v-model="temp.primaryCoverage" />
         </el-form-item>
-        <el-form-item label="佣金比例" prop="defaultCommissionRatio">
+        <el-form-item label="佣金比例(%)" prop="defaultCommissionRatio">
           <el-input v-model="temp.defaultCommissionRatio" />
         </el-form-item>
       </el-form>
@@ -123,8 +123,8 @@ import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 const statusTypeOptions = [
-  { key: 'ENABLED', display_name: '可用' },
-  { key: 'DISABLED', display_name: '禁用' }
+  { key: 'ENABLED', display_name: '有效' },
+  { key: 'DISABLED', display_name: '无效' }
 ]
 
 const statusTypeKeyValue = statusTypeOptions.reduce((acc, cur) => {
@@ -171,7 +171,7 @@ export default {
         ALIKE_productName: undefined,
         ALIKE_planCode: undefined,
         ALIKE_planName: undefined,
-        EQ_status: undefined
+        EQ_productPlan_status: undefined
       },
       temp: {
         id: undefined,
@@ -220,7 +220,7 @@ export default {
       this.listQuery.ALIKE_productName = undefined
       this.listQuery.ALIKE_planCode = undefined
       this.listQuery.ALIKE_planName = undefined
-      this.listQuery.EQ_status = undefined
+      this.listQuery.EQ_productPlan_status = undefined
       this.handleFilter()
     },
     resetTemp() {
@@ -273,7 +273,7 @@ export default {
         })
       })
     },
-    goTo(productName) {
+    goToProduct(productName) {
       this.$router.push({ name: 'Product', params: { productName: productName }})
     },
     goToLiability(planCode) {

@@ -1,9 +1,20 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.ALIKE_partnerName" placeholder="保司名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_productCode" placeholder="产品编码" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_productName" placeholder="产品名称" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_partnerName" placeholder="保司名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.EQ_productCategoryId" placeholder="产品大类" style="width: 165px;margin-left: 10px;" class="filter-item" @change="handleFilter">
+        <el-option
+          v-for="item in categories"
+          :key="item.id"
+          :label="item.categoryName + ' ' + item.categorySubName"
+          :value="item.id"
+        >
+          <span style="float: left">{{ item.categoryName }}</span>
+          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.categorySubName }}</span>
+        </el-option>
+      </el-select>
+      <el-input v-model="listQuery.ALIKE_productCode" placeholder="产品编码" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_productName" placeholder="产品名称" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
         清空
       </el-button>
@@ -12,7 +23,7 @@
       </el-button>
       <el-upload
         v-waves
-        action="http://localhost:8080/v1/api/products/file"
+        action="http://127.0.0.1:8080/v1/api/products/file"
         :headers="{'Authorization': 'Bearer ' + this.$store.getters.token}"
         class="filter-item"
         style="margin-top: 10px;"
@@ -37,9 +48,9 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column v-if="false" label="ID" prop="id" sortable="custom" align="center">
+      <el-table-column label="产品编码" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.productCode }}</span>
         </template>
       </el-table-column>
       <el-table-column label="保司名称" align="center">
@@ -47,9 +58,9 @@
           <span>{{ row.partnerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="产品编码" align="center">
+      <el-table-column label="产品大类" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.productCode }}</span>
+          <span>{{ row.categoryName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品名称" align="center">
@@ -57,14 +68,14 @@
           <span>{{ row.productName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="产品子名称" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.productSubName }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="产品描述" align="center">
         <template slot-scope="{row}">
           <span>{{ row.productDesc }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="起保日期(T+N)" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.waitingDays }}</span>
         </template>
       </el-table-column>
       <el-table-column label="包含计划数" align="center">
@@ -84,12 +95,12 @@
           <el-button size="mini" type="primary" @click="goTo(row.productName)">查看计划</el-button>
           <el-popconfirm v-if="row.status==='DISABLED'" title="您确定启用该产品吗?" @onConfirm="modifyStatus(row,'ENABLED')">
             <el-button slot="reference" size="mini" type="success" style="margin-left: 5px;">
-              启用
+              生效
             </el-button>
           </el-popconfirm>
           <el-popconfirm v-if="row.status==='ENABLED'" title="您确定禁用该产品吗?" @onConfirm="modifyStatus(row,'DISABLED')">
             <el-button slot="reference" size="mini" type="danger" style="margin-left: 5px;">
-              禁用
+              失效
             </el-button>
           </el-popconfirm>
         </template>
@@ -103,6 +114,19 @@
         <el-form-item label="产品编码" prop="productCode">
           <el-input v-model="temp.productCode" :disabled="dialogStatus==='update'" />
         </el-form-item>
+        <el-form-item label="产品大类" prop="productCategoryId">
+          <el-select v-model="temp.productCategoryId" placeholder="请选择">
+            <el-option
+              v-for="item in categories"
+              :key="item.id"
+              :label="item.categoryName + ' ' + item.categorySubName"
+              :value="item.id"
+            >
+              <span style="float: left">{{ item.categoryName }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.categorySubName }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="产品名称" prop="productName">
           <el-input v-model="temp.productName" />
         </el-form-item>
@@ -112,8 +136,8 @@
         <el-form-item label="产品描述" prop="productDesc">
           <el-input v-model="temp.productDesc" />
         </el-form-item>
-        <el-form-item label="投保须知" prop="notice" style="margin-bottom: 30px;">
-          <Tinymce ref="editor" v-model="temp.noticeText" :height="400" />
+        <el-form-item label="特约&须知" prop="notice" style="margin-bottom: 30px;">
+          <Tinymce ref="editor" v-model="temp.externalText" :height="400" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -131,6 +155,7 @@
 <script>
 import Tinymce from '@/components/Tinymce'
 import { fetchProduct, updateProduct } from '@/api/products'
+import { fetchCategory } from '@/api/categories'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -166,27 +191,28 @@ export default {
       categoryId: undefined,
       loading: false,
       tableKey: 0,
+      categories: [],
       list: null,
       total: 0,
       listLoading: true,
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
+        EQ_productCategoryId: undefined,
         ALIKE_partnerName: undefined,
         ALIKE_productCode: undefined,
         ALIKE_productName: undefined
       },
       temp: {
         id: undefined,
-        partnerName: undefined,
         partnerId: undefined,
+        productCategoryId: undefined,
         productCode: undefined,
         productName: undefined,
         productSubName: undefined,
         productDesc: undefined,
-        numberOfPlan: undefined,
-        noticeText: undefined,
-        noticeShort: undefined
+        waitingDays: undefined,
+        externalText: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -196,14 +222,19 @@ export default {
       },
       dialogPvVisible: false,
       rules: {
+        productCategoryId: [{ required: true, message: '产品大类不能为空', trigger: 'change' }],
         productCode: [{ required: true, message: '产品编码不能为空', trigger: 'change' }],
         productName: [{ required: true, message: '产品名称不能为空', trigger: 'change' }]
       }
     }
   },
   created() {
+    this.listQuery.EQ_productCategoryId = this.$route.params.productCategoryId
     this.listQuery.ALIKE_productName = this.$route.params.productName
     this.getList()
+  },
+  mounted() {
+    this.getCategories()
   },
   methods: {
     getList() {
@@ -216,11 +247,17 @@ export default {
         }, 1000)
       })
     },
+    getCategories() {
+      fetchCategory().then(response => {
+        this.categories = response.data.records
+      })
+    },
     handleFilter() {
       this.listQuery.P_NUM = 1
       this.getList()
     },
     resetQuery() {
+      this.listQuery.EQ_productCategoryId = undefined
       this.listQuery.ALIKE_partnerName = undefined
       this.listQuery.ALIKE_productCode = undefined
       this.listQuery.ALIKE_productName = undefined
@@ -229,9 +266,14 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        code: undefined,
-        name: undefined,
-        status: undefined
+        partnerId: undefined,
+        productCategoryId: undefined,
+        productCode: undefined,
+        productName: undefined,
+        productSubName: undefined,
+        productDesc: undefined,
+        waitingDays: undefined,
+        noticeText: undefined
       }
     },
     handleUpdate(row) {
@@ -308,14 +350,6 @@ export default {
 
 <style>
 .customWidth{
-  width:74%;
-}
-.custom-tree-node {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 14px;
-  padding-right: 8px;
+  width:68%;
 }
 </style>
