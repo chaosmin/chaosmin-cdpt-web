@@ -2,6 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.ALIKE_partnerName" placeholder="保司名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_productCode" placeholder="产品编码" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.ALIKE_productName" placeholder="产品名称" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
         清空
@@ -172,6 +173,7 @@ export default {
         P_NUM: 1,
         P_SIZE: 20,
         ALIKE_partnerName: undefined,
+        ALIKE_productCode: undefined,
         ALIKE_productName: undefined
       },
       temp: {
@@ -220,6 +222,7 @@ export default {
     },
     resetQuery() {
       this.listQuery.ALIKE_partnerName = undefined
+      this.listQuery.ALIKE_productCode = undefined
       this.listQuery.ALIKE_productName = undefined
       this.handleFilter()
     },

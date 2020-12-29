@@ -2,6 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.ALIKE_productName" placeholder="所属产品" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_planCode" placeholder="计划编码" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.ALIKE_planName" placeholder="计划名称" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.EQ_status" placeholder="状态" style="width: 200px;margin-left: 10px;" class="filter-item" @change="handleFilter">
         <el-option
@@ -167,6 +168,7 @@ export default {
         P_NUM: 1,
         P_SIZE: 20,
         ALIKE_productName: undefined,
+        ALIKE_planCode: undefined,
         ALIKE_planName: undefined,
         EQ_status: undefined
       },
@@ -215,6 +217,7 @@ export default {
     },
     resetQuery() {
       this.listQuery.ALIKE_productName = undefined
+      this.listQuery.ALIKE_planCode = undefined
       this.listQuery.ALIKE_planName = undefined
       this.listQuery.EQ_status = undefined
       this.handleFilter()
