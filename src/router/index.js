@@ -165,15 +165,6 @@ export const asyncRoutes = [
           icon: 'list',
           roles: ['administrator']
         }
-      },
-      {
-        path: '/knowledge',
-        name: 'Knowledge',
-        meta: {
-          title: 'Knowledge',
-          icon: 'documentation',
-          roles: ['administrator']
-        }
       }
     ]
   },
@@ -210,13 +201,16 @@ export const asyncRoutes = [
   },
   {
     path: '/insured',
-    component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
-    name: 'Insured',
-    meta: {
-      title: 'Insured',
-      icon: 'el-icon-document-add',
-      roles: ['administrator', 'officer']
-    }
+    component: Layout,
+    meta: { roles: ['administrator', 'officer'] },
+    children: [
+      {
+        path: 'index',
+        component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
+        name: 'Insured',
+        meta: { title: 'Insured', icon: 'el-icon-document-add', roles: ['administrator', 'officer'] }
+      }
+    ]
   },
   {
     path: '/report',
