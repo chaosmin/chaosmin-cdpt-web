@@ -74,16 +74,6 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: '/partners',
-        component: resolve => require.ensure([], () => resolve(require('@/views/partner/table')), 'Partner'),
-        name: 'Partner',
-        meta: {
-          title: 'Partner',
-          icon: 'el-icon-suitcase',
-          roles: ['administrator']
-        }
-      },
-      {
         path: '/departments',
         component: resolve => require.ensure([], () => resolve(require('@/views/department/table')), 'Department'),
         name: 'Department',
@@ -136,6 +126,16 @@ export const asyncRoutes = [
       roles: ['administrator']
     },
     children: [
+      {
+        path: '/partners',
+        component: resolve => require.ensure([], () => resolve(require('@/views/partner/table')), 'Partner'),
+        name: 'Partner',
+        meta: {
+          title: 'Partner',
+          icon: 'el-icon-suitcase',
+          roles: ['administrator']
+        }
+      },
       {
         path: '/product-categories',
         component: resolve => require.ensure([], () => resolve(require('@/views/product-category/table')), 'ProductCategory'),
