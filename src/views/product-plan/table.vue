@@ -281,7 +281,7 @@ export default {
       this.$router.push({ name: 'Liability', params: { productPlanCode: planCode }})
     },
     goToRateTable(planCode) {
-      this.$router.push({ name: 'Liability', params: { productPlanCode: planCode }})
+      this.$router.push({ name: 'RateTable', params: { productPlanCode: planCode }})
     }
   }
 }

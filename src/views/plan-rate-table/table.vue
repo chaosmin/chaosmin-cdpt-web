@@ -2,19 +2,14 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.EQ_productPlanCode" placeholder="计划编码" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_liabilityCategory" placeholder="责任大类" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_liabilityName" placeholder="责任内容" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
         清空
       </el-button>
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-checkbox v-model="showRemarkInfo" class="filter-item" style="margin-left: 10px;">
-        显示备注
-      </el-checkbox>
     </div>
-    <el-divider content-position="left">产品责任</el-divider>
+    <el-divider content-position="left">责任费率表</el-divider>
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -29,34 +24,24 @@
           <span>{{ row.productPlanCode }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="责任大类" align="center">
+      <el-table-column label="计算公式" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.liabilityCategory }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.formula }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="责任名称" align="center">
+      <el-table-column label="保费" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.liabilityName }}</span>
+          <span>{{ row.premium }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="showRemarkInfo" label="责任备注" align="center">
+      <el-table-column label="保费币种" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.liabilityRemark }}</span>
+          <span>{{ row.premiumCurrency }}</span>
         </template>
       </el-table-column>
       <el-table-column label="排序" align="center" width="60px">
         <template slot-scope="{row}">
           <span>{{ row.sort }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="责任金额" align="center" width="100px">
-        <template slot-scope="{row}">
-          <span>{{ row.amount }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="showRemarkInfo" label="责任金额备注" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.amountRemark }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -67,23 +52,17 @@
         <el-form-item label="计划编码" prop="productPlanCode">
           <el-input v-model="temp.productPlanCode" disabled />
         </el-form-item>
-        <el-form-item label="责任大类" prop="liabilityCategory">
-          <el-input v-model="temp.liabilityCategory" />
+        <el-form-item label="计算公式" prop="formula">
+          <el-input v-model="temp.formula" />
         </el-form-item>
-        <el-form-item label="责任名称" prop="liabilityName">
-          <el-input v-model="temp.liabilityName" />
+        <el-form-item label="保费" prop="premium">
+          <el-input v-model="temp.premium" />
         </el-form-item>
-        <el-form-item label="责任备注" prop="liabilityRemark">
-          <el-input v-model="temp.liabilityRemark" />
+        <el-form-item label="保费币种" prop="premiumCurrency">
+          <el-input v-model="temp.premiumCurrency" />
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input v-model="temp.sort" />
-        </el-form-item>
-        <el-form-item label="责任金额" prop="amount">
-          <el-input v-model="temp.amount" />
-        </el-form-item>
-        <el-form-item label="责任金额备注" prop="amountRemark">
-          <el-input v-model="temp.amountRemark" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -99,7 +78,7 @@
 </template>
 
 <script>
-import { fetchLiability, updateLiability } from '@/api/liabilities'
+import { fetchRateTable, updateRateTable } from '@/api/rate-table'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -128,18 +107,14 @@ export default {
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
-        EQ_productPlanCode: undefined,
-        ALIKE_liabilityCategory: undefined,
-        ALIKE_liabilityName: undefined
+        EQ_productPlanCode: undefined
       },
       temp: {
         id: undefined,
-        liabilityCategory: undefined,
-        liabilityName: undefined,
-        liabilityRemark: undefined,
-        sort: undefined,
-        amount: undefined,
-        amountRemark: undefined
+        formula: undefined,
+        premium: undefined,
+        premiumCurrency: undefined,
+        sort: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -150,8 +125,8 @@ export default {
       dialogPvVisible: false,
       rules: {
         productPlanCode: [{ required: true, message: '计划编码不能为空', trigger: 'change' }],
-        liabilityName: [{ required: true, message: '责任名称不能为空', trigger: 'change' }],
-        amount: [{ required: true, message: '责任金额不能为空', trigger: 'change' }]
+        formula: [{ required: true, message: '计算公式不能为空', trigger: 'change' }],
+        premium: [{ required: true, message: '保费不能为空', trigger: 'change' }]
       }
     }
   },
@@ -162,7 +137,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchLiability(this.listQuery).then(response => {
+      fetchRateTable(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         setTimeout(() => {
@@ -176,19 +151,15 @@ export default {
     },
     resetQuery() {
       this.listQuery.EQ_productPlanCode = undefined
-      this.listQuery.ALIKE_liabilityCategory = undefined
-      this.listQuery.ALIKE_liabilityName = undefined
       this.handleFilter()
     },
     resetTemp() {
       this.temp = {
         id: undefined,
-        liabilityCategory: undefined,
-        liabilityName: undefined,
-        liabilityRemark: undefined,
-        sort: undefined,
-        amount: undefined,
-        amountRemark: undefined
+        formula: undefined,
+        premium: undefined,
+        premiumCurrency: undefined,
+        sort: undefined
       }
     },
     handleUpdate(row) {
@@ -202,7 +173,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          updateLiability(this.temp.id, this.temp).then(() => {
+          updateRateTable(this.temp.id, this.temp).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false

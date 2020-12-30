@@ -175,6 +175,16 @@ export const asyncRoutes = [
           icon: 'el-icon-paperclip',
           roles: ['administrator']
         }
+      },
+      {
+        path: '/plan-rate-table',
+        component: resolve => require.ensure([], () => resolve(require('@/views/plan-rate-table/table')), 'RateTable'),
+        name: 'RateTable',
+        meta: {
+          title: 'RateTable',
+          icon: 'el-icon-coin',
+          roles: ['administrator']
+        }
       }
     ]
   },

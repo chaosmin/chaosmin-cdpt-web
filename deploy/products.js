@@ -46,7 +46,7 @@ const SERVER_LIST = [
     port: 22,
     username: 'app',
     password: 'X!S4F%#SDNKMksL1',
-    path: '/home/app/front'
+    path: '/home/app/cdpt/front'
   },
   {
     id: 1,
