@@ -21,20 +21,30 @@
     >
       <el-table-column label="所属计划" align="center" width="100px">
         <template slot-scope="{row}">
-          <span>{{ row.productPlanCode }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.productPlanCode }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="计算公式" align="center">
+      <el-table-column label="天数 起" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.formula }}</span>
+          <span>{{ row.dayStart }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保费" align="center">
+      <el-table-column label="天数 止" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.dayEnd }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column v-if="false" label="计算公式" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.formula }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="保费(元)" align="center">
         <template slot-scope="{row}">
           <span>{{ row.premium }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保费币种" align="center">
+      <el-table-column v-if="false" label="保费币种" align="center">
         <template slot-scope="{row}">
           <span>{{ row.premiumCurrency }}</span>
         </template>
@@ -52,8 +62,11 @@
         <el-form-item label="计划编码" prop="productPlanCode">
           <el-input v-model="temp.productPlanCode" disabled />
         </el-form-item>
-        <el-form-item label="计算公式" prop="formula">
-          <el-input v-model="temp.formula" />
+        <el-form-item label="天数 起" prop="dayStart">
+          <el-input v-model="temp.dayStart" />
+        </el-form-item>
+        <el-form-item label="天数 止" prop="dayEnd">
+          <el-input v-model="temp.dayEnd" />
         </el-form-item>
         <el-form-item label="保费" prop="premium">
           <el-input v-model="temp.premium" />
@@ -111,7 +124,8 @@ export default {
       },
       temp: {
         id: undefined,
-        formula: undefined,
+        dayStart: undefined,
+        dayEnd: undefined,
         premium: undefined,
         premiumCurrency: undefined,
         sort: undefined
@@ -125,7 +139,8 @@ export default {
       dialogPvVisible: false,
       rules: {
         productPlanCode: [{ required: true, message: '计划编码不能为空', trigger: 'change' }],
-        formula: [{ required: true, message: '计算公式不能为空', trigger: 'change' }],
+        dayStart: [{ required: true, message: '天数起不能为空', trigger: 'change' }],
+        dayEnd: [{ required: true, message: '天数止不能为空', trigger: 'change' }],
         premium: [{ required: true, message: '保费不能为空', trigger: 'change' }]
       }
     }
@@ -156,7 +171,8 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        formula: undefined,
+        dayStart: undefined,
+        dayEnd: undefined,
         premium: undefined,
         premiumCurrency: undefined,
         sort: undefined
