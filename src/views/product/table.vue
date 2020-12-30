@@ -53,6 +53,11 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.productCode }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="产品名称" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.productName }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="保司名称" align="center">
         <template slot-scope="{row}">
           <span>{{ row.partnerName }}</span>
@@ -61,11 +66,6 @@
       <el-table-column label="产品大类" align="center">
         <template slot-scope="{row}">
           <span>{{ row.categoryName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="产品名称" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.productName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品描述" align="center">
