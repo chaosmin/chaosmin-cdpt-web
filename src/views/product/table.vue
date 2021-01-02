@@ -155,7 +155,7 @@
 <script>
 import Tinymce from '@/components/Tinymce'
 import { fetchProduct, updateProduct } from '@/api/products'
-import { fetchCategory } from '@/api/categories'
+import { fetchCategory } from '@/api/product-categories'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 

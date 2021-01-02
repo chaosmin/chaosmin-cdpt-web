@@ -61,7 +61,7 @@
       </el-table-column>
       <el-table-column label="默认佣金比例" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.defaultCommissionRatio }}%</span>
+          <span>{{ row.comsRatio }}%</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" align="center">
@@ -102,8 +102,8 @@
         <el-form-item label="主险保额" prop="primaryCoverage">
           <el-input v-model="temp.primaryCoverage" />
         </el-form-item>
-        <el-form-item label="佣金比例(%)" prop="defaultCommissionRatio">
-          <el-input v-model="temp.defaultCommissionRatio" />
+        <el-form-item label="佣金比例(%)" prop="comsRatio">
+          <el-input v-model="temp.comsRatio" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import { fetchPlan, updatePlan } from '@/api/plans'
+import { fetchPlan, updatePlan } from '@/api/product-plans'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -181,7 +181,7 @@ export default {
         planName: undefined,
         primaryCoverage: undefined,
         currency: undefined,
-        defaultCommissionRatio: undefined,
+        comsRatio: undefined,
         status: undefined
       },
       dialogFormVisible: false,
@@ -232,7 +232,7 @@ export default {
         planName: undefined,
         primaryCoverage: undefined,
         currency: undefined,
-        defaultCommissionRatio: undefined,
+        comsRatio: undefined,
         status: undefined
       }
     },

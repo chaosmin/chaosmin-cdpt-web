@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { fetchCategory, createCategory, updateCategory } from '@/api/categories'
+import { fetchCategory, createCategory, updateCategory } from '@/api/product-categories'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 

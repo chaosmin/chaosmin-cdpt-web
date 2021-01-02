@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import { fetchRateTable, updateRateTable } from '@/api/rate-table'
+import { fetchRateTable, updateRateTable } from '@/api/plan-rate-table'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 

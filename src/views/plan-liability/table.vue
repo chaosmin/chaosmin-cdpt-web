@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { fetchLiability, updateLiability } from '@/api/liabilities'
+import { fetchLiability, updateLiability } from '@/api/plan-liabilities'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
