@@ -308,6 +308,7 @@ export default {
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
+        EQ_goodsPlan_status: 1,
         ALIKE_departmentName: undefined,
         ALIKE_userName: undefined,
         LIKE_goodsCode: undefined,
