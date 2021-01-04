@@ -185,6 +185,16 @@ export const asyncRoutes = [
           icon: 'el-icon-coin',
           roles: ['administrator']
         }
+      },
+      {
+        path: '/product-authorization',
+        component: resolve => require.ensure([], () => resolve(require('@/views/goods-plan/table')), 'ProductAuthorization'),
+        name: 'ProductAuthorization',
+        meta: {
+          title: 'ProductAuthorization',
+          icon: 'el-icon-s-check',
+          roles: ['administrator']
+        }
       }
     ]
   },

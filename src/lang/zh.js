@@ -18,6 +18,7 @@ export default {
     Plan: '计划管理',
     Liability: '责任管理',
     RateTable: '费率表',
+    ProductAuthorization: '产品授权',
     Knowledge: '知识库',
     Report: '报表管理',
     DebitNote: '应收账单'

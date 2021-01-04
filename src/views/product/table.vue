@@ -63,9 +63,14 @@
           <span>{{ row.partnerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="产品大类" align="center">
+      <el-table-column label="一级大类" align="center">
         <template slot-scope="{row}">
           <span>{{ row.categoryName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="二级大类" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.categorySubName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品描述" align="center">
