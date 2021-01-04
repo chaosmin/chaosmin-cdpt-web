@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.ALIKE_departmentName" placeholder="机构名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_userName" placeholder="用户名称" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.LIKE_goodsCode" placeholder="产品编码" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_goodsName" placeholder="产品名称" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_goodsPlan_departmentName" placeholder="机构名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_goodsPlan_userName" placeholder="用户名称" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.LIKE_productCode" placeholder="产品编码" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_productName" placeholder="产品名称" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
         清空
       </el-button>
@@ -309,10 +309,10 @@ export default {
         P_NUM: 1,
         P_SIZE: 20,
         EQ_goodsPlan_status: 1,
-        ALIKE_departmentName: undefined,
-        ALIKE_userName: undefined,
-        LIKE_goodsCode: undefined,
-        ALIKE_goodsName: undefined
+        ALIKE_goodsPlan_departmentName: undefined,
+        ALIKE_goodsPlan_userName: undefined,
+        LIKE_productCode: undefined,
+        ALIKE_productName: undefined
       },
       temp: {
         id: undefined,
@@ -345,8 +345,6 @@ export default {
     }
   },
   created() {
-    this.listQuery.EQ_productCategoryId = this.$route.params.productCategoryId
-    this.listQuery.ALIKE_productName = this.$route.params.productName
     this.getList()
   },
   mounted() {
@@ -397,10 +395,10 @@ export default {
       this.getList()
     },
     resetQuery() {
-      this.listQuery.ALIKE_departmentName = undefined
-      this.listQuery.ALIKE_userName = undefined
-      this.listQuery.LIKE_goodsCode = undefined
-      this.listQuery.ALIKE_goodsName = undefined
+      this.listQuery.ALIKE_goodsPlan_departmentName = undefined
+      this.listQuery.ALIKE_goodsPlan_userName = undefined
+      this.listQuery.LIKE_productCode = undefined
+      this.listQuery.ALIKE_productName = undefined
       this.handleFilter()
     },
     resetTemp() {
