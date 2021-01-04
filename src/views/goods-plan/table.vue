@@ -137,7 +137,7 @@
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="updateData()">
+        <el-button v-if="temp.status === 'ENABLED'" type="primary" @click="updateData()">
           确认
         </el-button>
       </div>
@@ -184,15 +184,15 @@
         <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="getProductPlanList">
           搜索
         </el-button>
-        <el-input v-model="defaultComsRatio" placeholder="批量设置佣金" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="setComsRatio(30)" />
+        <el-input v-model="defaultComsRatio" placeholder="批量设置佣金" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="setComsRatio($event)" />
       </div>
       <el-table
         ref="productPlanTable"
         :data="productPlans"
         border
         fit
-        highlight-current-row
         style="width: 100%;"
+        @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="保司名称" align="center">
@@ -222,7 +222,14 @@
         </el-table-column>
         <el-table-column label="授权佣金" align="center">
           <template slot-scope="{row}">
-            <el-input-number v-model="row.iComsRatio" size="small" :precision="2" :step="10" :min="0" :max="row.comsRatio" />
+            <el-input-number
+              v-model="row.icomsRatio"
+              size="small"
+              :precision="2"
+              :step="10"
+              :min="0.00"
+              :max="row.comsRatio"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -292,6 +299,7 @@ export default {
         ALIKE_productName: undefined
       },
       defaultComsRatio: undefined,
+      multipleSelection: [],
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
@@ -351,9 +359,6 @@ export default {
     getProductPlanList() {
       fetchPlan(this.planListQuery).then(response => {
         this.productPlans = response.data.records
-        this.productPlans.forEach((v, i) => {
-          v.iComsRatio = Number(v.comsRatio)
-        })
       })
     },
     getDepartmentList() {
@@ -409,20 +414,27 @@ export default {
         plans: {}
       }
     },
-    setComsRatio(comsRatio) {
-      console.log('批量设置佣金:' + comsRatio)
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+      console.log(this.multipleSelection)
+    },
+    setComsRatio(event) {
+      this.multipleSelection.forEach((v, i) => {
+        v.icomsRatio = Number(event.target.value)
+      })
     },
     handleCreate() {
       this.resetTemp()
       this.dialogAuthVisible = true
       this.$nextTick(() => {
         this.$refs['authDataForm'].clearValidate()
+        this.$refs['productPlanTable'].clearSelection()
       })
     },
     authData() {
       this.$refs['authDataForm'].validate((valid) => {
         if (valid) {
-          const _selectData = this.$refs.productPlanTable.selection
+          const _selectData = this.multipleSelection
           if (_selectData.length <= 0) {
             this.$alert('检测到未选择产品计划, 请至少选择一项计划进行授权', '提交失败', {
               distinguishCancelAndClose: true,
@@ -431,7 +443,7 @@ export default {
           } else {
             const _plans = {}
             for (const plan of _selectData) {
-              Vue.set(_plans, plan.id, plan.iComsRatio)
+              Vue.set(_plans, plan.id, plan.icomsRatio)
             }
             this.temp.plans = _plans
             createGoodsPlan(this.temp).then(() => {
