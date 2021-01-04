@@ -47,7 +47,12 @@
       </el-table-column>
       <el-table-column label="产品名称" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.goodsName }}</span>
+          <span>{{ row.productName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="计划名称" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.productPlanName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="是否有效" class-name="status-col" width="80px">
@@ -108,13 +113,13 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="产品代码" prop="productCode">
-              <el-input v-model="temp.productCode" disabled />
+            <el-form-item label="产品名称" prop="productName">
+              <el-input v-model="temp.productName" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="产品名称" prop="goodsName">
-              <el-input v-model="temp.goodsName" disabled />
+            <el-form-item label="计划名称" prop="productPlanName">
+              <el-input v-model="temp.productPlanName" disabled />
             </el-form-item>
           </el-col>
         </el-row>
@@ -314,8 +319,9 @@ export default {
         departmentName: undefined,
         userName: undefined,
         roleName: undefined,
-        goodsCode: undefined,
-        goodsName: undefined,
+        productCode: undefined,
+        productName: undefined,
+        productPlanName: undefined,
         status: undefined,
         saleDateScope: [],
         authorizer: undefined,
