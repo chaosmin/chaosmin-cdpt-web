@@ -62,6 +62,11 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column label="授权时间" width="140" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.authorizeTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="授权人" class-name="status-col" width="80">
         <template slot-scope="{row}">
           <span>{{ row.authorizer }}</span>
@@ -309,6 +314,7 @@ export default {
         P_NUM: 1,
         P_SIZE: 20,
         EQ_goodsPlan_status: 1,
+        O_goodsPlan_createTime: 0,
         ALIKE_goodsPlan_departmentName: undefined,
         ALIKE_goodsPlan_userName: undefined,
         LIKE_productCode: undefined,
