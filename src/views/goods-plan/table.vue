@@ -139,9 +139,18 @@
             />
           </div>
         </el-form-item>
-        <el-form-item label="佣金比例(%)" prop="comsRatio">
-          <el-input-number v-model="temp.comsRatio" :precision="2" :step="10" :min="0" :max="temp.maxComsRatio" />
-        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="默认佣金(%)" prop="maxComsRatio">
+              <el-input v-model="temp.maxComsRatio" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="佣金比例(%)" prop="comsRatio">
+              <el-input-number v-model="temp.comsRatio" size="small" :precision="2" :step="10" :min="0" :max="temp.maxComsRatio" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -187,14 +196,21 @@
       </el-form>
       <el-divider content-position="left">请选择产品计划</el-divider>
       <div class="filter-container">
-        <el-input v-model="planListQuery.LIKE_partnerCode" placeholder="保司编码" style="width: 150px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
-        <el-input v-model="planListQuery.ALIKE_partnerName" placeholder="保司名称" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
-        <el-input v-model="planListQuery.LIKE_productCode" placeholder="产品编码" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
-        <el-input v-model="planListQuery.ALIKE_productName" placeholder="产品名称" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
-        <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="getProductPlanList">
-          搜索
-        </el-button>
-        <el-input v-model="defaultComsRatio" placeholder="批量设置佣金" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="setComsRatio($event)" />
+        <el-row>
+          <el-input v-model="planListQuery.LIKE_partnerCode" placeholder="保司编码" style="width: 150px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
+          <el-input v-model="planListQuery.ALIKE_partnerName" placeholder="保司名称" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
+          <el-input v-model="planListQuery.LIKE_productCode" placeholder="产品编码" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
+          <el-input v-model="planListQuery.ALIKE_productName" placeholder="产品名称" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
+          <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="getProductPlanList">
+            搜索
+          </el-button>
+        </el-row>
+        <el-row>
+          <el-input v-model="defaultComsRatio" placeholder="批量设置佣金" style="width: 150px;" class="filter-item" @keyup.enter.native="setComsRatio" />
+          <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" size="small" @click="setComsRatio">
+            批量设置选中佣金
+          </el-button>
+        </el-row>
       </div>
       <el-table
         ref="productPlanTable"
@@ -429,9 +445,9 @@ export default {
       this.multipleSelection = val
       console.log(this.multipleSelection)
     },
-    setComsRatio(event) {
+    setComsRatio() {
       this.multipleSelection.forEach((v, i) => {
-        v.icomsRatio = Number(event.target.value)
+        v.icomsRatio = Number(this.defaultComsRatio)
       })
     },
     handleCreate() {
