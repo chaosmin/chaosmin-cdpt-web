@@ -206,7 +206,7 @@
           </el-button>
         </el-row>
         <el-row>
-          <el-input v-model="defaultComsRatio" placeholder="批量设置佣金" style="width: 150px;" class="filter-item" @keyup.enter.native="setComsRatio" />
+          <el-input v-model="defaultComsRatio" placeholder="请输入佣金值" style="width: 150px;" class="filter-item" @keyup.enter.native="setComsRatio" />
           <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" size="small" @click="setComsRatio">
             批量设置选中佣金
           </el-button>
