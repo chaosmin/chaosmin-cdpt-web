@@ -218,7 +218,8 @@ export default {
         P_NUM: 1,
         P_SIZE: 20,
         LIKE_username: undefined,
-        EQ_departmentId: this.$store.getters.department
+        EQ_departmentId: this.$store.getters.department,
+        EQ_role_code: undefined
       },
       temp: {
         id: undefined,
@@ -247,6 +248,9 @@ export default {
     }
   },
   created() {
+    if (!this.isAdmin) {
+      this.listQuery.EQ_role_code = 'officer'
+    }
     this.getList()
   },
   mounted() {

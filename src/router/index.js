@@ -123,7 +123,7 @@ export const asyncRoutes = [
     meta: {
       title: 'ProductCenter',
       icon: 'el-icon-collection',
-      roles: ['administrator']
+      roles: ['administrator', 'manager']
     },
     children: [
       {
@@ -193,7 +193,7 @@ export const asyncRoutes = [
         meta: {
           title: 'ProductAuthorization',
           icon: 'el-icon-s-check',
-          roles: ['administrator']
+          roles: ['administrator', 'manager']
         }
       }
     ]
