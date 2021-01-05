@@ -165,7 +165,7 @@
     <el-dialog title="产品授权" :visible.sync="dialogAuthVisible" custom-class="customWidth">
       <el-divider content-position="left">请选择用户</el-divider>
       <el-form ref="authDataForm" :rules="authRules" :model="temp" label-position="left" label-width="100px" style="width: 700px; margin-left:80px;">
-        <el-form-item label="用户机构" prop="departmentId">
+        <el-form-item v-if="isAdmin" label="用户机构" prop="departmentId">
           <el-select v-model="temp.departmentId" clearable placeholder="请选择" @change="getUserList">
             <el-option
               v-for="item in departments"
@@ -180,10 +180,7 @@
             v-model="temp.userIds"
             multiple
             filterable
-            remote
             reserve-keyword
-            placeholder="请输入关键词"
-            :remote-method="getUserList"
           >
             <el-option
               v-for="item in users"
@@ -308,6 +305,7 @@ export default {
   },
   data() {
     return {
+      isAdmin: this.$store.getters.isAdmin,
       uploading: undefined,
       categoryId: undefined,
       loading: false,
@@ -370,7 +368,17 @@ export default {
     this.getList()
   },
   mounted() {
-    this.getDepartmentList()
+    if (this.isAdmin) {
+      this.getDepartmentList()
+    } else {
+      const departmentId = this.$store.getters.department
+      this.departments = [{
+        id: departmentId,
+        name: '当前机构'
+      }]
+      this.temp.departmentId = departmentId
+      this.getUserList()
+    }
   },
   methods: {
     getList() {
@@ -401,7 +409,7 @@ export default {
       queryCond.EQ_user_status = 1
       queryCond.EQ_departmentId = this.temp.departmentId
       queryCond.P_SIZE = 500
-      if (this.$store.getters.isAdmin) {
+      if (this.isAdmin) {
         queryCond.EQ_role_code = 'manager'
       } else {
         queryCond.EQ_role_code = 'officer'
