@@ -90,8 +90,8 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.P_NUM" :limit.sync="listQuery.P_SIZE" @pagination="getList" />
 
-    <el-dialog title="更新授权" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 500px; margin-left:80px;">
+    <el-dialog title="更新授权" :visible.sync="dialogFormVisible" custom-class="customWidth2">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="right" label-width="120px" style="width: 600px; margin-left:80px;">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="保司" prop="partnerName">
@@ -128,6 +128,18 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="最大佣金比例(%)" prop="maxComsRatio">
+              <el-input v-model="temp.maxComsRatio" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="佣金比例(%)" prop="comsRatio">
+              <el-input-number v-model="temp.comsRatio" :step="10" :min="0" :max="temp.maxComsRatio" />
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="有效期" prop="saleDateScope">
           <div class="block">
             <el-date-picker
@@ -139,18 +151,6 @@
             />
           </div>
         </el-form-item>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="默认佣金(%)" prop="maxComsRatio">
-              <el-input v-model="temp.maxComsRatio" disabled />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="佣金比例(%)" prop="comsRatio">
-              <el-input-number v-model="temp.comsRatio" size="small" :precision="2" :step="10" :min="0" :max="temp.maxComsRatio" />
-            </el-form-item>
-          </el-col>
-        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -243,12 +243,11 @@
             <span>{{ row.comsRatio }}%</span>
           </template>
         </el-table-column>
-        <el-table-column label="授权佣金" align="center">
+        <el-table-column label="授权佣金(%)" align="center" width="200px">
           <template slot-scope="{row}">
             <el-input-number
               v-model="row.icomsRatio"
               size="small"
-              :precision="2"
               :step="10"
               :min="0.00"
               :max="row.comsRatio"
@@ -354,6 +353,7 @@ export default {
       dialogFormVisible: false,
       dialogAuthVisible: false,
       rules: {
+        saleDateScope: [{ required: true, message: '授权有效期不能为空', trigger: 'change' }],
         comsRatio: [{ required: true, message: '佣金比例不能为空', trigger: 'change' }]
       },
       authRules: {
@@ -540,5 +540,9 @@ export default {
 <style>
 .customWidth{
   width:72%;
+}
+
+.customWidth2{
+  width:58%;
 }
 </style>
