@@ -140,50 +140,71 @@
       <div class="grid-content bg-purple">
         <el-tabs type="border-card">
           <el-tab-pane label="被保人列表">
-            <table border="1" cellspacing="0">
-              <thead>
-                <tr>
-                  <td>序</td>
-                  <td width="100px">姓名 <span style="color: red;"><b>*</b></span></td>
-                  <td width="70px">性别 <span style="color: red;"><b>*</b></span></td>
-                  <td width="100px">证件类型 <span style="color: red;"><b>*</b></span></td>
-                  <td>证件号码 <span style="color: red;"><b>*</b></span></td>
-                  <td>出生日期 <span style="color: red;"><b>*</b></span></td>
-                  <td width="100px">手机</td>
-                  <td>原价</td>
-                  <td>结算价</td>
-                  <td />
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td><el-input v-model="name" placeholder="" size="mini" /></td>
-                  <td><el-select v-model="gender" size="mini" placeholder="">
-                    <el-option
-                      v-for="item in genders"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select></td>
-                  <td><el-select v-model="ceriType" size="mini" placeholder="">
-                    <el-option
-                      v-for="item in ceriTypes"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select></td>
-                  <td><el-input v-model="certiNo" placeholder="" size="mini" /></td>
-                  <td><el-input v-model="birthday" placeholder="" size="mini" /></td>
-                  <td><el-input v-model="mobile" placeholder="" size="mini" /></td>
-                  <td>5.00</td>
-                  <td>4.00</td>
-                  <td><button>X</button></td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="filter-container">
+              <el-button v-waves class="filter-item" type="primary" size="mini" icon="el-icon-upload">
+                上传被保人
+              </el-button>
+              <el-button v-waves class="filter-item" type="primary" size="mini" icon="el-icon-edit-outline" @click="dialogSmartPasteFormVisible = true">
+                智能粘贴
+              </el-button>
+            </div>
+            <el-table
+              :key="tableKey"
+              :data="temp.insuredList"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;"
+            >
+              <el-table-column type="index" label="序" align="center" />
+              <el-table-column label="姓名" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.name }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="性别" width="70px" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.gender }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="证件类型" width="80px" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.certiType }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="证件号码" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.certiNo }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="出生日期" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.dateOfBirth }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="手机号" width="110px" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.mobile }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="原价" width="75px" align="center">
+                <template slot-scope="{row}">
+                  <span>￥{{ row.premium }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="结算价" width="75px" align="center">
+                <template slot-scope="{row}">
+                  <span>￥{{ row.price }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" align="left" width="82px" class-name="small-padding fixed-width">
+                <template slot-scope="scope">
+                  <el-button size="mini" type="danger" style="margin-left: 5px;" @click.native.prevent="deleteRow(scope.$index, temp.insuredList)">
+                    删除
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -245,7 +266,7 @@
         </div>
         <br>
         <div style="text-align:center">
-          <el-button type="primary" size="mini" @click="onSubmit">确定投保</el-button>
+          <el-button type="primary" size="mini">确定投保</el-button>
           <el-button size="mini">存草稿</el-button>
         </div>
         <br>
@@ -363,14 +384,40 @@
         <div><span style="color: red;"><b>特别提醒</b></span> 在官方发布恶劣天气预警之后购买的的旅行延误、旅行变更的责任不承担赔偿责任，其他保障内容不受影响。</div>
       </div>
     </el-main>
+
+    <el-dialog title="智能粘贴" :visible.sync="dialogSmartPasteFormVisible">
+      <el-form ref="smartPasteForm" label-position="right" label-width="100px" style="width: 500px; margin-left:80px;">
+        <el-input v-model="smartPasteText" autosize type="textarea" />
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogSmartPasteFormVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="smartPaste()">
+          确认
+        </el-button>
+      </div>
+    </el-dialog>
   </el-container>
 </template>
 
 <script>
+import waves from '@/directive/waves'
+
 export default {
   name: 'PolicyIndex',
+  directives: { waves },
   data() {
     return {
+      text: '',
+      dialogSmartPasteFormVisible: false,
+      smartPasteText: undefined,
+      premium: 5,
+      price: 4,
+      tableKey: 0,
+      temp: {
+        insuredList: []
+      },
       company: '平安',
       plans: [{
         value: '',
@@ -403,12 +450,63 @@ export default {
       certiNo: '',
       birthday: '',
       mobile: '',
+      cpCode: '',
       cpName: '上海xxxxxx有限公司',
       cpNumber: '12352345356345634563456',
       paymethod: '支付宝',
       checked: false
     }
   },
-  methods: {}
+  methods: {
+    smartPaste() {
+      this.dialogSmartPasteFormVisible = false
+      this.smartPasteText.split(/[\n]/).forEach(v => {
+        const insured = {}
+        v.split(/[\s]/).forEach(s => {
+          console.log(s)
+          if (this.isCertiType(s)) {
+            insured.certiType = s
+          } else if (this.isGender(s)) {
+            insured.gender = s
+          } else if (this.isPhoneNumber(s)) {
+            insured.mobile = s
+          } else if (this.isCertiNo(s)) {
+            insured.certiNo = s
+          } else if (this.isDateOfBirth(s)) {
+            insured.dateOfBirth = s
+          } else {
+            insured.name = s
+          }
+        })
+        insured.premium = this.premium
+        insured.price = this.price
+        this.temp.insuredList.push(insured)
+      })
+    },
+    deleteRow(index, rows) {
+      rows.splice(index, 1)
+    },
+    isDateOfBirth(str) {
+      return false
+    },
+    isPhoneNumber(str) {
+      const exp = /^[1][3,4,5,7,8,9][0-9]{9}$/
+      return exp.test(str)
+    },
+    isCertiNo(str) {
+      for (const c of str) {
+        if (c > '0' && c < '9') {
+          return true
+        }
+      }
+      return false
+    },
+    isCertiType(str) {
+      return str === '身份证' || str === '护照'
+    },
+    isGender(str) {
+      return str === '男' || str === '女'
+    }
+  }
 }
 </script>
