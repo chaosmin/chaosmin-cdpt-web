@@ -211,6 +211,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '/policies',
+        component: resolve => require.ensure([], () => resolve(require('@/views/policy/table')), 'Policy'),
         name: 'Policy',
         meta: {
           title: 'Policy',
@@ -220,6 +221,7 @@ export const asyncRoutes = [
       },
       {
         path: '/orders',
+        component: resolve => require.ensure([], () => resolve(require('@/views/order/table')), 'Order'),
         name: 'Order',
         meta: {
           title: 'Order',

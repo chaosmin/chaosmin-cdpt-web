@@ -301,6 +301,7 @@ export default {
   directives: { waves },
   data() {
     return {
+      uploading: undefined,
       isCollapse: false,
       text: '',
       showInsured: false,
@@ -426,8 +427,15 @@ export default {
             })
             return
           }
+          this.uploading = this.$loading({
+            lock: true,
+            text: '正在出单中, 请稍后...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          })
           issuePolicy(this.temp).then(response => {
-            console.log(response)
+            this.uploading.close()
+            this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
           })
         }
       })
