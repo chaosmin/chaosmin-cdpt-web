@@ -28,7 +28,7 @@
             <el-tab-pane label="投保信息">
               <table border="1" cellspacing="0" width="100%">
                 <tr height="40px">
-                  <td><span style="padding: 5px;color: red;"><b>*</b></span>保险公司</td>
+                  <td width="110px"><span style="padding: 5px;color: red;"><b>*</b></span>保险公司</td>
                   <td colspan="3">
                     <el-radio-group v-model="partner" @change="changePartner">
                       <template v-for="p in partners">
@@ -40,7 +40,7 @@
                 <tr height="40px">
                   <td><span style="padding: 5px;color: red;"><b>*</b></span>产品选择</td>
                   <td colspan="6">
-                    <el-select v-model="productPlanId" placeholder="请选择产品" style="width: 300px;" class="filter-item" @change="changeProductPlan">
+                    <el-select v-model="temp.productPlanId" placeholder="请选择产品" style="width: 300px;" class="filter-item" @change="changeProductPlan">
                       <el-option
                         v-for="item in productPlans"
                         :key="item.productPlanId"
@@ -274,7 +274,7 @@
           <div v-html="productPlan.productExternal" />
         </div>
       </el-form>
-    </el-main>>
+    </el-main>
 
     <el-dialog title="智能粘贴" :visible.sync="dialogSmartPasteFormVisible">
       <el-form ref="smartPasteForm" label-position="right" label-width="100px" style="width: 500px; margin-left:80px;">
@@ -307,6 +307,7 @@ export default {
       dialogSmartPasteFormVisible: false,
       smartPasteText: undefined,
       temp: {
+        productPlanId: undefined,
         dateScope: [],
         days: 0,
         address: undefined,
@@ -326,7 +327,6 @@ export default {
       },
       list: [],
       categories: [],
-      productPlanId: undefined,
       productPlan: undefined,
       productPlans: [],
       partner: undefined,
@@ -370,7 +370,7 @@ export default {
       })
     },
     changeProductPlan() {
-      const productPlanId = this.productPlanId
+      const productPlanId = this.temp.productPlanId
       this.productPlan = this.productPlans.filter(function(v) {
         return v.productPlanId === productPlanId
       })[0]
@@ -382,7 +382,7 @@ export default {
       this.productPlans = this.list.filter(function(v) {
         return v.partnerName === currentPartner
       })
-      this.productPlanId = this.productPlans[0].productPlanId
+      this.temp.productPlanId = this.productPlans[0].productPlanId
       this.changeProductPlan()
     },
     setDateScope() {
@@ -472,7 +472,14 @@ export default {
       const unitPremium = this.temp.unitPremium
       const ratio = (100 - this.temp.comsRatio) / 100
       this.smartPasteText.split(/[\n]/).forEach(v => {
-        const insured = {}
+        const insured = {
+          name: '',
+          gender: '未知',
+          certiType: '身份证',
+          certiNo: '',
+          dateOfBirth: '',
+          mobile: ''
+        }
         v.split(/[\s]/).forEach(s => {
           if (this.isCertiType(s)) {
             insured.certiType = s
@@ -482,6 +489,27 @@ export default {
             insured.mobile = s
           } else if (this.isCertiNo(s)) {
             insured.certiNo = s
+            if (s.length === 15) {
+              insured.certiType = '身份证'
+              if (parseInt(s.charAt(14)) % 2 === 0) {
+                insured.gender = '女'
+              } else {
+                insured.gender = '男'
+              }
+              if (parseInt(s.charAt(6) + s.charAt(7)) < 10) {
+                insured.dateOfBirth = '20' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
+              } else {
+                insured.dateOfBirth = '19' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
+              }
+            } else if (s.length === 18) {
+              insured.certiType = '身份证'
+              if (parseInt(s.charAt(16)) % 2 === 0) {
+                insured.gender = '女'
+              } else {
+                insured.gender = '男'
+              }
+              insured.dateOfBirth = s.substring(6, 10) + '-' + s.substring(10, 12) + '-' + s.substring(12, 14)
+            }
           } else if (this.isDateOfBirth(s)) {
             insured.dateOfBirth = s
           } else {
