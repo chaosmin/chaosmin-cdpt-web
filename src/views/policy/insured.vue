@@ -23,217 +23,228 @@
     </el-aside>
     <el-main>
       <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true">
-        <div class="grid-content bg-purple">
-          <el-tabs type="border-card">
-            <el-tab-pane label="投保信息">
-              <table border="1" cellspacing="0" width="100%">
-                <tr height="40px">
-                  <td width="110px"><span style="padding: 5px;color: red;"><b>*</b></span>保险公司</td>
-                  <td colspan="3">
-                    <el-radio-group v-model="partner" @change="changePartner">
-                      <template v-for="p in partners">
-                        <el-radio-button :key="p" :label="p">{{ p }}</el-radio-button>
-                      </template>
-                    </el-radio-group>
-                  </td>
-                </tr>
-                <tr height="40px">
-                  <td><span style="padding: 5px;color: red;"><b>*</b></span>产品选择</td>
-                  <td colspan="6">
-                    <el-select v-model="temp.productPlanId" placeholder="请选择产品" style="width: 300px;" class="filter-item" @change="changeProductPlan">
-                      <el-option
-                        v-for="item in productPlans"
-                        :key="item.productPlanId"
-                        :label="'[' + item.productName+ ']-' + item.productPlanName + '-' + item.primaryCoverage"
-                        :value="item.productPlanId"
-                      />
-                    </el-select>
-                  </td>
-                </tr>
-                <tr height="40px">
-                  <td><span style="padding: 5px;color: red;"><b>*</b></span>保障区间</td>
-                  <td>
-                    <el-form-item prop="dateScope" style="margin-bottom: 0;">
-                      <el-date-picker
-                        v-model="temp.dateScope"
-                        type="daterange"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        range-separator="至"
-                        :default-time="['00:00:00', '23:59:59']"
-                        :picker-options="expireTimeOption"
-                        @change="setDateScope"
-                      />
-                    </el-form-item>
-                  </td>
-                  <td><span style="padding: 5px;color: red;"><b>*</b></span>保险期限</td>
-                  <td><span style="padding-left: 10px"><b>{{ temp.days }}</b> 天</span></td>
-                </tr>
-                <tr height="40px">
-                  <td><span style="padding-left: 17px">旅行目的地</span></td>
-                  <td>
-                    <el-input v-model="temp.address" placeholder="请输入内容" />
-                  </td>
-                  <td><span style="padding-left: 17px">团号/备注</span></td>
-                  <td>
-                    <el-input v-model="temp.remark" placeholder="请输入内容" />
-                  </td>
-                </tr>
-                <tr>
-                  <td><span style="padding-left: 17px">投保提示</span></td>
-                  <td colspan="3">
-                    1.投保范围：被保险人为0天至85周岁、身体健康、能正常工作或正常生活的自然人，若多份保单保险期间重叠，我司对的总赔偿额度以其中一份保单保额最高的保额为限。<br>
-                    2.本保险产品计划承保自由行、自驾、高原地区和高风险运动。<br>
-                    3.承包地域不包括战争恐怖地区。具体除外承包地域以http://baoxian.pingan.com/dangerous_zone/war.shtml所列国家为准。<br>
-                    <span style="color: red;">4.务必下载右上方详细条款交于客户，并仔细阅读保单上的保障内容、特别约定及责任免除条款。</span><br>
-                    5.支持当天投保，投保2小时后生效。<br>
-                  </td>
-                </tr>
-              </table>
-            </el-tab-pane>
-          </el-tabs>
-        </div>
-        <br>
-        <div v-if="showInsured" class="grid-content bg-purple">
-          <el-tabs type="border-card">
-            <el-tab-pane label="被保人列表">
-              <div class="filter-container">
-                <el-button v-waves class="filter-item" type="primary" icon="el-icon-upload">
-                  上传被保人
-                </el-button>
-                <el-button v-waves class="filter-item" type="primary" icon="el-icon-edit-outline" @click="dialogSmartPasteFormVisible = true">
-                  智能粘贴
-                </el-button>
-              </div>
-              <el-table
-                :data="temp.insuredList"
-                border
-                fit
-                highlight-current-row
-                style="width: 100%;"
-              >
-                <el-table-column type="index" label="序" align="center" />
-                <el-table-column label="姓名" align="center">
-                  <template slot-scope="{row}">
-                    <span>{{ row.name }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="性别" width="70px" align="center">
-                  <template slot-scope="{row}">
-                    <span>{{ row.gender }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="证件类型" width="80px" align="center">
-                  <template slot-scope="{row}">
-                    <span>{{ row.certiType }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="证件号码" align="center">
-                  <template slot-scope="{row}">
-                    <span>{{ row.certiNo }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="出生日期" align="center">
-                  <template slot-scope="{row}">
-                    <span>{{ row.dateOfBirth }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="手机号" width="110px" align="center">
-                  <template slot-scope="{row}">
-                    <span>{{ row.mobile }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="原价" width="75px" align="center">
-                  <template slot-scope="{row}">
-                    <span>￥{{ row.premium }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="结算价" width="75px" align="center">
-                  <template slot-scope="{row}">
-                    <span>￥{{ row.price }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="操作" align="left" width="90px" class-name="small-padding fixed-width">
-                  <template slot-scope="scope">
-                    <el-button type="danger" style="margin-left: 5px;" @click.native.prevent="deleteRow(scope.$index, temp.insuredList)">
-                      删除
-                    </el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-tab-pane>
-          </el-tabs>
-        </div>
-        <br>
-        <div class="grid-content bg-purple">
-          <el-tabs type="border-card">
-            <el-tab-pane label="投保人">
-              <table border="1" cellspacing="0" width="100%">
-                <tr height="40px">
-                  <td><span style="padding: 5px;color: red;"><b>*</b></span>公司名称</td>
-                  <td>
-                    <el-form-item prop="policyHolderName" style="margin-bottom: 0;">
-                      <el-input v-model="temp.policyHolderName" style="width: 75%" placeholder="请输入投保公司名称" />
-                    </el-form-item>
-                  </td>
-                  <td><span style="padding: 5px;color: red;"><b>*</b></span>证件号码</td>
-                  <td>
-                    <el-form-item prop="policyHolderCerti" style="margin-bottom: 0;">
-                      <el-input v-model="temp.policyHolderCerti" style="width: 75%" placeholder="请输入投保公司证件号" />
-                    </el-form-item>
-                  </td>
-                </tr>
-              </table>
-            </el-tab-pane>
-          </el-tabs>
-          <br>
-          <table border="1" cellspacing="0" width="100%">
-            <tr height="40px">
-              <td><span style="padding-left: 17px">人数合计：</span></td>
-              <td><span style="padding-left: 10px"><b>{{ temp.insuredList.length }}</b> 人</span></td>
-              <td><span style="padding-left: 17px">原价合计：</span></td>
-              <td><span style="padding-left: 17px"><b>{{ temp.totalPremium }}</b> 元</span></td>
-              <td><span style="padding-left: 17px">结算合计：</span></td>
-              <td><span style="padding-left: 17px"><b>{{ temp.actualPremium }}</b> 元</span></td>
-            </tr>
-          </table>
-          <br>
-          <table border="1" cellspacing="0" width="100%">
-            <tr height="40px">
-              <td width="200px"><span style="padding-left: 10px">选择支付方式：</span></td>
-              <td>
-                <template>
-                  <div style="padding-left: 10px">
-                    <el-radio v-model="temp.payMethod" label="MONTHLY">月结</el-radio>
-                    <el-radio v-model="temp.payMethod" disabled label="WECHAT">微信</el-radio>
-                  </div>
+        <el-divider content-position="left">投保信息</el-divider>
+        <table v-if="productPlan" border="1" cellspacing="0" width="100%">
+          <tr>
+            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险公司</span></td>
+            <td colspan="5">
+              <el-radio-group v-model="partner" size="mini" @change="changePartner">
+                <template v-for="p in partners">
+                  <el-radio-button :key="p" :label="p">{{ p }}</el-radio-button>
                 </template>
-              </td>
-            </tr>
-            <tr height="40px">
-              <td><span style="padding-left: 10px">支付方式说明：</span></td>
-              <td><span style="padding-left: 10px">默认支持月结</span></td>
-            </tr>
-          </table>
+              </el-radio-group>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>产品选择</span></td>
+            <td colspan="5">
+              <el-select v-model="temp.productPlanId" size="mini" placeholder="请选择产品" style="width: 300px;" class="filter-item" @change="changeProductPlan">
+                <el-option
+                  v-for="item in productPlans"
+                  :key="item.productPlanId"
+                  :label="'[' + item.productName+ ']-' + item.productPlanName + '-' + item.primaryCoverage"
+                  :value="item.productPlanId"
+                />
+              </el-select>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险期限</span></td>
+            <td>
+              <el-form-item prop="days" size="mini" style="margin-bottom: 0;">
+                <el-select v-model="temp.days" size="mini" placeholder="请选择保障天数" @change="setEndTime">
+                  <el-option
+                    v-for="item in productPlan.goodsRateTable"
+                    :key="item.dayEnd"
+                    :label="item.remark"
+                    :value="item.dayEnd"
+                  />
+                </el-select>
+              </el-form-item>
+            </td>
+            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>起保时间</span></td>
+            <td>
+              <el-date-picker
+                v-model="temp.startTime"
+                size="mini"
+                type="datetime"
+                placeholder="请选择起保时间"
+                default-time="00:00:00"
+                :clearable="false"
+                :editable="false"
+                :picker-options="pickerStartOptions"
+                @change="changeStartTime"
+              />
+            </td>
+            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>终止时间</span></td>
+            <td>
+              <el-date-picker
+                v-model="temp.endTime"
+                size="mini"
+                type="datetime"
+                placeholder="请选择终止时间"
+                default-time="23:59:59"
+                :editable="false"
+                :picker-options="pickerEndOptions"
+                @change="changeEndTime"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td><span style="padding-left: 17px">旅行目的地</span></td>
+            <td colspan="2">
+              <el-input v-model="temp.address" size="mini" placeholder="请输入内容" />
+            </td>
+            <td><span style="padding-left: 17px">团号/备注</span></td>
+            <td colspan="2">
+              <el-input v-model="temp.remark" size="mini" placeholder="请输入内容" />
+            </td>
+          </tr>
+          <tr>
+            <td><span style="padding-left: 17px">投保提示</span></td>
+            <td colspan="5">
+              <span>1.投保范围：被保险人为0天至85周岁、身体健康、能正常工作或正常生活的自然人，若多份保单保险期间重叠，我司对的总赔偿额度以其中一份保单保额最高的保额为限。</span><br>
+              <span>2.本保险产品计划承保自由行、自驾、高原地区和高风险运动。</span><br>
+              <span>3.承包地域不包括战争恐怖地区。具体除外承包地域以<a class="link-type" href="http://baoxian.pingan.com/dangerous_zone/war.shtml">http://baoxian.pingan.com/dangerous_zone/war.shtml</a>所列国家为准。</span><br>
+              <span style="color: red;">4.务必下载右上方详细条款交于客户，并仔细阅读保单上的保障内容、特别约定及责任免除条款。</span><br>
+              <span>5.支持当天投保，投保2小时后生效。</span><br>
+            </td>
+          </tr>
+        </table>
+        <div v-if="productPlan === undefined"><span style="padding-left: 50px;font-size: 18px">请先选择产品</span><br></div>
+        <el-divider content-position="left">被保人列表</el-divider>
+        <div class="filter-container" style="padding-bottom: 0px;height: 35px;">
+          <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-upload">
+            上传被保人
+          </el-button>
+          <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-edit-outline" @click="dialogSmartPasteFormVisible = true">
+            智能粘贴
+          </el-button>
+        </div>
+        <el-table
+          :data="temp.insuredList"
+          border
+          fit
+          highlight-current-row
+          style="width: 100%;"
+          :header-row-style="rowStyle"
+          :row-style="rowStyle"
+        >
+          <el-table-column type="index" label="序" align="center" />
+          <el-table-column label="姓名" align="center" style="font-size: 12px">
+            <template slot-scope="{row}">
+              <span>{{ row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="性别" width="70px" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.gender }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="证件类型" width="80px" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.certiType }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="证件号码" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.certiNo }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="出生日期" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.dateOfBirth }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="手机号" width="110px" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.mobile }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="原价" width="75px" align="center">
+            <template slot-scope="{row}">
+              <span>￥{{ row.premium }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="结算价" width="75px" align="center">
+            <template slot-scope="{row}">
+              <span>￥{{ row.price }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="left" width="90px" class-name="small-padding fixed-width">
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" style="margin-left: 5px;" @click.native.prevent="deleteRow(scope.$index, temp.insuredList)">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-divider content-position="left">投保人信息</el-divider>
+        <table border="1" cellspacing="0" width="100%">
+          <tr>
+            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>公司名称</span></td>
+            <td>
+              <el-form-item prop="policyHolderName" size="mini" style="margin-bottom: 0;">
+                <el-input v-model="temp.policyHolderName" size="mini" style="width: 75%" placeholder="请输入投保公司名称" />
+              </el-form-item>
+            </td>
+            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>证件号码</span></td>
+            <td>
+              <el-form-item prop="policyHolderCerti" size="mini" style="margin-bottom: 0;">
+                <el-input v-model="temp.policyHolderCerti" size="mini" style="width: 75%" placeholder="请输入投保公司证件号" />
+              </el-form-item>
+            </td>
+          </tr>
+        </table>
+        <br>
+        <table border="1" cellspacing="0" width="100%">
+          <tr>
+            <td><span style="padding-left: 17px">人数合计：</span></td>
+            <td><span style="padding-left: 10px"><b>{{ temp.insuredList.length }}</b> 人</span></td>
+            <td><span style="padding-left: 17px">原价合计：</span></td>
+            <td><span style="padding-left: 17px"><b>{{ temp.totalPremium }}</b> 元</span></td>
+            <td><span style="padding-left: 17px">结算合计：</span></td>
+            <td><span style="padding-left: 17px"><b>{{ temp.actualPremium }}</b> 元</span></td>
+          </tr>
+        </table>
+        <br>
+        <table border="1" cellspacing="0" width="100%">
+          <tr>
+            <td width="200px"><span style="padding-left: 10px">选择支付方式：</span></td>
+            <td>
+              <template>
+                <div style="padding-left: 10px">
+                  <el-radio-group v-model="temp.payMethod" size="mini">
+                    <el-radio label="MONTHLY"><span>月结</span></el-radio>
+                    <el-radio disabled label="WECHAT"><span>微信</span></el-radio>
+                  </el-radio-group>
+                </div>
+              </template>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="padding-left: 10px">支付方式说明：</span></td>
+            <td><span style="padding-left: 10px">默认支持月结</span></td>
+          </tr>
+        </table>
+        <br>
+        <div v-if="productPlan">
+          <div style="text-align:center">
+            <!-- `checked` 为 true 或 false -->
+            <el-checkbox v-model="temp.checked">我已详细阅读并理解投保注意事项</el-checkbox>
+          </div>
           <br>
-          <div v-if="showInsured">
-            <div style="text-align:center">
-              <!-- `checked` 为 true 或 false -->
-              <el-checkbox v-model="temp.checked">我已详细阅读并理解投保注意事项</el-checkbox>
-            </div>
-            <br>
-            <div style="text-align:center">
-              <el-button type="primary" @click="issuePolicy">确定投保</el-button>
-              <el-button>存草稿</el-button>
-            </div>
-            <br>
+          <div style="text-align:center">
+            <el-button type="primary" size="mini" @click="issuePolicy">确定投保</el-button>
+            <el-button size="mini">存草稿</el-button>
           </div>
         </div>
+        <br>
         <div v-if="productPlan">
           <el-table
             :data="productPlan.goodsLiabilities"
             :span-method="spanMethod"
-            style="width: 100%"
+            style="width: 100%;font-size: 12px"
           >
             <el-table-column align="center" :label="'[' + productPlan.productName+ ']-' + productPlan.productPlanName + '-' + productPlan.primaryCoverage">
               <el-table-column
@@ -255,7 +266,7 @@
           </el-table>
           <el-table
             :data="productPlan.goodsRateTable"
-            style="width: 100%"
+            style="width: 100%;font-size: 12px"
           >
             <el-table-column align="center" label="保障金额/人 （人民币：元）">
               <el-table-column
@@ -304,13 +315,16 @@ export default {
       uploading: undefined,
       isCollapse: false,
       text: '',
-      showInsured: false,
       dialogSmartPasteFormVisible: false,
       smartPasteText: undefined,
+      rowStyle: {
+        height: 12
+      },
       temp: {
         productPlanId: undefined,
-        dateScope: [],
-        days: 0,
+        days: 1,
+        startTime: undefined,
+        endTime: undefined,
         address: undefined,
         remark: undefined,
         insuredList: [],
@@ -332,13 +346,21 @@ export default {
       productPlans: [],
       partner: undefined,
       partners: [],
-      expireTimeOption: {
+      pickerStartOptions: {
         disabledDate(date) {
-          return date.getTime() < Date.now() - 24 * 60 * 60 * 1000
+          const oneDay = 24 * 60 * 60 * 1000
+          return date.getTime() < Date.now() - oneDay
+        }
+      },
+      pickerEndOptions: {
+        disabledDate: (date) => {
+          return this.beforeStartTime(date)
         }
       },
       rules: {
-        dateScope: [{ required: true, message: '请选择保障区间', trigger: 'change' }],
+        days: [{ required: true, message: '请选择保障期限', trigger: 'change' }],
+        startTime: [{ required: true, message: '请选择起保时间', trigger: 'change' }],
+        endTime: [{ required: true, message: '请选择终止时间', trigger: 'change' }],
         policyHolderName: [{ required: true, message: '请输入投保人名称', trigger: 'change' }],
         policyHolderCerti: [{ required: true, message: '请选择投保人证件号', trigger: 'change' }]
       }
@@ -351,15 +373,50 @@ export default {
   },
   created() {
     this.getGoodsCategories()
+    this.setStartAndEndTime(1)
   },
   methods: {
+    beforeStartTime(date) {
+      const oneDay = 1000 * 60 * 60 * 24
+      const days = this.productPlan.goodsRateTable[this.productPlan.goodsRateTable.length - 1].dayEnd
+      const limitStartTime = new Date(this.temp.startTime.getTime() + (oneDay))
+      const limitEndTime = new Date(this.temp.startTime.getTime() + (oneDay * days))
+      return date.getTime() < limitStartTime || date.getTime() > limitEndTime
+    },
+    setStartAndEndTime(n) {
+      if (n === 0) {
+        this.temp.startTime = new Date()
+        this.setEndTime()
+      } else {
+        this.temp.startTime = new Date(new Date(new Date(new Date().setDate(new Date().getDate() + n)).toLocaleDateString()).getTime())
+        this.setEndTime()
+      }
+    },
+    setEndTime() {
+      const startTime = this.temp.startTime
+      this.temp.endTime = new Date(new Date(new Date(new Date().setDate(startTime.getDate() + this.temp.days)).toLocaleDateString()).getTime())
+      this.changeDateScope()
+    },
+    changeStartTime() {
+      this.setEndTime()
+    },
+    changeEndTime() {
+      const number = Math.ceil((this.temp.endTime - this.temp.startTime) / 86400000)
+      let dayEnd = 0
+      this.productPlan.goodsRateTable.forEach(function(item, index) {
+        if (number >= item.dayStart && number <= item.dayEnd) {
+          dayEnd = item.dayEnd
+        }
+      })
+      this.temp.days = dayEnd
+      this.changeDateScope()
+    },
     getGoodsCategories() {
       fetchGoodsCategories().then(response => {
         this.categories = response.data
       })
     },
     getGoodsPlan(categoryId) {
-      this.showInsured = true
       this.listQuery.EQ_productCategory_id = categoryId
       fetchGoods(this.listQuery).then(response => {
         this.list = response.data
@@ -376,7 +433,7 @@ export default {
         return v.productPlanId === productPlanId
       })[0]
       this.temp.comsRatio = this.productPlan.comsRatio
-      console.log('佣金比例: ' + this.temp.comsRatio + '%')
+      this.getUnitPremium()
     },
     changePartner() {
       const currentPartner = this.partner
@@ -386,8 +443,7 @@ export default {
       this.temp.productPlanId = this.productPlans[0].productPlanId
       this.changeProductPlan()
     },
-    setDateScope() {
-      this.temp.days = Math.ceil((this.temp.dateScope[1] - this.temp.dateScope[0]) / 86400000)
+    changeDateScope() {
       this.getUnitPremium()
       const unitPremium = this.temp.unitPremium
       const ratio = (100 - this.temp.comsRatio) / 100
@@ -565,3 +621,17 @@ export default {
   }
 }
 </script>
+
+<style>
+span {
+  font-size: 12px;
+}
+
+table {
+  line-height: 14px;
+}
+
+div .el-tabs__content {
+  padding-top: 5px;
+}
+</style>
