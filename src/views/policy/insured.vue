@@ -21,10 +21,10 @@
         </template>
       </el-menu>
     </el-aside>
-    <el-main>
+    <el-main v-if="productPlan">
       <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true">
         <el-divider content-position="left">投保信息</el-divider>
-        <table v-if="productPlan" border="1" cellspacing="0" width="100%">
+        <table border="1" cellspacing="0" width="100%">
           <tr>
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险公司</span></td>
             <td colspan="5">
@@ -111,7 +111,6 @@
             </td>
           </tr>
         </table>
-        <div v-if="productPlan === undefined"><span style="padding-left: 50px;font-size: 18px">请先选择产品</span><br></div>
         <el-divider content-position="left">被保人列表</el-divider>
         <div class="filter-container" style="padding-bottom: 0px;height: 35px;">
           <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-upload">
@@ -131,34 +130,66 @@
           :row-style="rowStyle"
         >
           <el-table-column type="index" label="序" align="center" />
-          <el-table-column label="姓名" align="center" style="font-size: 12px">
+          <el-table-column label="姓名" align="center" width="100px" style="font-size: 12px">
             <template slot-scope="{row}">
-              <span>{{ row.name }}</span>
+              <template v-if="row.edit">
+                <el-input v-model="row.name" class="edit-input" size="mini" />
+              </template>
+              <span v-else>{{ row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="性别" width="70px" align="center">
+          <el-table-column label="性别" width="95px" align="center">
             <template slot-scope="{row}">
-              <span>{{ row.gender }}</span>
+              <template v-if="row.edit">
+                <el-select v-model="row.gender" class="edit-input" size="mini">
+                  <el-option
+                    v-for="item in genderOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+              <span v-else>{{ row.gender }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="证件类型" width="80px" align="center">
+          <el-table-column label="证件类型" width="110px" align="center">
             <template slot-scope="{row}">
-              <span>{{ row.certiType }}</span>
+              <template v-if="row.edit">
+                <el-select v-model="row.certiType" class="edit-input" size="mini">
+                  <el-option
+                    v-for="item in certiTypeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+              <span v-else>{{ row.certiType }}</span>
             </template>
           </el-table-column>
           <el-table-column label="证件号码" align="center">
             <template slot-scope="{row}">
-              <span>{{ row.certiNo }}</span>
+              <template v-if="row.edit">
+                <el-input v-model="row.certiNo" class="edit-input" size="mini" />
+              </template>
+              <span v-else>{{ row.certiNo }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="出生日期" align="center">
+          <el-table-column label="出生日期" width="155px" align="center">
             <template slot-scope="{row}">
-              <span>{{ row.dateOfBirth }}</span>
+              <template v-if="row.edit">
+                <el-date-picker v-model="row.dateOfBirth" size="mini" style="width: 130px" type="date" placeholder="选择生日" />
+              </template>
+              <span v-else>{{ row.dateOfBirth }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="手机号" width="110px" align="center">
+          <el-table-column label="手机号" width="125px" align="center">
             <template slot-scope="{row}">
-              <span>{{ row.mobile }}</span>
+              <template v-if="row.edit">
+                <el-input v-model="row.mobile" class="edit-input" size="mini" />
+              </template>
+              <span v-else>{{ row.mobile }}</span>
             </template>
           </el-table-column>
           <el-table-column label="原价" width="75px" align="center">
@@ -171,11 +202,11 @@
               <span>￥{{ row.price }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="left" width="90px" class-name="small-padding fixed-width">
-            <template slot-scope="scope">
-              <el-button type="danger" size="mini" style="margin-left: 5px;" @click.native.prevent="deleteRow(scope.$index, temp.insuredList)">
-                删除
-              </el-button>
+          <el-table-column label="操作" align="left" width="140px" class-name="small-padding fixed-width">
+            <template slot-scope="{row,$index}">
+              <el-button v-if="row.edit" type="success" size="mini" icon="el-icon-circle-check-outline" @click="confirmEdit(row)">确认</el-button>
+              <el-button v-else type="primary" size="mini" icon="el-icon-edit" @click="row.edit=!row.edit">编辑</el-button>
+              <el-button type="danger" size="mini" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -286,10 +317,11 @@
         </div>
       </el-form>
     </el-main>
+    <el-main v-else style="color: #333; text-align: center; line-height: 200px;">请先选择产品</el-main>
 
     <el-dialog title="智能粘贴" :visible.sync="dialogSmartPasteFormVisible">
       <el-form ref="smartPasteForm" label-position="right" label-width="100px" style="width: 500px; margin-left:80px;">
-        <el-input v-model="smartPasteText" autosize type="textarea" />
+        <el-input v-model="smartPasteText" :rows="5" autosize type="textarea" />
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogSmartPasteFormVisible = false">
@@ -346,6 +378,16 @@ export default {
       productPlans: [],
       partner: undefined,
       partners: [],
+      genderOptions: [
+        { label: '男', value: '男' },
+        { label: '女', value: '女' },
+        { label: '未知', value: '未知' }
+      ],
+      certiTypeOptions: [
+        { label: '身份证', value: '身份证' },
+        { label: '护照', value: '护照' },
+        { label: '未知', value: '未知' }
+      ],
       pickerStartOptions: {
         disabledDate(date) {
           const oneDay = 24 * 60 * 60 * 1000
@@ -536,71 +578,85 @@ export default {
       const unitPremium = this.temp.unitPremium
       const ratio = (100 - this.temp.comsRatio) / 100
       this.smartPasteText.split(/[\n]/).forEach(v => {
-        const insured = {
-          name: '',
-          gender: '未知',
-          certiType: '身份证',
-          certiNo: '',
-          dateOfBirth: '',
-          mobile: ''
-        }
-        v.split(/[\s]/).forEach(s => {
-          if (this.isCertiType(s)) {
-            insured.certiType = s
-          } else if (this.isGender(s)) {
-            insured.gender = this.formatGender(s)
-          } else if (this.isPhoneNumber(s)) {
-            insured.mobile = s
-          } else if (this.isCertiNo(s)) {
-            insured.certiNo = s
-            if (s.length === 15) {
-              insured.certiType = '身份证'
-              if (parseInt(s.charAt(14)) % 2 === 0) {
-                insured.gender = '女'
-              } else {
-                insured.gender = '男'
-              }
-              if (parseInt(s.charAt(6) + s.charAt(7)) < 10) {
-                insured.dateOfBirth = '20' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
-              } else {
-                insured.dateOfBirth = '19' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
-              }
-            } else if (s.length === 18) {
-              insured.certiType = '身份证'
-              if (parseInt(s.charAt(16)) % 2 === 0) {
-                insured.gender = '女'
-              } else {
-                insured.gender = '男'
-              }
-              insured.dateOfBirth = s.substring(6, 10) + '-' + s.substring(10, 12) + '-' + s.substring(12, 14)
-            }
-          } else if (this.isDateOfBirth(s)) {
-            insured.dateOfBirth = s
-          } else {
-            insured.name = s
+        if (v !== undefined && v !== '') {
+          const insured = {
+            name: '',
+            gender: '未知',
+            certiType: '未知',
+            certiNo: '',
+            dateOfBirth: '',
+            mobile: '',
+            edit: false
           }
-        })
-        insured.premium = unitPremium.toFixed(2)
-        insured.price = (unitPremium * ((100 - ratio) / 100)).toFixed(2)
-        this.temp.insuredList.push(insured)
-        this.getUnitPremium()
+          v.split(/[\s]/).forEach(s => {
+            if (s !== undefined && s !== '') {
+              if (this.isCertiType(s)) {
+                insured.certiType = s
+              } else if (this.isGender(s)) {
+                insured.gender = this.formatGender(s)
+              } else if (this.isDateOfBirth(s)) {
+                insured.dateOfBirth = s
+              } else if (this.isPhoneNumber(s)) {
+                insured.mobile = s
+              } else if (this.isCertiNo(s)) {
+                insured.certiNo = s
+                if (s.length === 15) {
+                  insured.certiType = '身份证'
+                  if (parseInt(s.charAt(14)) % 2 === 0) {
+                    insured.gender = '女'
+                  } else {
+                    insured.gender = '男'
+                  }
+                  if (parseInt(s.charAt(6) + s.charAt(7)) < 10) {
+                    insured.dateOfBirth = '20' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
+                  } else {
+                    insured.dateOfBirth = '19' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
+                  }
+                } else if (s.length === 18) {
+                  insured.certiType = '身份证'
+                  if (parseInt(s.charAt(16)) % 2 === 0) {
+                    insured.gender = '女'
+                  } else {
+                    insured.gender = '男'
+                  }
+                  insured.dateOfBirth = s.substring(6, 10) + '-' + s.substring(10, 12) + '-' + s.substring(12, 14)
+                }
+              } else {
+                insured.name = s
+              }
+            }
+          })
+          insured.premium = unitPremium.toFixed(2)
+          insured.price = (unitPremium * ((100 - ratio) / 100)).toFixed(2)
+          this.temp.insuredList.push(insured)
+        }
       })
-    },
-    deleteRow(index, rows) {
-      rows.splice(index, 1)
       this.getUnitPremium()
     },
+    deleteRow(row, index) {
+      this.temp.insuredList.splice(index, 1)
+      this.getUnitPremium()
+    },
+    confirmEdit(row) {
+      row.edit = false
+      this.$message({
+        message: '更新成功',
+        type: 'success'
+      })
+    },
     isDateOfBirth(str) {
-      return false
+      return str.indexOf('-') !== -1 || str.indexOf('/') !== -1 || str.indexOf('年') !== -1
     },
     isPhoneNumber(str) {
       const exp = /^[1][3,4,5,7,8,9][0-9]{9}$/
       return exp.test(str)
     },
     isCertiNo(str) {
-      for (const c of str) {
-        if (c > '0' && c < '9') {
-          return true
+      if (str.length > 6) {
+        for (const c of str) {
+          if (c > '0' && c < '9') {
+            return true
+          }
         }
       }
       return false
@@ -612,7 +668,7 @@ export default {
       return str === '男' || str === '女' || str === 'M' || str === 'F' || str === 'm' || str === 'f'
     },
     formatGender(str) {
-      if (str === '男' || str === '男' || str === '男') {
+      if (str === '男' || str === 'M' || str === 'm') {
         return '男'
       } else {
         return '女'
