@@ -73,7 +73,7 @@
                 :clearable="false"
                 :editable="false"
                 :picker-options="pickerStartOptions"
-                @change="changeStartTime"
+                @change="setEndTime"
               />
             </td>
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>终止时间</span></td>
@@ -112,11 +112,19 @@
           </tr>
         </table>
         <el-divider content-position="left">被保人列表</el-divider>
-        <div class="filter-container" style="padding-bottom: 0px;height: 35px;">
-          <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-upload">
-            上传被保人
+        <div class="filter-container" style="display: flex;align-items: center;">
+          <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-download" @click="downloadTemplate">
+            下载模板
           </el-button>
-          <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-edit-outline" @click="dialogSmartPasteFormVisible = true">
+          <el-upload ref="upload" v-waves action="" style="margin-left: 10px;" :show-file-list="false" :limit="1" :auto-upload="false" :on-change="handleChange">
+            <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-upload">
+              上传被保人
+            </el-button>
+          </el-upload>
+          <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="addNewInsured">
+            添加被保人
+          </el-button>
+          <el-button v-waves class="filter-item" size="mini" type="success" icon="el-icon-edit-outline" @click="dialogSmartPasteFormVisible = true">
             智能粘贴
           </el-button>
         </div>
@@ -171,7 +179,7 @@
           <el-table-column label="证件号码" align="center">
             <template slot-scope="{row}">
               <template v-if="row.edit">
-                <el-input v-model="row.certiNo" class="edit-input" size="mini" />
+                <el-input v-model="row.certiNo" class="edit-input" size="mini" @change="parseSFZ(row.certiNo, row)" />
               </template>
               <span v-else>{{ row.certiNo }}</span>
             </template>
@@ -181,7 +189,7 @@
               <template v-if="row.edit">
                 <el-date-picker v-model="row.dateOfBirth" size="mini" style="width: 130px" type="date" placeholder="选择生日" />
               </template>
-              <span v-else>{{ row.dateOfBirth }}</span>
+              <span v-else>{{ row.dateOfBirth | parseTime('{y}-{m}-{d}') }}</span>
             </template>
           </el-table-column>
           <el-table-column label="手机号" width="125px" align="center">
@@ -338,6 +346,7 @@
 <script>
 import { fetchGoodsCategories, fetchGoods, issuePolicy } from '@/api/insure'
 import waves from '@/directive/waves'
+import jschardet from 'jschardet'
 
 export default {
   name: 'PolicyIndex',
@@ -373,6 +382,7 @@ export default {
         EQ_productCategory_id: undefined
       },
       list: [],
+      fileList: [],
       categories: [],
       productPlan: undefined,
       productPlans: [],
@@ -389,14 +399,13 @@ export default {
         { label: '未知', value: '未知' }
       ],
       pickerStartOptions: {
-        disabledDate(date) {
-          const oneDay = 24 * 60 * 60 * 1000
-          return date.getTime() < Date.now() - oneDay
+        disabledDate: (date) => {
+          return this.limitStartTime(date)
         }
       },
       pickerEndOptions: {
         disabledDate: (date) => {
-          return this.beforeStartTime(date)
+          return this.limitEndTime(date)
         }
       },
       rules: {
@@ -415,16 +424,8 @@ export default {
   },
   created() {
     this.getGoodsCategories()
-    this.setStartAndEndTime(1)
   },
   methods: {
-    beforeStartTime(date) {
-      const oneDay = 1000 * 60 * 60 * 24
-      const days = this.productPlan.goodsRateTable[this.productPlan.goodsRateTable.length - 1].dayEnd
-      const limitStartTime = new Date(this.temp.startTime.getTime() + (oneDay))
-      const limitEndTime = new Date(this.temp.startTime.getTime() + (oneDay * days))
-      return date.getTime() < limitStartTime || date.getTime() > limitEndTime
-    },
     setStartAndEndTime(n) {
       if (n === 0) {
         this.temp.startTime = new Date()
@@ -436,11 +437,19 @@ export default {
     },
     setEndTime() {
       const startTime = this.temp.startTime
-      this.temp.endTime = new Date(new Date(new Date(new Date().setDate(startTime.getDate() + this.temp.days)).toLocaleDateString()).getTime())
-      this.changeDateScope()
+      this.temp.endTime = new Date(new Date(new Date(new Date().setDate(startTime.getDate() + this.temp.days)).toLocaleDateString()).getTime() - 1000)
+      this.updatePremiumInTable()
     },
-    changeStartTime() {
-      this.setEndTime()
+    limitStartTime(date) {
+      const oneDay = 1000 * 60 * 60 * 24
+      return date.getTime() < Date.now() + oneDay * (this.productPlan.waitingDays - 1)
+    },
+    limitEndTime(date) {
+      const oneDay = 1000 * 60 * 60 * 24
+      const days = this.productPlan.goodsRateTable[this.productPlan.goodsRateTable.length - 1].dayEnd
+      const limitStartTime = new Date(this.temp.startTime.getTime() + (oneDay))
+      const limitEndTime = new Date(this.temp.startTime.getTime() + (oneDay * days))
+      return date.getTime() < limitStartTime || date.getTime() > limitEndTime
     },
     changeEndTime() {
       const number = Math.ceil((this.temp.endTime - this.temp.startTime) / 86400000)
@@ -451,7 +460,7 @@ export default {
         }
       })
       this.temp.days = dayEnd
-      this.changeDateScope()
+      this.updatePremiumInTable()
     },
     getGoodsCategories() {
       fetchGoodsCategories().then(response => {
@@ -469,14 +478,6 @@ export default {
         this.changePartner()
       })
     },
-    changeProductPlan() {
-      const productPlanId = this.temp.productPlanId
-      this.productPlan = this.productPlans.filter(function(v) {
-        return v.productPlanId === productPlanId
-      })[0]
-      this.temp.comsRatio = this.productPlan.comsRatio
-      this.getUnitPremium()
-    },
     changePartner() {
       const currentPartner = this.partner
       this.productPlans = this.list.filter(function(v) {
@@ -485,8 +486,17 @@ export default {
       this.temp.productPlanId = this.productPlans[0].productPlanId
       this.changeProductPlan()
     },
-    changeDateScope() {
-      this.getUnitPremium()
+    changeProductPlan() {
+      const productPlanId = this.temp.productPlanId
+      this.productPlan = this.productPlans.filter(function(v) {
+        return v.productPlanId === productPlanId
+      })[0]
+      this.temp.comsRatio = this.productPlan.comsRatio
+      this.setStartAndEndTime(this.productPlan.waitingDays)
+      this.updatePremiumInTable()
+    },
+    updatePremiumInTable() {
+      this.updateUnitPremium()
       const unitPremium = this.temp.unitPremium
       const ratio = (100 - this.temp.comsRatio) / 100
       this.temp.insuredList.forEach(function(item, index) {
@@ -494,7 +504,7 @@ export default {
         item.price = (unitPremium * ratio).toFixed(2)
       })
     },
-    getUnitPremium() {
+    updateUnitPremium() {
       let unitPremium = 0
       const days = this.temp.days
       if (this.productPlan !== undefined && this.productPlan.goodsRateTable !== undefined) {
@@ -573,6 +583,22 @@ export default {
         }
       }
     },
+    addNewInsured() {
+      const unitPremium = this.temp.unitPremium
+      const ratio = (100 - this.temp.comsRatio) / 100
+      const insured = {
+        name: '',
+        gender: '未知',
+        certiType: '未知',
+        certiNo: '',
+        dateOfBirth: '',
+        mobile: '',
+        edit: true
+      }
+      insured.premium = unitPremium.toFixed(2)
+      insured.price = (unitPremium * ((100 - ratio) / 100)).toFixed(2)
+      this.temp.insuredList.push(insured)
+    },
     smartPaste() {
       this.dialogSmartPasteFormVisible = false
       const unitPremium = this.temp.unitPremium
@@ -600,27 +626,7 @@ export default {
                 insured.mobile = s
               } else if (this.isCertiNo(s)) {
                 insured.certiNo = s
-                if (s.length === 15) {
-                  insured.certiType = '身份证'
-                  if (parseInt(s.charAt(14)) % 2 === 0) {
-                    insured.gender = '女'
-                  } else {
-                    insured.gender = '男'
-                  }
-                  if (parseInt(s.charAt(6) + s.charAt(7)) < 10) {
-                    insured.dateOfBirth = '20' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
-                  } else {
-                    insured.dateOfBirth = '19' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
-                  }
-                } else if (s.length === 18) {
-                  insured.certiType = '身份证'
-                  if (parseInt(s.charAt(16)) % 2 === 0) {
-                    insured.gender = '女'
-                  } else {
-                    insured.gender = '男'
-                  }
-                  insured.dateOfBirth = s.substring(6, 10) + '-' + s.substring(10, 12) + '-' + s.substring(12, 14)
-                }
+                this.parseSFZ(s, insured)
               } else {
                 insured.name = s
               }
@@ -631,11 +637,11 @@ export default {
           this.temp.insuredList.push(insured)
         }
       })
-      this.getUnitPremium()
+      this.updateUnitPremium()
     },
     deleteRow(row, index) {
       this.temp.insuredList.splice(index, 1)
-      this.getUnitPremium()
+      this.updateUnitPremium()
     },
     confirmEdit(row) {
       row.edit = false
@@ -667,12 +673,101 @@ export default {
     isGender(str) {
       return str === '男' || str === '女' || str === 'M' || str === 'F' || str === 'm' || str === 'f'
     },
+    parseSFZ(s, insured) {
+      if (s.length === 15) {
+        insured.certiType = '身份证'
+        if (parseInt(s.charAt(14)) % 2 === 0) {
+          insured.gender = '女'
+        } else {
+          insured.gender = '男'
+        }
+        if (parseInt(s.charAt(6) + s.charAt(7)) < 10) {
+          insured.dateOfBirth = '20' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
+        } else {
+          insured.dateOfBirth = '19' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
+        }
+      } else if (s.length === 18) {
+        insured.certiType = '身份证'
+        if (parseInt(s.charAt(16)) % 2 === 0) {
+          insured.gender = '女'
+        } else {
+          insured.gender = '男'
+        }
+        insured.dateOfBirth = s.substring(6, 10) + '-' + s.substring(10, 12) + '-' + s.substring(12, 14)
+      }
+    },
     formatGender(str) {
       if (str === '男' || str === 'M' || str === 'm') {
         return '男'
       } else {
         return '女'
       }
+    },
+    downloadTemplate() {
+      const data = '姓名,性别,证件类型,证件号码,生日,手机'
+      const filename = 'template.csv'
+      const type = ''
+      const file = new Blob(['\ufeff' + data], { type: type })
+      if (window.navigator.msSaveOrOpenBlob) {
+        // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename)
+      } else {
+        const a = document.createElement('a')
+        const url = URL.createObjectURL(file)
+        a.href = url
+        a.download = filename
+        document.body.appendChild(a)
+        a.click()
+        setTimeout(function() {
+          document.body.removeChild(a)
+          window.URL.revokeObjectURL(url)
+        }, 0)
+      }
+    },
+    handleChange(file, fileList) {
+      const fReader = new FileReader()
+      fReader.readAsDataURL(file.raw)
+      fReader.onload = evt => {
+        const encoding = this.checkEncoding(evt.target.result)
+        // 将csv转换成二维数组
+        this.$papa.parse(file.raw, {
+          encoding,
+          complete: res => {
+            const data = res.data
+            if (data[data.length - 1] === '') {
+              data.pop()
+            }
+            const unitPremium = this.temp.unitPremium
+            const ratio = (100 - this.temp.comsRatio) / 100
+            for (let num = 1; num < data.length; num++) {
+              const insured = {
+                name: data[num][0],
+                gender: data[num][1],
+                certiType: data[num][2],
+                certiNo: data[num][3],
+                dateOfBirth: data[num][4],
+                mobile: data[num][5],
+                edit: false
+              }
+              this.parseSFZ(data[num][3], insured)
+              insured.premium = unitPremium.toFixed(2)
+              insured.price = (unitPremium * ((100 - ratio) / 100)).toFixed(2)
+              this.temp.insuredList.push(insured)
+            }
+          }
+        })
+      }
+    },
+    checkEncoding(base64Str) {
+      // 这种方式得到的是一种二进制串
+      const str = atob(base64Str.split(';base64,')[1])
+      // 要用二进制格式
+      let encoding = jschardet.detect(str)
+      encoding = encoding.encoding
+      if (encoding === 'windows-1252') {
+        encoding = 'ANSI'
+      }
+      return encoding
     }
   }
 }
