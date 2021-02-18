@@ -140,17 +140,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="有效期" prop="saleDateScope">
-          <div class="block">
-            <el-date-picker
-              v-model="temp.saleDateScope"
-              type="datetimerange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            />
-          </div>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
