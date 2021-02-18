@@ -327,10 +327,20 @@
     </el-main>
     <el-main v-else style="color: #333; text-align: center; line-height: 200px;">请先选择产品</el-main>
 
-    <el-dialog title="智能粘贴" :visible.sync="dialogSmartPasteFormVisible">
-      <el-form ref="smartPasteForm" label-position="right" label-width="100px" style="width: 500px; margin-left:80px;">
-        <el-input v-model="smartPasteText" :rows="5" autosize type="textarea" />
-      </el-form>
+    <el-dialog title="请将名单复制到下面的文本框中" :visible.sync="dialogSmartPasteFormVisible">
+      <div>
+        <el-button size="mini" @click="smartPasteText = ''">清空已有名单</el-button>
+        <el-button size="mini" type="warning">有问题，点我!</el-button>
+        <el-select v-model="specialDateFormat" style="float: right;" size="mini">
+          <el-option key="1" label="选择特殊日期格式" value="yyyy-mm-dd" />
+          <el-option key="2" label="月日年[01-31-1980]" value="mm-dd-yyyy" />
+          <el-option key="3" label="日月年[31-01-1980]" value="dd-mm-yyyy" />
+          <el-option key="4" label="日月年[31-JAN-80]" value="dd-MM-yy" />
+        </el-select>
+      </div>
+      <div style="padding-top: 10px">
+        <el-input v-model="smartPasteText" :rows="10" type="textarea" />
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogSmartPasteFormVisible = false">
           取消
@@ -358,6 +368,7 @@ export default {
       text: '',
       dialogSmartPasteFormVisible: false,
       smartPasteText: undefined,
+      specialDateFormat: 'yyyy-mm-dd',
       rowStyle: {
         height: 12
       },
@@ -391,12 +402,12 @@ export default {
       genderOptions: [
         { label: '男', value: '男' },
         { label: '女', value: '女' },
-        { label: '未知', value: '未知' }
+        { label: '其他', value: '其他' }
       ],
       certiTypeOptions: [
         { label: '身份证', value: '身份证' },
         { label: '护照', value: '护照' },
-        { label: '未知', value: '未知' }
+        { label: '其他', value: '其他' }
       ],
       pickerStartOptions: {
         disabledDate: (date) => {
@@ -588,8 +599,8 @@ export default {
       const ratio = (100 - this.temp.comsRatio) / 100
       const insured = {
         name: '',
-        gender: '未知',
-        certiType: '未知',
+        gender: '其他',
+        certiType: '其他',
         certiNo: '',
         dateOfBirth: '',
         mobile: '',
@@ -607,8 +618,8 @@ export default {
         if (v !== undefined && v !== '') {
           const insured = {
             name: '',
-            gender: '未知',
-            certiType: '未知',
+            gender: '其他',
+            certiType: '其他',
             certiNo: '',
             dateOfBirth: '',
             mobile: '',
