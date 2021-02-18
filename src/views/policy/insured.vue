@@ -1,11 +1,7 @@
 <template>
   <el-container style="border: 1px solid #eee">
     <el-aside width="225px" style="background-color: rgb(238, 241, 246);padding-left: 12px;padding-right: 12px;">
-      <el-menu
-        class="el-menu-vertical-demo"
-        unique-opened
-        :collapse="isCollapse"
-      >
+      <el-menu class="el-menu-vertical-demo" :collapse="false" :default-openeds="defaultMenu">
         <template v-for="category in categories">
           <el-submenu :key="category.id" :index="category.id">
             <template slot="title">
@@ -54,10 +50,10 @@
               <el-form-item prop="days" size="mini" style="margin-bottom: 0;">
                 <el-select v-model="temp.days" size="mini" placeholder="请选择保障天数" @change="setEndTime">
                   <el-option
-                    v-for="item in productPlan.goodsRateTable"
-                    :key="item.dayEnd"
-                    :label="item.remark"
-                    :value="item.dayEnd"
+                    v-for="item in dateSelectionOption"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
                   />
                 </el-select>
               </el-form-item>
@@ -270,7 +266,9 @@
         <div v-if="productPlan">
           <div style="text-align:center">
             <!-- `checked` 为 true 或 false -->
-            <el-checkbox v-model="temp.checked">我已详细阅读并理解投保注意事项</el-checkbox>
+            <el-checkbox v-model="temp.checked">我已详细阅读并理解</el-checkbox>
+            <el-button type="text" @click="centerDialogVisible = true">投保注意事项</el-button> |
+            <el-link icon="el-icon-document" href="https://chaosmin-static.oss-cn-shanghai.aliyuncs.com/template/template_logo.png">保险条款</el-link>
           </div>
           <br>
           <div style="text-align:center">
@@ -330,7 +328,18 @@
     <el-dialog title="请将名单复制到下面的文本框中" :visible.sync="dialogSmartPasteFormVisible">
       <div>
         <el-button size="mini" @click="smartPasteText = ''">清空已有名单</el-button>
-        <el-button size="mini" type="warning">有问题，点我!</el-button>
+        <el-popover placement="right" style="padding-left: 5px" trigger="click">
+          <div>
+            <span><b>规则：</b>一个被保人一行, 如：</span><br>
+            <span>张强 男 420683199506240355</span><br>
+            <span>刘红 女 E23672888 1980-01-10</span><br>
+            <span>大海.阳光 女 E23672666 1980-08-08</span><br>
+            <span><b>身份证：</b>只需要姓名和证件号即可，网站可以自动识别证件号中的出生日期及性别，如果不能识别，证件类型将设置为其他</span><br>
+            <span><b>护照：</b>目前识别大多数国家的护照，如果出现部分国家无法识别，证件类型将设置为其他</span><br>
+            <span><b>出生日期：</b>目前可识别格式有: 1980-7-25，1980/7/25，1980年7月25，19800725，25/JUL/1980，25-JUL-1980，25/7/1980，25/JUL/80，25-JUL-80，25/7/80</span><br>
+          </div>
+          <el-button slot="reference" size="mini" type="warning">有问题，点我!</el-button>
+        </el-popover>
         <el-select v-model="specialDateFormat" style="float: right;" size="mini">
           <el-option key="1" label="选择特殊日期格式" value="yyyy-mm-dd" />
           <el-option key="2" label="月日年[01-31-1980]" value="mm-dd-yyyy" />
@@ -343,13 +352,22 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogSmartPasteFormVisible = false">
-          取消
+          关闭
         </el-button>
         <el-button type="primary" @click="smartPaste()">
-          确认
+          识别名单
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="投保注意事项" :visible.sync="centerDialogVisible" width="30%" center>
+      <span>投保注意事项内容...</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="centerDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="centerDialogVisible = false;temp.checked = true">我已阅读并确认</el-button>
+      </span>
+    </el-dialog>
+
   </el-container>
 </template>
 
@@ -364,14 +382,16 @@ export default {
   data() {
     return {
       uploading: undefined,
-      isCollapse: false,
       text: '',
       dialogSmartPasteFormVisible: false,
+      centerDialogVisible: false,
       smartPasteText: undefined,
       specialDateFormat: 'yyyy-mm-dd',
       rowStyle: {
         height: 12
       },
+      defaultMenu: [],
+      dateSelectionOption: [],
       temp: {
         productPlanId: undefined,
         days: 1,
@@ -476,6 +496,14 @@ export default {
     getGoodsCategories() {
       fetchGoodsCategories().then(response => {
         this.categories = response.data
+        if (this.categories.length > 0) {
+          const openMenu = []
+          this.categories.forEach(function(item, index) {
+            openMenu.push(item.id)
+          })
+          this.defaultMenu = openMenu
+          this.getGoodsPlan(this.categories[0].children[0].id)
+        }
       })
     },
     getGoodsPlan(categoryId) {
@@ -505,6 +533,23 @@ export default {
       this.temp.comsRatio = this.productPlan.comsRatio
       this.setStartAndEndTime(this.productPlan.waitingDays)
       this.updatePremiumInTable()
+      this.updateDateSelectionOption()
+    },
+    updateDateSelectionOption() {
+      let max = 1
+      let min = 99999
+      this.productPlan.goodsRateTable.forEach(function(item, index) {
+        if (item.dayStart < min) {
+          min = item.dayStart
+        }
+        if (item.dayEnd > max) {
+          max = item.dayEnd
+        }
+      })
+      for (let i = min; i <= max; i++) {
+        const option = { label: i + '天', value: i }
+        this.dateSelectionOption.push(option)
+      }
     },
     updatePremiumInTable() {
       this.updateUnitPremium()
