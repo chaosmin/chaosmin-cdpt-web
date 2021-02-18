@@ -88,6 +88,12 @@
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
+        <el-form-item label="投保公司" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+        <el-form-item label="证件号" prop="certiNo">
+          <el-input v-model="temp.certiNo" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -149,18 +155,21 @@ export default {
         numberOfUser: undefined,
         code: undefined,
         name: undefined,
+        title: undefined,
+        certiNo: undefined,
+        letterhead: [],
         status: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: '更新',
+        create: '创建'
       },
       dialogPvVisible: false,
       rules: {
-        code: [{ required: true, message: 'code is required', trigger: 'change' }],
-        name: [{ required: true, message: 'name is required', trigger: 'change' }]
+        code: [{ required: true, message: '请输入机构编号', trigger: 'change' }],
+        name: [{ required: true, message: '请输入机构名称', trigger: 'change' }]
       }
     }
   },
@@ -187,6 +196,9 @@ export default {
         id: undefined,
         code: undefined,
         name: undefined,
+        title: undefined,
+        certiNo: undefined,
+        letterhead: [],
         status: undefined
       }
     },
@@ -201,6 +213,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          this.temp.letterhead.push({ title: this.temp.title, certiNo: this.temp.certiNo })
           createDepartment(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
