@@ -121,7 +121,12 @@ aside {
 
 //main-container全局样式
 .app-container {
-  padding: 20px;
+  padding: 10px;
+}
+
+.app-divider {
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 .components-container {
@@ -172,7 +177,8 @@ aside {
 }
 
 .filter-container {
-  padding-bottom: 10px;
+  padding: 5px;
+  height: 40px;
 
   .filter-item {
     display: inline-block;

@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.LIKE_username" placeholder="用户名" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-input v-model="listQuery.LIKE_username" size="mini" placeholder="用户名" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         添加
       </el-button>
       <el-checkbox v-model="showModifyInfo" class="filter-item" style="margin-left: 10px;">
@@ -111,13 +111,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
         <el-form-item v-if="isAdmin" label="所属机构" prop="departmentId">
-          <el-select
-            v-model="temp.departmentId"
-            filterable
-            placeholder="请选择"
-            style="width: 200px"
-            :disabled="dialogStatus==='update'"
-          >
+          <el-select v-model="temp.departmentId" filterable placeholder="请选择" style="width: 200px" :disabled="dialogStatus==='update'">
             <el-option
               v-for="item in departmentOptions"
               :key="item.value"
@@ -129,22 +123,20 @@
         <el-form-item label="登录名" prop="loginName">
           <el-input v-model="temp.loginName" :disabled="dialogStatus==='update'" />
         </el-form-item>
-        <el-form-item label="用户名" prop="username">
+        <el-form-item label="联系人" prop="username">
           <el-input v-model="temp.username" :disabled="dialogStatus==='update'" />
         </el-form-item>
-        <el-form-item label="手机号" prop="phone">
+        <el-form-item label="联系电话" prop="phone">
           <el-input v-model="temp.phone" />
         </el-form-item>
-        <el-form-item label="电子邮箱" prop="email">
+        <el-form-item label="联系地址" prop="address">
+          <el-input v-model="temp.address" />
+        </el-form-item>
+        <el-form-item label="联系邮箱" prop="email">
           <el-input v-model="temp.email" />
         </el-form-item>
         <el-form-item v-if="isAdmin" label="角色" prop="roleId">
-          <el-select
-            v-model="temp.roleId"
-            filterable
-            placeholder="请选择"
-            style="width: 200px"
-          >
+          <el-select v-model="temp.roleIds" multiple placeholder="请选择" style="width: 200px">
             <el-option
               v-for="item in roleOptions"
               :key="item.value"
@@ -228,8 +220,9 @@ export default {
         loginName: undefined,
         phone: undefined,
         email: undefined,
+        address: undefined,
         status: undefined,
-        roleId: undefined
+        roleIds: []
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -239,10 +232,8 @@ export default {
       },
       dialogPvVisible: false,
       rules: {
-        departmentId: [{ required: true, message: '请选择用户所属机构', trigger: 'change' }],
         loginName: [{ required: true, message: '请输入登录名', trigger: 'change' }],
-        username: [{ required: true, message: '请输入用户名', trigger: 'change' }],
-        roleId: [{ required: true, message: '请选择用户所属角色', trigger: 'change' }]
+        username: [{ required: true, message: '请输入联系人名称', trigger: 'change' }]
       },
       downloadLoading: false
     }
@@ -281,10 +272,11 @@ export default {
         username: undefined,
         loginName: undefined,
         password: undefined,
+        address: undefined,
         phone: undefined,
         email: undefined,
         status: undefined,
-        roleId: undefined
+        roleIds: []
       }
     },
     handleCreate() {

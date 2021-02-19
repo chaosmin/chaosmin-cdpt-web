@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.ALIKE_goodsPlan_departmentName" placeholder="机构名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_goodsPlan_userName" placeholder="用户名称" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.LIKE_productCode" placeholder="产品编码" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_productName" placeholder="产品名称" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
+      <el-input v-model="listQuery.ALIKE_goodsPlan_departmentName" size="mini" placeholder="机构名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_goodsPlan_userName" size="mini" placeholder="用户名称" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.LIKE_productCode" size="mini" placeholder="产品编码" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_productName" size="mini" placeholder="产品名称" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
         清空
       </el-button>
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-coordinate" @click="handleCreate">
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="success" icon="el-icon-coordinate" @click="handleCreate">
         添加授权
       </el-button>
     </div>
@@ -155,7 +155,7 @@
       <el-divider content-position="left">请选择用户</el-divider>
       <el-form ref="authDataForm" :rules="authRules" :model="temp" label-position="left" label-width="100px" style="width: 700px; margin-left:80px;">
         <el-form-item v-if="isAdmin" label="用户机构" prop="departmentId">
-          <el-select v-model="temp.departmentId" clearable placeholder="请选择" @change="getUserList">
+          <el-select v-model="temp.departmentId" size="mini" clearable placeholder="请选择" @change="getUserList">
             <el-option
               v-for="item in departments"
               :key="item.id"
@@ -165,12 +165,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="请选择用户" prop="userIds">
-          <el-select
-            v-model="temp.userIds"
-            multiple
-            filterable
-            reserve-keyword
-          >
+          <el-select v-model="temp.userIds" size="mini" multiple filterable reserve-keyword>
             <el-option
               v-for="item in users"
               :key="item.id"
@@ -183,17 +178,17 @@
       <el-divider content-position="left">请选择产品计划</el-divider>
       <div class="filter-container">
         <el-row>
-          <el-input v-model="planListQuery.LIKE_partnerCode" placeholder="保司编码" style="width: 150px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
-          <el-input v-model="planListQuery.ALIKE_partnerName" placeholder="保司名称" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
-          <el-input v-model="planListQuery.LIKE_productCode" placeholder="产品编码" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
-          <el-input v-model="planListQuery.ALIKE_productName" placeholder="产品名称" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
-          <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="getProductPlanList">
+          <el-input v-model="planListQuery.LIKE_partnerCode" size="mini" placeholder="保司编码" style="width: 150px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
+          <el-input v-model="planListQuery.ALIKE_partnerName" size="mini" placeholder="保司名称" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
+          <el-input v-model="planListQuery.LIKE_productCode" size="mini" placeholder="产品编码" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
+          <el-input v-model="planListQuery.ALIKE_productName" size="mini" placeholder="产品名称" style="width: 150px;margin-left: 10px;" class="filter-item" @keyup.enter.native="getProductPlanList" />
+          <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="getProductPlanList">
             搜索
           </el-button>
         </el-row>
         <el-row>
-          <el-input v-model="defaultComsRatio" placeholder="请输入佣金值" style="width: 150px;" class="filter-item" @keyup.enter.native="setComsRatio" />
-          <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" size="small" @click="setComsRatio">
+          <el-input v-model="defaultComsRatio" size="mini" placeholder="请输入佣金值" style="width: 150px;" class="filter-item" @keyup.enter.native="setComsRatio" />
+          <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" @click="setComsRatio">
             批量设置选中佣金
           </el-button>
         </el-row>

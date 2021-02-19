@@ -1,16 +1,16 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.EQ_productPlanCode" placeholder="计划编码" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_liabilityCategory" placeholder="责任大类" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_liabilityName" placeholder="责任内容" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
+      <el-input v-model="listQuery.EQ_productPlanCode" size="mini" placeholder="计划编码" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_liabilityCategory" size="mini" placeholder="责任大类" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_liabilityName" size="mini" placeholder="责任内容" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
         清空
       </el-button>
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-checkbox v-model="showRemarkInfo" class="filter-item" style="margin-left: 10px;">
+      <el-checkbox v-model="showRemarkInfo" size="mini" class="filter-item" style="margin-left: 10px;">
         显示备注
       </el-checkbox>
     </div>

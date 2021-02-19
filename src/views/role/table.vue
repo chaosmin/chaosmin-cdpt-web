@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.LIKE_name" placeholder="名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-input v-model="listQuery.LIKE_name" size="mini" placeholder="名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         添加
       </el-button>
     </div>
@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { fetchRole, getOneRole, createRole, updateRole } from '@/api/roles'
+import { fetchRole, fetchAuthorityOfRole, createRole, updateRole } from '@/api/roles'
 import { fetchAuthorityTree } from '@/api/authorities'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
@@ -196,8 +196,8 @@ export default {
     handleAssignAuthorities(id) {
       this.resetTemp()
       this.temp.id = id
-      getOneRole(id).then(response => {
-        this.$refs['tree'].setCheckedKeys(response.data.authorityIds)
+      fetchAuthorityOfRole(id).then(response => {
+        this.$refs['tree'].setCheckedKeys(response.data)
         setTimeout(() => {
         }, 1000)
       })

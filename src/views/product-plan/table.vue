@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.ALIKE_productName" placeholder="所属产品" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_planCode" placeholder="计划编码" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_planName" placeholder="计划名称" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.EQ_productPlan_status" placeholder="状态" style="width: 100px;margin-left: 10px;" class="filter-item" @change="handleFilter">
+      <el-input v-model="listQuery.ALIKE_productName" size="mini" placeholder="所属产品" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_planCode" size="mini" placeholder="计划编码" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_planName" size="mini" placeholder="计划名称" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.EQ_productPlan_status" size="mini" placeholder="状态" style="width: 100px;margin-left: 10px;" class="filter-item" @change="handleFilter">
         <el-option
           v-for="item in statusOptions"
           :key="item.value"
@@ -12,10 +12,10 @@
           :value="item.value"
         />
       </el-select>
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
         清空
       </el-button>
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
     </div>

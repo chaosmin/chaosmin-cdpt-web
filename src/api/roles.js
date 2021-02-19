@@ -7,6 +7,13 @@ export function getOneRole(id) {
   })
 }
 
+export function fetchAuthorityOfRole(id) {
+  return request({
+    url: `/v1/api/roles/${id}/authorities`,
+    method: 'GET'
+  })
+}
+
 export function fetchRole(query) {
   return request({
     url: '/v1/api/roles',
