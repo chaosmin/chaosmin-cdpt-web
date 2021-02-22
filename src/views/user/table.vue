@@ -211,7 +211,8 @@ export default {
         P_SIZE: 20,
         LIKE_username: undefined,
         EQ_departmentId: this.$store.getters.department,
-        EQ_role_code: undefined
+        EQ_role_code: undefined,
+        O_createTime: 0
       },
       temp: {
         id: undefined,

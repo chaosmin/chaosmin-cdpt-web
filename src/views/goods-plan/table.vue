@@ -154,16 +154,6 @@
     <el-dialog title="产品授权" :visible.sync="dialogAuthVisible" custom-class="customWidth">
       <el-divider content-position="left">请选择用户</el-divider>
       <el-form ref="authDataForm" :rules="authRules" :model="temp" label-position="left" label-width="100px" style="width: 700px; margin-left:80px;">
-        <el-form-item v-if="isAdmin" label="用户机构" prop="departmentId">
-          <el-select v-model="temp.departmentId" size="mini" clearable placeholder="请选择" @change="getUserList">
-            <el-option
-              v-for="item in departments"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
         <el-form-item label="请选择用户" prop="userIds">
           <el-select v-model="temp.userIds" size="mini" multiple filterable reserve-keyword>
             <el-option
@@ -254,7 +244,6 @@
 <script>
 import { fetchGoodsPlan, createGoodsPlan, updateGoodsPlan } from '@/api/goods-plans'
 import { fetchPlan } from '@/api/product-plans'
-import { fetchDepartment } from '@/api/departments'
 import { fetchUser } from '@/api/users'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
@@ -319,8 +308,6 @@ export default {
       },
       temp: {
         id: undefined,
-        departmentId: undefined,
-        departmentName: undefined,
         userName: undefined,
         roleName: undefined,
         productCode: undefined,
@@ -344,7 +331,6 @@ export default {
         userIds: [{ required: true, message: '请先选择用户', trigger: 'change' }]
       },
       productPlans: null,
-      departments: null,
       users: null
     }
   },
@@ -352,17 +338,7 @@ export default {
     this.getList()
   },
   mounted() {
-    if (this.isAdmin) {
-      this.getDepartmentList()
-    } else {
-      const departmentId = this.$store.getters.department
-      this.departments = [{
-        id: departmentId,
-        name: '当前机构'
-      }]
-      this.temp.departmentId = departmentId
-      this.getUserList()
-    }
+    this.getUserList()
   },
   methods: {
     getList() {
@@ -380,23 +356,10 @@ export default {
         this.productPlans = response.data.records
       })
     },
-    getDepartmentList() {
-      const queryCond = {}
-      queryCond.EQ_status = 1
-      queryCond.P_SIZE = 500
-      fetchDepartment(queryCond).then(response => {
-        this.departments = response.data.records
-      })
-    },
     getUserList() {
-      const queryCond = {}
-      queryCond.EQ_user_status = 1
-      queryCond.EQ_departmentId = this.temp.departmentId
-      queryCond.P_SIZE = 500
-      if (this.isAdmin) {
-        queryCond.EQ_role_code = 'manager'
-      } else {
-        queryCond.EQ_role_code = 'officer'
+      const queryCond = {
+        EQ_user_status: 1,
+        P_SIZE: 500
       }
       fetchUser(queryCond).then(response => {
         this.users = response.data.records
@@ -418,8 +381,6 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        departmentId: undefined,
-        departmentName: undefined,
         userName: undefined,
         roleName: undefined,
         goodsCode: undefined,

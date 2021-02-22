@@ -37,6 +37,9 @@
           点击上传
         </el-button>
       </el-upload>
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-download">
+        下载模板
+      </el-button>
     </div>
     <el-divider content-position="left" class="app-divider">保险产品</el-divider>
     <el-table
