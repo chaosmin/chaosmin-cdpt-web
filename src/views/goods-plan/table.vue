@@ -25,17 +25,17 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="机构" align="center" width="180px">
+      <el-table-column label="机构" align="center">
         <template slot-scope="{row}">
           <span>{{ row.departmentName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" align="center" width="120px">
+      <el-table-column label="用户名" align="center">
         <template slot-scope="{row}">
           <span>{{ row.userName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="角色" align="center" width="80px">
+      <el-table-column label="角色" align="center">
         <template slot-scope="{row}">
           <span>{{ row.roleName }}</span>
         </template>
@@ -67,7 +67,7 @@
           <span>{{ row.authorizeTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="授权人" class-name="status-col" width="80">
+      <el-table-column label="授权人" class-name="status-col" width="110">
         <template slot-scope="{row}">
           <span>{{ row.authorizer }}</span>
         </template>
