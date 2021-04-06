@@ -8,6 +8,13 @@ export function fetchPlan(query) {
   })
 }
 
+export function fetchContract() {
+  return request({
+    url: '/v1/api/product-plans/contract',
+    method: 'GET'
+  })
+}
+
 export function createPlan(data) {
   return request({
     url: '/v1/api/product-plans',

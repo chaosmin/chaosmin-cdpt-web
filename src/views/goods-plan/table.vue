@@ -243,7 +243,7 @@
 
 <script>
 import { fetchGoodsPlan, createGoodsPlan, updateGoodsPlan } from '@/api/goods-plans'
-import { fetchPlan } from '@/api/product-plans'
+import { fetchContract } from '@/api/product-plans'
 import { fetchUser } from '@/api/users'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
@@ -352,16 +352,13 @@ export default {
       })
     },
     getProductPlanList() {
-      fetchPlan(this.planListQuery).then(response => {
+      fetchContract().then(response => {
         this.productPlans = response.data.records
       })
     },
     getUserList() {
-      const queryCond = {
-        EQ_user_status: 1,
-        P_SIZE: 500
-      }
-      fetchUser(queryCond).then(response => {
+      const cond = { EQ_user_creator: this.$store.getters.name }
+      fetchUser(cond).then(response => {
         this.users = response.data.records
         setTimeout(() => {
         }, 1000)

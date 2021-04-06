@@ -209,9 +209,10 @@ export default {
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
-        LIKE_username: undefined,
-        EQ_departmentId: this.$store.getters.department,
+        // EQ_departmentId: this.$store.getters.department,
         EQ_role_code: undefined,
+        LIKE_username: undefined,
+        EQ_user_creator: undefined,
         O_createTime: 0
       },
       temp: {
@@ -241,7 +242,7 @@ export default {
   },
   created() {
     if (!this.isAdmin) {
-      this.listQuery.EQ_role_code = 'officer'
+      this.listQuery.EQ_user_creator = this.$store.getters.name
     }
     this.getList()
   },

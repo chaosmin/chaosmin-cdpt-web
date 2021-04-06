@@ -30,7 +30,7 @@ service.interceptors.response.use(
 
     if (res.code !== 'SUCCESS') {
       Message({
-        message: res.msg || 'Error',
+        message: res.msg || '系统异常, 请稍后重试',
         type: 'error',
         duration: 5 * 1000
       })
@@ -53,9 +53,9 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    console.log('err: ' + error) // for debug
     Message({
-      message: error.msg,
+      message: error.msg || '系统异常, 请稍后重试',
       type: 'error',
       duration: 5 * 1000
     })

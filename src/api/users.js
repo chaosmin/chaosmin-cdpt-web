@@ -1,5 +1,19 @@
 import request from '@/utils/request'
 
+export function getOneUser(id) {
+  return request({
+    url: `/v1/api/users/${id}`,
+    method: 'GET'
+  })
+}
+
+export function fetchSubordinates(id) {
+  return request({
+    url: `/v1/api/users/${id}/subordinates`,
+    method: 'GET'
+  })
+}
+
 export function fetchUser(query) {
   return request({
     url: '/v1/api/users',
