@@ -17,370 +17,376 @@
         </template>
       </el-menu>
     </el-aside>
-    <el-main v-if="productPlan">
-      <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true">
-        <el-divider content-position="left">投保信息</el-divider>
-        <table border="1" cellspacing="0" width="100%">
-          <tr>
-            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险公司</span></td>
-            <td colspan="5">
-              <el-radio-group v-model="partner" size="mini" @change="changePartner">
-                <template v-for="p in partners">
-                  <el-radio-button :key="p" :label="p">{{ p }}</el-radio-button>
-                </template>
-              </el-radio-group>
-            </td>
-          </tr>
-          <tr>
-            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>产品选择</span></td>
-            <td colspan="5">
-              <el-select v-model="temp.productPlanId" size="mini" placeholder="请选择产品" style="width: 300px;" class="filter-item" @change="changeProductPlan">
-                <el-option
-                  v-for="item in productPlans"
-                  :key="item.productPlanId"
-                  :label="'[' + item.productName+ ']-' + item.productPlanName + '-' + item.primaryCoverage"
-                  :value="item.productPlanId"
+    <div ref="imageTofile">
+      <el-main v-if="productPlan">
+        <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true">
+          <el-divider content-position="left">投保信息</el-divider>
+          <table border="1" cellspacing="0" width="100%">
+            <tr>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险公司</span></td>
+              <td colspan="5">
+                <el-radio-group v-model="partner" size="mini" @change="changePartner">
+                  <template v-for="p in partners">
+                    <el-radio-button :key="p" :label="p">{{ p }}</el-radio-button>
+                  </template>
+                </el-radio-group>
+              </td>
+            </tr>
+            <tr>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>产品选择</span></td>
+              <td colspan="5">
+                <el-select v-model="temp.productPlanId" size="mini" placeholder="请选择产品" style="width: 300px;" class="filter-item" @change="changeProductPlan">
+                  <el-option
+                    v-for="item in productPlans"
+                    :key="item.productPlanId"
+                    :label="'[' + item.productName+ ']-' + item.productPlanName + '-' + item.primaryCoverage"
+                    :value="item.productPlanId"
+                  />
+                </el-select>
+              </td>
+            </tr>
+            <tr>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险期限</span></td>
+              <td>
+                <el-form-item prop="days" size="mini" style="margin-bottom: 0;">
+                  <el-select v-model="temp.days" size="mini" placeholder="请选择保障天数" @change="setEndTime">
+                    <el-option
+                      v-for="item in dateSelectionOption"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </td>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>起保时间</span></td>
+              <td>
+                <el-date-picker
+                  v-model="temp.startTime"
+                  size="mini"
+                  type="datetime"
+                  placeholder="请选择起保时间"
+                  default-time="00:00:00"
+                  :clearable="false"
+                  :editable="false"
+                  :picker-options="pickerStartOptions"
+                  @change="setEndTime"
                 />
-              </el-select>
-            </td>
-          </tr>
-          <tr>
-            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险期限</span></td>
-            <td>
-              <el-form-item prop="days" size="mini" style="margin-bottom: 0;">
-                <el-select v-model="temp.days" size="mini" placeholder="请选择保障天数" @change="setEndTime">
-                  <el-option
-                    v-for="item in dateSelectionOption"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </td>
-            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>起保时间</span></td>
-            <td>
-              <el-date-picker
-                v-model="temp.startTime"
-                size="mini"
-                type="datetime"
-                placeholder="请选择起保时间"
-                default-time="00:00:00"
-                :clearable="false"
-                :editable="false"
-                :picker-options="pickerStartOptions"
-                @change="setEndTime"
-              />
-            </td>
-            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>终止时间</span></td>
-            <td>
-              <el-date-picker
-                v-model="temp.endTime"
-                size="mini"
-                type="datetime"
-                placeholder="请选择终止时间"
-                default-time="23:59:59"
-                :editable="false"
-                :picker-options="pickerEndOptions"
-                @change="changeEndTime"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td><span style="padding-left: 17px">旅行目的地</span></td>
-            <td colspan="2">
-              <el-input v-model="temp.address" size="mini" placeholder="请输入内容" />
-            </td>
-            <td><span style="padding-left: 17px">团号/备注</span></td>
-            <td colspan="2">
-              <el-input v-model="temp.remark" size="mini" placeholder="请输入内容" />
-            </td>
-          </tr>
-          <tr>
-            <td><span style="padding-left: 17px">投保提示</span></td>
-            <td colspan="5">
-              <span>1.投保范围：被保险人为0天至85周岁、身体健康、能正常工作或正常生活的自然人，若多份保单保险期间重叠，我司对的总赔偿额度以其中一份保单保额最高的保额为限。</span><br>
-              <span>2.本保险产品计划承保自由行、自驾、高原地区和高风险运动。</span><br>
-              <span>3.承包地域不包括战争恐怖地区。具体除外承包地域以<a class="link-type" href="http://baoxian.pingan.com/dangerous_zone/war.shtml">http://baoxian.pingan.com/dangerous_zone/war.shtml</a>所列国家为准。</span><br>
-              <span style="color: red;">4.务必下载右上方详细条款交于客户，并仔细阅读保单上的保障内容、特别约定及责任免除条款。</span><br>
-              <span>5.支持当天投保，投保2小时后生效。</span><br>
-            </td>
-          </tr>
-        </table>
-        <el-divider content-position="left">被保人列表</el-divider>
-        <div class="filter-container" style="display: flex;align-items: center;">
-          <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-download" @click="downloadTemplate">
-            下载模板
-          </el-button>
-          <el-upload ref="upload" v-waves action="" style="margin-left: 10px;" :show-file-list="false" :limit="1" :auto-upload="false" :on-change="handleChange">
-            <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-upload">
-              上传被保人
+              </td>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>终止时间</span></td>
+              <td>
+                <el-date-picker
+                  v-model="temp.endTime"
+                  size="mini"
+                  type="datetime"
+                  placeholder="请选择终止时间"
+                  default-time="23:59:59"
+                  :editable="false"
+                  :picker-options="pickerEndOptions"
+                  @change="changeEndTime"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td><span style="padding-left: 17px">旅行目的地</span></td>
+              <td colspan="2">
+                <el-input v-model="temp.address" size="mini" placeholder="请输入内容" />
+              </td>
+              <td><span style="padding-left: 17px">团号/备注</span></td>
+              <td colspan="2">
+                <el-input v-model="temp.remark" size="mini" placeholder="请输入内容" />
+              </td>
+            </tr>
+            <tr>
+              <td><span style="padding-left: 17px">投保提示</span></td>
+              <td colspan="5">
+                <span>1.投保范围：被保险人为0天至85周岁、身体健康、能正常工作或正常生活的自然人，若多份保单保险期间重叠，我司对的总赔偿额度以其中一份保单保额最高的保额为限。</span><br>
+                <span>2.本保险产品计划承保自由行、自驾、高原地区和高风险运动。</span><br>
+                <span>3.承包地域不包括战争恐怖地区。具体除外承包地域以<a class="link-type" href="http://baoxian.pingan.com/dangerous_zone/war.shtml">http://baoxian.pingan.com/dangerous_zone/war.shtml</a>所列国家为准。</span><br>
+                <span style="color: red;">4.务必下载右上方详细条款交于客户，并仔细阅读保单上的保障内容、特别约定及责任免除条款。</span><br>
+                <span>5.支持当天投保，投保2小时后生效。</span><br>
+              </td>
+            </tr>
+          </table>
+          <el-divider content-position="left">被保人列表</el-divider>
+          <div class="filter-container" style="display: flex;align-items: center;">
+            <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-download" @click="downloadTemplate">
+              下载模板
             </el-button>
-          </el-upload>
-          <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="addNewInsured">
-            添加被保人
-          </el-button>
-          <el-button v-waves class="filter-item" size="mini" type="success" icon="el-icon-edit-outline" @click="dialogSmartPasteFormVisible = true">
-            智能粘贴
-          </el-button>
-        </div>
-        <el-table
-          :data="temp.insuredList"
-          border
-          fit
-          highlight-current-row
-          style="width: 100%;"
-          :header-row-style="rowStyle"
-          :row-style="rowStyle"
-        >
-          <el-table-column type="index" label="序" align="center" />
-          <el-table-column label="姓名" align="center" width="100px" style="font-size: 12px">
-            <template slot-scope="{row}">
-              <template v-if="row.edit">
-                <el-input v-model="row.name" class="edit-input" size="mini" />
-              </template>
-              <span v-else>{{ row.name }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="性别" width="95px" align="center">
-            <template slot-scope="{row}">
-              <template v-if="row.edit">
-                <el-select v-model="row.gender" class="edit-input" size="mini">
-                  <el-option
-                    v-for="item in genderOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-              <span v-else>{{ row.gender }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="证件类型" width="110px" align="center">
-            <template slot-scope="{row}">
-              <template v-if="row.edit">
-                <el-select v-model="row.certiType" class="edit-input" size="mini">
-                  <el-option
-                    v-for="item in certiTypeOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-              <span v-else>{{ row.certiType }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="证件号码" align="center">
-            <template slot-scope="{row}">
-              <template v-if="row.edit">
-                <el-input v-model="row.certiNo" class="edit-input" size="mini" @change="parseSFZ(row.certiNo, row)" />
-              </template>
-              <span v-else>{{ row.certiNo }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="出生日期" width="155px" align="center">
-            <template slot-scope="{row}">
-              <template v-if="row.edit">
-                <el-date-picker v-model="row.dateOfBirth" size="mini" style="width: 130px" type="date" placeholder="选择生日" />
-              </template>
-              <span v-else>{{ row.dateOfBirth | parseTime('{y}-{m}-{d}') }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="手机号" width="125px" align="center">
-            <template slot-scope="{row}">
-              <template v-if="row.edit">
-                <el-input v-model="row.mobile" class="edit-input" size="mini" />
-              </template>
-              <span v-else>{{ row.mobile }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="原价" width="75px" align="center">
-            <template slot-scope="{row}">
-              <span>￥{{ row.premium }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="结算价" width="75px" align="center">
-            <template slot-scope="{row}">
-              <span>￥{{ row.price }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="left" width="140px" class-name="small-padding fixed-width">
-            <template slot-scope="{row,$index}">
-              <el-button v-if="row.edit" type="success" size="mini" icon="el-icon-circle-check-outline" @click="confirmEdit(row)">确认</el-button>
-              <el-button v-else type="primary" size="mini" icon="el-icon-edit" @click="row.edit=!row.edit">编辑</el-button>
-              <el-button type="danger" size="mini" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-divider content-position="left">投保人信息</el-divider>
-        <table border="1" cellspacing="0" width="100%">
-          <tr>
-            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>公司名称</span></td>
-            <td>
-              <el-form-item prop="policyHolderName" size="mini" style="margin-bottom: 0;">
-                <el-input v-model="temp.policyHolderName" size="mini" style="width: 75%" placeholder="请输入投保公司名称" />
-              </el-form-item>
-            </td>
-            <td><span style="padding: 5px;color: red;"><b>*</b></span><span>证件号码</span></td>
-            <td>
-              <el-form-item prop="policyHolderCerti" size="mini" style="margin-bottom: 0;">
-                <el-input v-model="temp.policyHolderCerti" size="mini" style="width: 75%" placeholder="请输入投保公司证件号" />
-              </el-form-item>
-            </td>
-          </tr>
-        </table>
-        <br>
-        <table border="1" cellspacing="0" width="100%">
-          <tr>
-            <td><span style="padding-left: 17px">人数合计：</span></td>
-            <td><span style="padding-left: 10px"><b>{{ temp.insuredList.length }}</b> 人</span></td>
-            <td><span style="padding-left: 17px">原价合计：</span></td>
-            <td><span style="padding-left: 17px"><b>{{ temp.totalPremium }}</b> 元</span></td>
-            <td><span style="padding-left: 17px">结算合计：</span></td>
-            <td><span style="padding-left: 17px"><b>{{ temp.actualPremium }}</b> 元</span></td>
-          </tr>
-        </table>
-        <br>
-        <table border="1" cellspacing="0" width="100%">
-          <tr>
-            <td width="200px"><span style="padding-left: 10px">选择支付方式：</span></td>
-            <td>
-              <template>
-                <div style="padding-left: 10px">
-                  <el-radio-group v-model="temp.payMethod" size="mini">
-                    <el-radio label="MONTHLY"><span>月结</span></el-radio>
-                    <el-radio disabled label="WECHAT"><span>微信</span></el-radio>
-                  </el-radio-group>
-                </div>
-              </template>
-            </td>
-          </tr>
-          <tr>
-            <td><span style="padding-left: 10px">支付方式说明：</span></td>
-            <td><span style="padding-left: 10px">默认支持月结</span></td>
-          </tr>
-        </table>
-        <br>
-        <div v-if="productPlan">
-          <div style="text-align:center">
-            <!-- `checked` 为 true 或 false -->
-            <el-checkbox v-model="temp.checked">我已详细阅读并理解</el-checkbox>
-            <el-button type="text" @click="centerDialogVisible = true">投保注意事项</el-button> |
-            <el-link icon="el-icon-document" href="https://chaosmin-static.oss-cn-shanghai.aliyuncs.com/template/template_logo.png">保险条款</el-link>
+            <el-upload ref="upload" v-waves action="" style="margin-left: 10px;" :show-file-list="false" :limit="1" :auto-upload="false" :on-change="handleChange">
+              <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-upload">
+                上传被保人
+              </el-button>
+            </el-upload>
+            <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="addNewInsured">
+              添加被保人
+            </el-button>
+            <el-button v-waves class="filter-item" size="mini" type="success" icon="el-icon-edit-outline" @click="dialogSmartPasteFormVisible = true">
+              智能粘贴
+            </el-button>
           </div>
-          <br>
-          <div style="text-align:center">
-            <el-button type="primary" size="mini" @click="issuePolicy">确定投保</el-button>
-            <el-button size="mini">存草稿</el-button>
-          </div>
-        </div>
-        <br>
-        <div v-if="productPlan">
           <el-table
-            :data="productPlan.goodsLiabilities"
-            :span-method="spanMethod"
-            style="width: 100%;font-size: 12px"
+            :data="temp.insuredList"
+            border
+            fit
+            highlight-current-row
+            style="width: 100%;"
+            :header-row-style="rowStyle"
+            :row-style="rowStyle"
           >
-            <el-table-column align="center" :label="'[' + productPlan.productName+ ']-' + productPlan.productPlanName + '-' + productPlan.primaryCoverage">
-              <el-table-column
-                align="center"
-                prop="liabilityCategory"
-                label="责任大类"
-              />
-              <el-table-column
-                align="center"
-                prop="liabilityName"
-                label="保障内容"
-              />
-              <el-table-column
-                align="center"
-                prop="amount"
-                label="保障金额（人民币：元）"
-              />
+            <el-table-column type="index" label="序" align="center" />
+            <el-table-column label="姓名" align="center" width="100px" style="font-size: 12px">
+              <template slot-scope="{row}">
+                <template v-if="row.edit">
+                  <el-input v-model="row.name" class="edit-input" size="mini" />
+                </template>
+                <span v-else>{{ row.name }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="性别" width="95px" align="center">
+              <template slot-scope="{row}">
+                <template v-if="row.edit">
+                  <el-select v-model="row.gender" class="edit-input" size="mini">
+                    <el-option
+                      v-for="item in genderOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </template>
+                <span v-else>{{ row.gender }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="证件类型" width="110px" align="center">
+              <template slot-scope="{row}">
+                <template v-if="row.edit">
+                  <el-select v-model="row.certiType" class="edit-input" size="mini">
+                    <el-option
+                      v-for="item in certiTypeOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </template>
+                <span v-else>{{ row.certiType }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="证件号码" align="center">
+              <template slot-scope="{row}">
+                <template v-if="row.edit">
+                  <el-input v-model="row.certiNo" class="edit-input" size="mini" @change="parseSFZ(row.certiNo, row)" />
+                </template>
+                <span v-else>{{ row.certiNo }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="出生日期" width="155px" align="center">
+              <template slot-scope="{row}">
+                <template v-if="row.edit">
+                  <el-date-picker v-model="row.dateOfBirth" size="mini" style="width: 130px" type="date" placeholder="选择生日" />
+                </template>
+                <span v-else>{{ row.dateOfBirth | parseTime('{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="手机号" width="125px" align="center">
+              <template slot-scope="{row}">
+                <template v-if="row.edit">
+                  <el-input v-model="row.mobile" class="edit-input" size="mini" />
+                </template>
+                <span v-else>{{ row.mobile }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="原价" width="75px" align="center">
+              <template slot-scope="{row}">
+                <span>￥{{ row.premium }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="结算价" width="75px" align="center">
+              <template slot-scope="{row}">
+                <span>￥{{ row.price }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="left" width="140px" class-name="small-padding fixed-width">
+              <template slot-scope="{row,$index}">
+                <el-button v-if="row.edit" type="success" size="mini" icon="el-icon-circle-check-outline" @click="confirmEdit(row)">确认</el-button>
+                <el-button v-else type="primary" size="mini" icon="el-icon-edit" @click="row.edit=!row.edit">编辑</el-button>
+                <el-button type="danger" size="mini" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)">删除</el-button>
+              </template>
             </el-table-column>
           </el-table>
-          <el-table
-            :data="productPlan.goodsRateTable"
-            style="width: 100%;font-size: 12px"
-          >
-            <el-table-column align="center" label="保障金额/人 （人民币：元）">
-              <el-table-column
-                align="center"
-                prop="remark"
-                label="旅行天数"
-              />
-              <el-table-column
-                align="center"
-                prop="premium"
-                label="价格"
-              />
-            </el-table-column>
-          </el-table>
+          <el-divider content-position="left">投保人信息</el-divider>
+          <table border="1" cellspacing="0" width="100%">
+            <tr>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>公司名称</span></td>
+              <td>
+                <el-form-item prop="policyHolderName" size="mini" style="margin-bottom: 0;">
+                  <el-input v-model="temp.policyHolderName" size="mini" style="width: 75%" placeholder="请输入投保公司名称" />
+                </el-form-item>
+              </td>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>证件号码</span></td>
+              <td>
+                <el-form-item prop="policyHolderCerti" size="mini" style="margin-bottom: 0;">
+                  <el-input v-model="temp.policyHolderCerti" size="mini" style="width: 75%" placeholder="请输入投保公司证件号" />
+                </el-form-item>
+              </td>
+            </tr>
+          </table>
           <br>
-          <div v-html="productPlan.productExternal" />
-        </div>
-      </el-form>
-    </el-main>
-    <el-main v-else style="color: #333; text-align: center; line-height: 200px;">请先选择产品</el-main>
-
-    <el-dialog title="请将名单复制到下面的文本框中" :visible.sync="dialogSmartPasteFormVisible">
-      <div>
-        <el-button size="mini" @click="smartPasteText = ''">清空已有名单</el-button>
-        <el-popover placement="right" style="padding-left: 5px" trigger="click">
-          <div>
-            <span><b>规则：</b>一个被保人一行, 如：</span><br>
-            <span>张强 男 420683199506240355</span><br>
-            <span>刘红 女 E23672888 1980-01-10</span><br>
-            <span>大海.阳光 女 E23672666 1980-08-08</span><br>
-            <span><b>身份证：</b>只需要姓名和证件号即可，网站可以自动识别证件号中的出生日期及性别，如果不能识别，证件类型将设置为其他</span><br>
-            <span><b>护照：</b>目前识别大多数国家的护照，如果出现部分国家无法识别，证件类型将设置为其他</span><br>
-            <span><b>出生日期：</b>目前可识别格式有: 1980-7-25，1980/7/25，1980年7月25，19800725，25/JUL/1980，25-JUL-1980，25/7/1980，25/JUL/80，25-JUL-80，25/7/80</span><br>
+          <table border="1" cellspacing="0" width="100%">
+            <tr>
+              <td><span style="padding-left: 17px">人数合计：</span></td>
+              <td><span style="padding-left: 10px"><b>{{ temp.insuredList.length }}</b> 人</span></td>
+              <td><span style="padding-left: 17px">原价合计：</span></td>
+              <td><span style="padding-left: 17px"><b>{{ temp.totalPremium }}</b> 元</span></td>
+              <td><span style="padding-left: 17px">结算合计：</span></td>
+              <td><span style="padding-left: 17px"><b>{{ temp.actualPremium }}</b> 元</span></td>
+            </tr>
+          </table>
+          <br>
+          <table border="1" cellspacing="0" width="100%">
+            <tr>
+              <td width="200px"><span style="padding-left: 10px">选择支付方式：</span></td>
+              <td>
+                <template>
+                  <div style="padding-left: 10px">
+                    <el-radio-group v-model="temp.payMethod" size="mini">
+                      <el-radio label="MONTHLY"><span>月结</span></el-radio>
+                      <el-radio disabled label="WECHAT"><span>微信</span></el-radio>
+                    </el-radio-group>
+                  </div>
+                </template>
+              </td>
+            </tr>
+            <tr>
+              <td><span style="padding-left: 10px">支付方式说明：</span></td>
+              <td><span style="padding-left: 10px">默认支持月结</span></td>
+            </tr>
+          </table>
+          <br>
+          <div v-if="productPlan">
+            <div style="text-align:center">
+              <!-- `checked` 为 true 或 false -->
+              <el-checkbox v-model="temp.checked">我已详细阅读并理解</el-checkbox>
+              <el-button type="text" @click="centerDialogVisible = true">投保注意事项</el-button> |
+              <el-link icon="el-icon-document" href="https://chaosmin-static.oss-cn-shanghai.aliyuncs.com/template/template_logo.png">保险条款</el-link>
+            </div>
+            <br>
+            <div style="text-align:center">
+              <el-button type="primary" size="mini" @click="issuePolicy">确定投保</el-button>
+              <el-button size="mini">存草稿</el-button>
+            </div>
           </div>
-          <el-button slot="reference" size="mini" type="warning">有问题，点我!</el-button>
-        </el-popover>
-        <el-select v-model="specialDateFormat" style="float: right;" size="mini">
-          <el-option key="1" label="选择特殊日期格式" value="yyyy-mm-dd" />
-          <el-option key="2" label="月日年[01-31-1980]" value="mm-dd-yyyy" />
-          <el-option key="3" label="日月年[31-01-1980]" value="dd-mm-yyyy" />
-          <el-option key="4" label="日月年[31-JAN-80]" value="dd-MM-yy" />
-        </el-select>
-      </div>
-      <div style="padding-top: 10px">
-        <el-input v-model="smartPasteText" :rows="10" type="textarea" />
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogSmartPasteFormVisible = false">
-          关闭
-        </el-button>
-        <el-button type="primary" @click="smartPaste()">
-          识别名单
-        </el-button>
-      </div>
-    </el-dialog>
+          <br>
+          <div v-if="productPlan">
+            <el-table
+              :data="productPlan.goodsLiabilities"
+              :span-method="spanMethod"
+              style="width: 100%;font-size: 12px"
+            >
+              <el-table-column align="center" :label="'[' + productPlan.productName+ ']-' + productPlan.productPlanName + '-' + productPlan.primaryCoverage">
+                <el-table-column
+                  align="center"
+                  prop="liabilityCategory"
+                  label="责任大类"
+                />
+                <el-table-column
+                  align="center"
+                  prop="liabilityName"
+                  label="保障内容"
+                />
+                <el-table-column
+                  align="center"
+                  prop="amount"
+                  label="保障金额（人民币：元）"
+                />
+              </el-table-column>
+            </el-table>
+            <el-table
+              :data="productPlan.goodsRateTable"
+              style="width: 100%;font-size: 12px"
+            >
+              <el-table-column align="center" label="保障金额/人 （人民币：元）">
+                <el-table-column
+                  align="center"
+                  prop="remark"
+                  label="旅行天数"
+                />
+                <el-table-column
+                  align="center"
+                  prop="premium"
+                  label="价格"
+                />
+              </el-table-column>
+            </el-table>
+            <br>
+            <div v-html="productPlan.productExternal" />
+          </div>
+        </el-form>
+      </el-main>
+      <el-main v-else style="color: #333; text-align: center; line-height: 200px;">请先选择产品</el-main>
 
-    <el-dialog title="投保注意事项" :visible.sync="centerDialogVisible" width="30%" center>
-      <span>投保注意事项内容...</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="centerDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="centerDialogVisible = false;temp.checked = true">我已阅读并确认</el-button>
-      </span>
-    </el-dialog>
+      <el-dialog title="请将名单复制到下面的文本框中" :visible.sync="dialogSmartPasteFormVisible">
+        <div>
+          <el-button size="mini" @click="smartPasteText = ''">清空已有名单</el-button>
+          <el-popover placement="right" style="padding-left: 5px" trigger="click">
+            <div>
+              <span><b>规则：</b>一个被保人一行, 如：</span><br>
+              <span>张强 男 420683199506240355</span><br>
+              <span>刘红 女 E23672888 1980-01-10</span><br>
+              <span>大海.阳光 女 E23672666 1980-08-08</span><br>
+              <span><b>身份证：</b>只需要姓名和证件号即可，网站可以自动识别证件号中的出生日期及性别，如果不能识别，证件类型将设置为其他</span><br>
+              <span><b>护照：</b>目前识别大多数国家的护照，如果出现部分国家无法识别，证件类型将设置为其他</span><br>
+              <span><b>出生日期：</b>目前可识别格式有: 1980-7-25，1980/7/25，1980年7月25，19800725，25/JUL/1980，25-JUL-1980，25/7/1980，25/JUL/80，25-JUL-80，25/7/80</span><br>
+            </div>
+            <el-button slot="reference" size="mini" type="warning">有问题，点我!</el-button>
+          </el-popover>
+          <el-select v-model="specialDateFormat" style="float: right;" size="mini">
+            <el-option key="1" label="选择特殊日期格式" value="yyyy-mm-dd" />
+            <el-option key="2" label="月日年[01-31-1980]" value="mm-dd-yyyy" />
+            <el-option key="3" label="日月年[31-01-1980]" value="dd-mm-yyyy" />
+            <el-option key="4" label="日月年[31-JAN-80]" value="dd-MM-yy" />
+          </el-select>
+        </div>
+        <div style="padding-top: 10px">
+          <el-input v-model="smartPasteText" :rows="10" type="textarea" />
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogSmartPasteFormVisible = false">
+            关闭
+          </el-button>
+          <el-button type="primary" @click="smartPaste()">
+            识别名单
+          </el-button>
+        </div>
+      </el-dialog>
 
+      <el-dialog title="投保注意事项" :visible.sync="centerDialogVisible" width="30%" center>
+        <span>投保注意事项内容...</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="mini" @click="centerDialogVisible = false">取 消</el-button>
+          <el-button size="mini" type="primary" @click="setImage('tbxz');centerDialogVisible = false;temp.checked = true">我已阅读并确认</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </el-container>
 </template>
 
 <script>
 import { fetchGoodsCategories, fetchGoods, issuePolicy } from '@/api/insure'
+import { put, signatureUrl, getFileNameUUID } from '@/utils/oss'
+import { parseTime } from '@/utils'
 import waves from '@/directive/waves'
 import jschardet from 'jschardet'
+import html2canvas from 'html2canvas'
+import Vue from 'vue'
 
 export default {
   name: 'PolicyIndex',
   directives: { waves },
   data() {
     return {
+      uuid: getFileNameUUID(),
       uploading: undefined,
       text: '',
       dialogSmartPasteFormVisible: false,
@@ -394,6 +400,7 @@ export default {
       dateSelectionOption: [],
       temp: {
         productPlanId: undefined,
+        khsUrl: {},
         days: 1,
         startTime: undefined,
         endTime: undefined,
@@ -457,6 +464,22 @@ export default {
     this.getGoodsCategories()
   },
   methods: {
+    setImage(step) {
+      html2canvas(this.$refs.imageTofile, {
+        background: '#FFFFFF',
+        useCORS: true
+      }).then((canvas) => {
+        const objName = this.uuid + '_' + step + '.jpeg'
+        const dateStr = parseTime(new Date(), '{y}-{m}-{d}')
+        canvas.toBlob((blobObj) => {
+          put(`${dateStr}/${objName}`, blobObj).then(_ => {
+            signatureUrl(`${dateStr}/${objName}`).then(res => {
+              Vue.set(this.temp.khsUrl, step, res)
+            })
+          })
+        }, 'image/jpeg')
+      })
+    },
     setStartAndEndTime(n) {
       if (n === 0) {
         this.temp.startTime = new Date()

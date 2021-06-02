@@ -45,7 +45,7 @@ const SERVER_LIST = [
     host: '106.14.40.2',
     port: 22,
     username: 'app',
-    password: 'X!S4F%#SDNKMksL1',
+    password: 'chaosmin-cdpt',
     path: '/home/app/cdpt/front'
   },
   {
