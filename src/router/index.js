@@ -218,17 +218,17 @@ export const asyncRoutes = [
           icon: 'el-icon-document-checked',
           roles: ['administrator', 'manager', 'officer']
         }
-      },
-      {
-        path: '/orders',
-        component: resolve => require.ensure([], () => resolve(require('@/views/order/table')), 'Order'),
-        name: 'Order',
-        meta: {
-          title: 'Order',
-          icon: 'el-icon-document',
-          roles: ['administrator', 'manager', 'officer']
-        }
       }
+      // {
+      //   path: '/orders',
+      //   component: resolve => require.ensure([], () => resolve(require('@/views/order/table')), 'Order'),
+      //   name: 'Order',
+      //   meta: {
+      //     title: 'Order',
+      //     icon: 'el-icon-document',
+      //     roles: ['administrator', 'manager', 'officer']
+      //   }
+      // }
     ]
   },
   {
