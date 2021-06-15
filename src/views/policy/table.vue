@@ -24,7 +24,7 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column prop="children" type="expand" width="100">
+      <!-- <el-table-column prop="children" type="expand" width="100">
         <template slot-scope="props">
           <el-table :key="1" :data="props.row.insuredList">
             <el-table-column prop="name" label="姓名" />
@@ -35,7 +35,7 @@
             <el-table-column prop="phoneNo" label="手机号" />
           </el-table>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column v-if="false" label="ID" prop="id" sortable="custom" align="center">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
@@ -46,7 +46,7 @@
           <span>{{ row.orderNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保单号">
+      <el-table-column label="保单号" width="190">
         <template slot-scope="{row}">
           <span>{{ row.policyNo }}</span>
         </template>
@@ -86,15 +86,18 @@
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保单状态" class-name="status-col" width="80">
+      <el-table-column label="保单状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status | valueFilter }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="115px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
+          <el-button slot="reference" size="mini" type="info" style="margin-left: 5px;" @click="handleKhsList(row.id)">
+            查看可回溯信息
+          </el-button>
           <el-popconfirm v-if="row.status==='PROCESS'" title="您确定要重新推送该保单吗?">
             <el-button slot="reference" size="mini" type="success" style="margin-left: 5px;">
               重新推送保司
@@ -105,11 +108,35 @@
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.P_NUM" :limit.sync="listQuery.P_SIZE" @pagination="getList" />
+
+    <el-dialog title="可回溯文件列表" :visible.sync="policyKhsFormVisible" custom-class="customWidth">
+      <el-table key="khsList" :data="khsList" border fit style="width: 100%;">
+        <el-table-column label="文件时间">
+          <template slot-scope="{row}">
+            <span>{{ row.fileTime }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="文件类型">
+          <template slot-scope="{row}">
+            <span>{{ row.khsType }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="left" class-name="small-padding fixed-width">
+          <template slot-scope="{row}">
+            <el-link target="_blank" :href="row.resourceUrl" :underline="false">
+              <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-download">
+                下载文件
+              </el-button>
+            </el-link>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchPolicy } from '@/api/policies'
+import { fetchPolicy, fetchPolicyKhs } from '@/api/policies'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -146,6 +173,7 @@ export default {
       loading: false,
       tableKey: 0,
       list: null,
+      khsList: null,
       total: 0,
       listLoading: true,
       statusOptions: [{
@@ -165,7 +193,8 @@ export default {
         P_NUM: 1,
         P_SIZE: 20,
         EQ_policyNo: undefined
-      }
+      },
+      policyKhsFormVisible: false
     }
   },
   created() {
@@ -186,6 +215,12 @@ export default {
     handleFilter() {
       this.listQuery.P_NUM = 1
       this.getList()
+    },
+    handleKhsList(id) {
+      fetchPolicyKhs(id).then(response => {
+        this.khsList = response.data
+      })
+      this.policyKhsFormVisible = true
     }
   }
 }

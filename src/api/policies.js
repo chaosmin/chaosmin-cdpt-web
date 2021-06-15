@@ -7,3 +7,10 @@ export function fetchPolicy(query) {
     params: query
   })
 }
+
+export function fetchPolicyKhs(id) {
+  return request({
+    url: `/v1/api/policies/${id}/khs`,
+    method: 'GET'
+  })
+}

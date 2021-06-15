@@ -365,7 +365,7 @@
         <span>投保注意事项内容...</span>
         <span slot="footer" class="dialog-footer">
           <el-button size="mini" @click="centerDialogVisible = false">取 消</el-button>
-          <el-button size="mini" type="primary" @click="setImage('tbxz');centerDialogVisible = false;temp.checked = true">我已阅读并确认</el-button>
+          <el-button size="mini" type="primary" @click="setImage('投保须知');centerDialogVisible = false;temp.checked = true">我已阅读并确认</el-button>
         </span>
       </el-dialog>
     </div>
@@ -373,13 +373,12 @@
 </template>
 
 <script>
-import { fetchGoodsCategories, fetchGoods, issuePolicy } from '@/api/insure'
+import { fetchGoodsCategories, fetchGoods, getBizNo, issuePolicy } from '@/api/insure'
 import { put, signatureUrl, getFileNameUUID } from '@/utils/oss'
 import { parseTime } from '@/utils'
 import waves from '@/directive/waves'
 import jschardet from 'jschardet'
 import html2canvas from 'html2canvas'
-import Vue from 'vue'
 
 export default {
   name: 'PolicyIndex',
@@ -399,8 +398,10 @@ export default {
       defaultMenu: [],
       dateSelectionOption: [],
       temp: {
+        orderId: undefined,
         productPlanId: undefined,
-        khsUrl: {},
+        orderNo: undefined,
+        khsUrl: [],
         days: 1,
         startTime: undefined,
         endTime: undefined,
@@ -462,19 +463,26 @@ export default {
   },
   created() {
     this.getGoodsCategories()
+    this.getBizNo()
   },
   methods: {
     setImage(step) {
+      const date = new Date()
       html2canvas(this.$refs.imageTofile, {
         background: '#FFFFFF',
         useCORS: true
       }).then((canvas) => {
         const objName = this.uuid + '_' + step + '.jpeg'
-        const dateStr = parseTime(new Date(), '{y}-{m}-{d}')
+        const dateStr = parseTime(date, '{y}-{m}-{d}')
         canvas.toBlob((blobObj) => {
           put(`${dateStr}/${objName}`, blobObj).then(_ => {
             signatureUrl(`${dateStr}/${objName}`).then(res => {
-              Vue.set(this.temp.khsUrl, step, res)
+              const data = {
+                'type': step,
+                'time': date,
+                'url': res
+              }
+              this.temp.khsUrl.push(data)
             })
           })
         }, 'image/jpeg')
@@ -515,6 +523,13 @@ export default {
       })
       this.temp.days = dayEnd
       this.updatePremiumInTable()
+    },
+    getBizNo() {
+      if (this.temp.orderNo === undefined) {
+        getBizNo().then(response => {
+          this.temp.orderNo = response.data
+        })
+      }
     },
     getGoodsCategories() {
       fetchGoodsCategories().then(response => {
@@ -620,6 +635,8 @@ export default {
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
           })
+          // 创建确认投保截图
+          this.setImage('投保确认')
           issuePolicy(this.temp).then(response => {
             this.uploading.close()
             this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
