@@ -97,16 +97,16 @@
                 <el-input v-model="temp.remark" size="mini" placeholder="请输入内容" />
               </td>
             </tr>
-            <tr>
-              <td><span style="padding-left: 17px">投保提示</span></td>
-              <td colspan="5">
-                <span>1.投保范围：被保险人为0天至85周岁、身体健康、能正常工作或正常生活的自然人，若多份保单保险期间重叠，我司对的总赔偿额度以其中一份保单保额最高的保额为限。</span><br>
-                <span>2.本保险产品计划承保自由行、自驾、高原地区和高风险运动。</span><br>
-                <span>3.承包地域不包括战争恐怖地区。具体除外承包地域以<a class="link-type" href="http://baoxian.pingan.com/dangerous_zone/war.shtml">http://baoxian.pingan.com/dangerous_zone/war.shtml</a>所列国家为准。</span><br>
-                <span style="color: red;">4.务必下载右上方详细条款交于客户，并仔细阅读保单上的保障内容、特别约定及责任免除条款。</span><br>
-                <span>5.支持当天投保，投保2小时后生效。</span><br>
-              </td>
-            </tr>
+            <!--            <tr>-->
+            <!--              <td><span style="padding-left: 17px">投保提示</span></td>-->
+            <!--              <td colspan="5">-->
+            <!--                <span>1.投保范围：被保险人为0天至85周岁、身体健康、能正常工作或正常生活的自然人，若多份保单保险期间重叠，我司对的总赔偿额度以其中一份保单保额最高的保额为限。</span><br>-->
+            <!--                <span>2.本保险产品计划承保自由行、自驾、高原地区和高风险运动。</span><br>-->
+            <!--                <span>3.承包地域不包括战争恐怖地区。具体除外承包地域以<a class="link-type" href="http://baoxian.pingan.com/dangerous_zone/war.shtml">http://baoxian.pingan.com/dangerous_zone/war.shtml</a>所列国家为准。</span><br>-->
+            <!--                <span style="color: red;">4.务必下载右上方详细条款交于客户，并仔细阅读保单上的保障内容、特别约定及责任免除条款。</span><br>-->
+            <!--                <span>5.支持当天投保，投保2小时后生效。</span><br>-->
+            <!--              </td>-->
+            <!--            </tr>-->
           </table>
           <el-divider content-position="left">被保人列表</el-divider>
           <div class="filter-container" style="display: flex;align-items: center;">
@@ -269,7 +269,7 @@
               <!-- `checked` 为 true 或 false -->
               <el-checkbox v-model="temp.checked">我已详细阅读并理解</el-checkbox>
               <el-button type="text" @click="centerDialogVisible = true">投保注意事项</el-button> |
-              <el-link icon="el-icon-document" href="https://chaosmin-static.oss-cn-shanghai.aliyuncs.com/template/template_logo.png">保险条款</el-link>
+              <el-link icon="el-icon-document" :href="productPlan.clauseUrl">保险条款</el-link>
             </div>
             <br>
             <div style="text-align:center">
@@ -362,7 +362,14 @@
       </el-dialog>
 
       <el-dialog title="投保注意事项" :visible.sync="centerDialogVisible" width="30%" center>
-        <span>投保注意事项内容...</span>
+        <span>一、投保须知</span>
+        <span>1. 注意事项</span>
+        <span>您的保险合同是您和保险公司之间订立的具有法律效力的合同文件，请仔细阅读保险合同，若其中包含任何不正确的信息请立即告知本公司，否则您可能在索赔时无法获得保险金，并且或者您的保险合同可能会被宣布无效，而只能获得您保险期间所支付的无息保险费。为避免您不能从保险合同项下获得保险金的风险，您和所有被保险人应在投保单中如实披露所有您知道的（或应该知道的），关乎于本公司承保决定的重要事实。</span>
+        <span>2. 电子保单</span>
+        <span>为客户提供快捷投保和售后服务，投保、理赔一站式全流程体验。网上投保为您提供电子保单，根据《中华人民共和国合同法》第十一条规定，数据电文是合法的合同表现形式，电子保单具有法律效力。</span>
+        <span>二、投保人/被保险人声明</span>
+        <span>本人已经如实填报一切重要的有关资料，绝无隐瞒或保留任何重大事实以影响贵公司评估风险或接受本投保申请，并同意将本投保单及声明作为和本人所定合约的根据，并以保险条款为准。</span>
+        <span>本人已经理解并完整阅读以上须知及投保险种的保险条款，尤其是其中免除保险人责任的条款或者约定。</span>
         <span slot="footer" class="dialog-footer">
           <el-button size="mini" @click="centerDialogVisible = false">取 消</el-button>
           <el-button size="mini" type="primary" @click="setImage('投保须知');centerDialogVisible = false;temp.checked = true">我已阅读并确认</el-button>

@@ -24,18 +24,6 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <!-- <el-table-column prop="children" type="expand" width="100">
-        <template slot-scope="props">
-          <el-table :key="1" :data="props.row.insuredList">
-            <el-table-column prop="name" label="姓名" />
-            <el-table-column prop="gender" label="性别" />
-            <el-table-column prop="certiType" label="证件类型" />
-            <el-table-column prop="certiNo" label="证件号" />
-            <el-table-column prop="birthday" label="生日" />
-            <el-table-column prop="phoneNo" label="手机号" />
-          </el-table>
-        </template>
-      </el-table-column> -->
       <el-table-column v-if="false" label="ID" prop="id" sortable="custom" align="center">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
@@ -51,44 +39,39 @@
           <span>{{ row.policyNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="起保时间" width="140" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.effectiveTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="停保时间" width="140" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.expiryTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <!--      <el-table-column label="旅行目的地">-->
-      <!--        <template slot-scope="{row}">-->
-      <!--          <span>{{ row.travelDestination }}</span>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-      <el-table-column label="被保人数" width="80" align="center">
+      <el-table-column label="总人数" width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.insuredList.length }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单价保费" width="80" align="center">
+      <el-table-column label="起保时间" width="140" align="center">
         <template slot-scope="{row}">
-          <span>￥{{ row.unitPremium }}</span>
+          <span>{{ row.effectiveTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总保费" width="70" align="center">
+      <el-table-column label="终止时间" width="140" align="center">
         <template slot-scope="{row}">
-          <span>￥{{ row.totalPremium }}</span>
+          <span>{{ row.expiryTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="实收保费" width="80" align="center">
+      <el-table-column label="保险公司" width="120" align="center">
         <template slot-scope="{row}">
-          <span>￥{{ row.actualPremium }}</span>
+          <span>{{ row.partnerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="录入时间" width="140" align="center">
+      <el-table-column label="出单时间" width="140" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="出单人" width="105" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.creator }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="投保人" width="105" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.holder.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="保单状态" class-name="status-col" width="100">
@@ -98,24 +81,19 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="400" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="220" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;">
-            保单详情
+            详情
           </el-button>
           <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="handleKhsList(row.id)">
-            查看可回溯
+            可回溯
           </el-button>
           <el-link target="_blank" :href="row.epolicyUrl" :underline="false">
             <el-button v-waves class="filter-item" size="mini" style="margin-left: 5px;" type="primary" icon="el-icon-download">
-              下载电子保单
+              保单
             </el-button>
           </el-link>
-          <el-popconfirm v-if="row.status==='PROCESS'" title="您确定要重新推送该保单吗?">
-            <el-button slot="reference" size="mini" type="success" style="margin-left: 5px;">
-              重新推送保司
-            </el-button>
-          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -154,10 +132,8 @@ import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 const statusTypeOptions = [
-  { key: 'INIT', display_name: '待出单' },
-  { key: 'PROCESS', display_name: '出单中' },
-  { key: 'SUCCESS', display_name: '出单成功' },
-  { key: 'FAILED', display_name: '出单失败' }
+  { key: 'SUCCESS', display_name: '已承保' },
+  { key: 'REFUND', display_name: '已退保' }
 ]
 
 const khsTypeOptions = [
@@ -184,9 +160,8 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        'PROCESS': 'info',
         'SUCCESS': 'success',
-        'FAILED': 'danger'
+        'REFUND': 'danger'
       }
       return statusMap[status]
     },
@@ -209,13 +184,10 @@ export default {
         label: '全部',
         value: undefined
       }, {
-        label: '出单中',
-        value: 0
-      }, {
-        label: '出单成功',
+        label: '已承保',
         value: 1
       }, {
-        label: '出单失败',
+        label: '已退保',
         value: 2
       }],
       listQuery: {
