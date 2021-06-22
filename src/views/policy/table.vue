@@ -46,7 +46,7 @@
           <span>{{ row.orderNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保单号" width="190">
+      <el-table-column label="保单号">
         <template slot-scope="{row}">
           <span>{{ row.policyNo }}</span>
         </template>
@@ -61,22 +61,27 @@
           <span>{{ row.expiryTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="旅行目的地">
+      <!--      <el-table-column label="旅行目的地">-->
+      <!--        <template slot-scope="{row}">-->
+      <!--          <span>{{ row.travelDestination }}</span>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
+      <el-table-column label="被保人数" width="80" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.travelDestination }}</span>
+          <span>{{ row.insuredList.length }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="计划单价保费">
+      <el-table-column label="单价保费" width="80" align="center">
         <template slot-scope="{row}">
           <span>￥{{ row.unitPremium }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保单总保费">
+      <el-table-column label="总保费" width="70" align="center">
         <template slot-scope="{row}">
           <span>￥{{ row.totalPremium }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="实收保费">
+      <el-table-column label="实收保费" width="80" align="center">
         <template slot-scope="{row}">
           <span>￥{{ row.actualPremium }}</span>
         </template>
@@ -93,11 +98,19 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="400" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button slot="reference" size="mini" type="info" style="margin-left: 5px;" @click="handleKhsList(row.id)">
-            查看可回溯信息
+          <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;">
+            保单详情
           </el-button>
+          <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="handleKhsList(row.id)">
+            查看可回溯
+          </el-button>
+          <el-link target="_blank" :href="row.epolicyUrl" :underline="false">
+            <el-button v-waves class="filter-item" size="mini" style="margin-left: 5px;" type="primary" icon="el-icon-download">
+              下载电子保单
+            </el-button>
+          </el-link>
           <el-popconfirm v-if="row.status==='PROCESS'" title="您确定要重新推送该保单吗?">
             <el-button slot="reference" size="mini" type="success" style="margin-left: 5px;">
               重新推送保司
@@ -113,12 +126,12 @@
       <el-table key="khsList" :data="khsList" border fit style="width: 100%;">
         <el-table-column label="文件时间">
           <template slot-scope="{row}">
-            <span>{{ row.fileTime }}</span>
+            <span>{{ row.fileTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="文件类型">
           <template slot-scope="{row}">
-            <span>{{ row.khsType }}</span>
+            <span>{{ row.khsType | khsTypeFilter }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="left" class-name="small-padding fixed-width">
@@ -141,12 +154,25 @@ import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 const statusTypeOptions = [
+  { key: 'INIT', display_name: '待出单' },
   { key: 'PROCESS', display_name: '出单中' },
   { key: 'SUCCESS', display_name: '出单成功' },
   { key: 'FAILED', display_name: '出单失败' }
 ]
 
+const khsTypeOptions = [
+  { key: 'SCHEDULE', display_name: '定时截图' },
+  { key: 'POLICY_NOTICE', display_name: '阅读投保须知截图' },
+  { key: 'INSU_CLAUSES', display_name: '下载保险条款截图' },
+  { key: 'INSU_CONFIRM', display_name: '确认投保前截图' }
+]
+
 const statusTypeKeyValue = statusTypeOptions.reduce((acc, cur) => {
+  acc[cur.key] = cur.display_name
+  return acc
+}, {})
+
+const khsTypeKeyValue = khsTypeOptions.reduce((acc, cur) => {
   acc[cur.key] = cur.display_name
   return acc
 }, {})
@@ -166,6 +192,9 @@ export default {
     },
     valueFilter(type) {
       return statusTypeKeyValue[type]
+    },
+    khsTypeFilter(type) {
+      return khsTypeKeyValue[type]
     }
   },
   data() {
