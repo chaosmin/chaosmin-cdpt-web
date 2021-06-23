@@ -110,7 +110,7 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
-        <el-form-item label="所属机构" prop="departmentId">
+        <el-form-item v-if="departmentOptions.length > 0" label="所属机构" prop="departmentId">
           <el-select v-model="temp.departmentId" filterable placeholder="请选择" style="width: 200px" :disabled="dialogStatus==='update'">
             <el-option
               v-for="item in departmentOptions"
@@ -208,7 +208,6 @@ export default {
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
-        // EQ_departmentId: this.$store.getters.department,
         EQ_role_code: undefined,
         LIKE_username: undefined,
         EQ_user_creator: undefined,
@@ -241,6 +240,8 @@ export default {
   },
   created() {
     this.getList()
+    this.loadDepartmentOptions()
+    this.loadRoleOptions()
   },
   methods: {
     getList() {

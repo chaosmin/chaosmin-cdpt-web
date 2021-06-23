@@ -70,7 +70,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Admin',
       icon: 'peoples',
-      roles: ['administrator', 'manager']
+      roles: ['administrator', 'sales', 'manager']
     },
     children: [
       {
@@ -90,7 +90,7 @@ export const asyncRoutes = [
         meta: {
           title: 'User',
           icon: 'user',
-          roles: ['administrator', 'manager']
+          roles: ['administrator', 'sales', 'manager']
         }
       },
       {
@@ -123,7 +123,7 @@ export const asyncRoutes = [
     meta: {
       title: 'ProductCenter',
       icon: 'el-icon-collection',
-      roles: ['administrator', 'manager']
+      roles: ['administrator', 'sales', 'manager']
     },
     children: [
       {
@@ -193,7 +193,7 @@ export const asyncRoutes = [
         meta: {
           title: 'ProductAuthorization',
           icon: 'el-icon-s-check',
-          roles: ['administrator', 'manager']
+          roles: ['administrator', 'sales', 'manager']
         }
       }
     ]
@@ -206,7 +206,7 @@ export const asyncRoutes = [
     meta: {
       title: 'PolicyMgmt',
       icon: 'el-icon-document-copy',
-      roles: ['administrator', 'manager', 'officer']
+      roles: ['administrator', 'sales', 'manager', 'officer']
     },
     children: [
       {
@@ -216,19 +216,19 @@ export const asyncRoutes = [
         meta: {
           title: 'Policy',
           icon: 'el-icon-document-checked',
-          roles: ['administrator', 'manager', 'officer']
+          roles: ['administrator', 'sales', 'manager', 'officer']
+        }
+      },
+      {
+        path: '/orders',
+        component: resolve => require.ensure([], () => resolve(require('@/views/order/table')), 'Order'),
+        name: 'Order',
+        meta: {
+          title: 'Order',
+          icon: 'el-icon-document',
+          roles: ['administrator', 'sales', 'manager', 'officer']
         }
       }
-      // {
-      //   path: '/orders',
-      //   component: resolve => require.ensure([], () => resolve(require('@/views/order/table')), 'Order'),
-      //   name: 'Order',
-      //   meta: {
-      //     title: 'Order',
-      //     icon: 'el-icon-document',
-      //     roles: ['administrator', 'manager', 'officer']
-      //   }
-      // }
     ]
   },
   {
