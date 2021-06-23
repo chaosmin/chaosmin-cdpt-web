@@ -64,6 +64,7 @@
                 <el-date-picker
                   v-model="temp.startTime"
                   size="mini"
+                  value-format="timestamp"
                   type="datetime"
                   placeholder="请选择起保时间"
                   default-time="00:00:00"
@@ -78,6 +79,7 @@
                 <el-date-picker
                   v-model="temp.endTime"
                   size="mini"
+                  value-format="timestamp"
                   type="datetime"
                   placeholder="请选择终止时间"
                   default-time="23:59:59"
@@ -267,9 +269,9 @@
           <div v-if="productPlan">
             <div style="text-align:center">
               <!-- `checked` 为 true 或 false -->
-              <el-checkbox v-model="temp.checked">我已详细阅读并理解</el-checkbox>
+              <el-checkbox v-model="temp.checked" disabled>我已详细阅读并理解</el-checkbox>
               <el-button type="text" @click="centerDialogVisible = true">投保注意事项</el-button> |
-              <el-link icon="el-icon-document" :href="productPlan.clauseUrl">保险条款</el-link>
+              <el-link icon="el-icon-document" :href="productPlan.clauseUrl" target="_blank">保险条款</el-link>
             </div>
             <br>
             <div style="text-align:center">
@@ -362,13 +364,16 @@
       </el-dialog>
 
       <el-dialog title="投保注意事项" :visible.sync="centerDialogVisible" width="30%" center>
-        <span>一、投保须知</span>
-        <span>1. 注意事项</span>
-        <span>您的保险合同是您和保险公司之间订立的具有法律效力的合同文件，请仔细阅读保险合同，若其中包含任何不正确的信息请立即告知本公司，否则您可能在索赔时无法获得保险金，并且或者您的保险合同可能会被宣布无效，而只能获得您保险期间所支付的无息保险费。为避免您不能从保险合同项下获得保险金的风险，您和所有被保险人应在投保单中如实披露所有您知道的（或应该知道的），关乎于本公司承保决定的重要事实。</span>
-        <span>2. 电子保单</span>
-        <span>为客户提供快捷投保和售后服务，投保、理赔一站式全流程体验。网上投保为您提供电子保单，根据《中华人民共和国合同法》第十一条规定，数据电文是合法的合同表现形式，电子保单具有法律效力。</span>
-        <span>二、投保人/被保险人声明</span>
-        <span>本人已经如实填报一切重要的有关资料，绝无隐瞒或保留任何重大事实以影响贵公司评估风险或接受本投保申请，并同意将本投保单及声明作为和本人所定合约的根据，并以保险条款为准。</span>
+        <span style="font-size:16px;"><b>一、投保须知</b></span><br>
+        <br>
+        <span style="font-size:14px;">1. 注意事项</span><br>
+        <span>您的保险合同是您和保险公司之间订立的具有法律效力的合同文件，请仔细阅读保险合同，若其中包含任何不正确的信息请立即告知本公司，否则您可能在索赔时无法获得保险金，并且或者您的保险合同可能会被宣布无效，而只能获得您保险期间所支付的无息保险费。为避免您不能从保险合同项下获得保险金的风险，您和所有被保险人应在投保单中如实披露所有您知道的（或应该知道的），关乎于本公司承保决定的重要事实。</span><br>
+        <span style="font-size:14px;">2. 电子保单</span><br>
+        <span>为客户提供快捷投保和售后服务，投保、理赔一站式全流程体验。网上投保为您提供电子保单，根据《中华人民共和国合同法》第十一条规定，数据电文是合法的合同表现形式，电子保单具有法律效力。</span><br>
+        <br>
+        <span style="font-size:16px;"><b>二、投保人/被保险人声明</b></span><br>
+        <br>
+        <span>本人已经如实填报一切重要的有关资料，绝无隐瞒或保留任何重大事实以影响贵公司评估风险或接受本投保申请，并同意将本投保单及声明作为和本人所定合约的根据，并以保险条款为准。</span><br>
         <span>本人已经理解并完整阅读以上须知及投保险种的保险条款，尤其是其中免除保险人责任的条款或者约定。</span>
         <span slot="footer" class="dialog-footer">
           <el-button size="mini" @click="centerDialogVisible = false">取 消</el-button>
