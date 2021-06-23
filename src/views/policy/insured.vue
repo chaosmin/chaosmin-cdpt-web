@@ -709,7 +709,7 @@ export default {
         edit: true
       }
       insured.premium = unitPremium.toFixed(2)
-      insured.price = (unitPremium * ((100 - ratio) / 100)).toFixed(2)
+      insured.price = (unitPremium * ratio).toFixed(2)
       this.temp.insuredList.push(insured)
     },
     smartPaste() {
@@ -746,7 +746,7 @@ export default {
             }
           })
           insured.premium = unitPremium.toFixed(2)
-          insured.price = (unitPremium * ((100 - ratio) / 100)).toFixed(2)
+          insured.price = (unitPremium * ratio).toFixed(2)
           this.temp.insuredList.push(insured)
         }
       })
@@ -864,7 +864,7 @@ export default {
               }
               this.parseSFZ(data[num][3], insured)
               insured.premium = unitPremium.toFixed(2)
-              insured.price = (unitPremium * ((100 - ratio) / 100)).toFixed(2)
+              insured.price = (unitPremium * ratio).toFixed(2)
               this.temp.insuredList.push(insured)
             }
           }
