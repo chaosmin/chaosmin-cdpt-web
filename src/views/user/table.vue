@@ -32,7 +32,7 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.loginName }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="isAdmin" label="机构" align="center">
+      <el-table-column label="机构" align="center">
         <template slot-scope="{row}">
           <span>{{ row.department }}</span>
         </template>
@@ -110,7 +110,7 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
-        <el-form-item v-if="isAdmin" label="所属机构" prop="departmentId">
+        <el-form-item label="所属机构" prop="departmentId">
           <el-select v-model="temp.departmentId" filterable placeholder="请选择" style="width: 200px" :disabled="dialogStatus==='update'">
             <el-option
               v-for="item in departmentOptions"
@@ -135,7 +135,7 @@
         <el-form-item label="联系邮箱" prop="email">
           <el-input v-model="temp.email" />
         </el-form-item>
-        <el-form-item v-if="isAdmin" label="角色" prop="roleId">
+        <el-form-item label="角色" prop="roleId">
           <el-select v-model="temp.roleIds" multiple placeholder="请选择" style="width: 200px">
             <el-option
               v-for="item in roleOptions"
@@ -197,7 +197,6 @@ export default {
   },
   data() {
     return {
-      isAdmin: this.$store.getters.isAdmin,
       departmentOptions: [],
       roleOptions: [],
       showModifyInfo: false,
@@ -241,16 +240,7 @@ export default {
     }
   },
   created() {
-    if (!this.isAdmin) {
-      this.listQuery.EQ_user_creator = this.$store.getters.name
-    }
     this.getList()
-  },
-  mounted() {
-    if (this.isAdmin) {
-      this.loadDepartmentOptions()
-      this.loadRoleOptions()
-    }
   },
   methods: {
     getList() {
@@ -293,11 +283,6 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.temp.password = '123456'
-          if (!this.isAdmin) {
-            // 非超管创建的用户, 机构为创建者同机构, 角色为出单员
-            this.temp.departmentId = this.$store.getters.department
-            this.temp.roleId = 3
-          }
           createUser(this.temp).then(() => {
             this.dialogFormVisible = false
             this.$notify({
