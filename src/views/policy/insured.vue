@@ -894,3 +894,9 @@ div .el-tabs__content {
   padding-top: 5px;
 }
 </style>
+
+<style lang="scss">
+.date_picker .el-picker__footer .el-button--text {
+  display: none;
+}
+</style>

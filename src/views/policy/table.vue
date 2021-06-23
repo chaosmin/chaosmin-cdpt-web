@@ -100,28 +100,69 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.P_NUM" :limit.sync="listQuery.P_SIZE" @pagination="getList" />
 
-    <el-dialog title="可回溯文件列表" :visible.sync="policyKhsFormVisible" custom-class="customWidth">
-      <el-table key="khsList" :data="khsList" border fit style="width: 100%;">
-        <el-table-column label="文件时间">
-          <template slot-scope="{row}">
-            <span>{{ row.fileTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="文件类型">
-          <template slot-scope="{row}">
-            <span>{{ row.khsType | khsTypeFilter }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="left" class-name="small-padding fixed-width">
-          <template slot-scope="{row}">
-            <el-link target="_blank" :href="row.resourceUrl" :underline="false">
-              <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-download">
-                下载文件
-              </el-button>
-            </el-link>
-          </template>
-        </el-table-column>
-      </el-table>
+    <el-dialog title="查看投保流程" :visible.sync="policyKhsFormVisible" custom-class="customWidth">
+      <el-form ref="khsForm" label-position="right" label-width="130px" :inline="true" style="margin-left:20px;">
+        <el-row type="flex" class="row-bg">
+          <el-col>
+            <el-form-item label="订单号" prop="orderNo">
+              <el-input :v-model="khsObj.orderNo" :disabled="true" />
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="保单号" prop="policyNo">
+              <el-input :v-model="khsObj.policyNo" :disabled="true" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" class="row-bg">
+          <el-col>
+            <el-form-item label="投保人" prop="holderName">
+              <el-input :v-model="khsObj.holderName" :disabled="true" />
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="出单人" prop="issuerName">
+              <el-input :v-model="khsObj.issuerName" :disabled="true" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" class="row-bg">
+          <el-col>
+            <el-form-item label="进入投保页面时间" prop="enterPageTime">
+              <el-input :v-model="khsObj.enterPageTime" :disabled="true" />
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="离开投保页面时间" prop="leavePageTime">
+              <el-input :v-model="khsObj.leavePageTime" :disabled="true" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" class="row-bg">
+          <el-col>
+            <el-form-item label="阅读条款须知时间" prop="readTime">
+              <el-input :v-model="khsObj.readTime" :disabled="true" />
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="点击投保时间" prop="issueTime">
+              <el-input :v-model="khsObj.issueTime" :disabled="true" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" class="row-bg">
+          <el-col>
+            <el-form-item label="阅读条款须知截图" prop="readPicUrl">
+              <el-link icon="el-icon-document" :href="khsObj.readPicUrl" target="_blank">查看图片</el-link>
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="投保页面截图" prop="issuePicUrl">
+              <el-link icon="el-icon-document" :href="khsObj.issuePicUrl" target="_blank">查看图片</el-link>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -177,7 +218,18 @@ export default {
       loading: false,
       tableKey: 0,
       list: null,
-      khsList: null,
+      khsObj: {
+        orderNo: '',
+        policyNo: '',
+        holderName: '',
+        issuerName: '',
+        enterPageTime: '',
+        leavePageTime: '',
+        readTime: '',
+        issueTime: '',
+        readPicUrl: '',
+        issuePicUrl: ''
+      },
       total: 0,
       listLoading: true,
       statusOptions: [{
@@ -219,7 +271,7 @@ export default {
     },
     handleKhsList(id) {
       fetchPolicyKhs(id).then(response => {
-        this.khsList = response.data
+        this.khsObj = response.data
       })
       this.policyKhsFormVisible = true
     }
