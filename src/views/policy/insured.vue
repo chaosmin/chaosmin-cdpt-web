@@ -504,38 +504,32 @@ export default {
     },
     setStartAndEndTime(n) {
       if (n === 0) {
-        this.temp.startTime = new Date()
+        this.temp.startTime = new Date().getTime()
         this.setEndTime()
       } else {
-        this.temp.startTime = new Date(new Date(new Date(new Date().setDate(new Date().getDate() + n)).toLocaleDateString()).getTime())
+        this.temp.startTime = new Date(new Date(new Date().setDate(new Date().getDate() + n)).toLocaleDateString()).getTime()
         this.setEndTime()
       }
     },
     setEndTime() {
       const startTime = this.temp.startTime
-      this.temp.endTime = new Date(new Date(new Date(new Date().setDate(startTime.getDate() + this.temp.days)).toLocaleDateString()).getTime() - 1000)
+      this.temp.endTime = startTime + (this.temp.days * 24 * 3600 * 1000) - 1000
       this.updatePremiumInTable()
     },
     limitStartTime(date) {
       const oneDay = 1000 * 60 * 60 * 24
-      return date.getTime() < Date.now() + oneDay * (this.productPlan.waitingDays - 1)
+      return date < new Date().getTime() + oneDay * (this.productPlan.waitingDays - 1)
     },
     limitEndTime(date) {
       const oneDay = 1000 * 60 * 60 * 24
       const days = this.productPlan.goodsRateTable[this.productPlan.goodsRateTable.length - 1].dayEnd
-      const limitStartTime = new Date(this.temp.startTime.getTime() + (oneDay))
-      const limitEndTime = new Date(this.temp.startTime.getTime() + (oneDay * days))
-      return date.getTime() < limitStartTime || date.getTime() > limitEndTime
+      const limitStartTime = new Date(this.temp.startTime + (oneDay))
+      const limitEndTime = new Date(this.temp.startTime + (oneDay * days))
+      return date < limitStartTime || date > limitEndTime
     },
     changeEndTime() {
-      const number = Math.ceil((this.temp.endTime - this.temp.startTime) / 86400000)
-      let dayEnd = 0
-      this.productPlan.goodsRateTable.forEach(function(item, index) {
-        if (number >= item.dayStart && number <= item.dayEnd) {
-          dayEnd = item.dayEnd
-        }
-      })
-      this.temp.days = dayEnd
+      const number = Math.ceil(((this.temp.endTime + 1000) - this.temp.startTime)) / 1000 / 3600 / 24
+      this.temp.days = number
       this.updatePremiumInTable()
     },
     getBizNo() {
