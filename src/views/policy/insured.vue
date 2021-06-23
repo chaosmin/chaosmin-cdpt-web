@@ -476,6 +476,7 @@ export default {
   created() {
     this.getGoodsCategories()
     this.getBizNo()
+    this.setImage('定时截图')
   },
   methods: {
     setImage(step) {
@@ -499,6 +500,7 @@ export default {
           })
         }, 'image/jpeg')
       })
+      return true
     },
     setStartAndEndTime(n) {
       if (n === 0) {
@@ -648,10 +650,13 @@ export default {
             background: 'rgba(0, 0, 0, 0.7)'
           })
           // 创建确认投保截图
-          this.setImage('投保确认')
-          issuePolicy(this.temp).then(response => {
-            this.uploading.close()
-            this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
+          this.setImage('投保确认').then(response => {
+            if (response) {
+              issuePolicy(this.temp).then(response => {
+                this.uploading.close()
+                this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
+              })
+            }
           })
         }
       })
