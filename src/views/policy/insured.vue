@@ -691,10 +691,11 @@ export default {
               background: 'rgba(0, 0, 0, 0.7)'
             })
             issuePolicy(this.temp).then(response => {
-              this.uploading.close()
               if (response.success === true) {
                 this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
               }
+            }).finally(() => {
+              this.uploading.close()
             })
           }
         }
