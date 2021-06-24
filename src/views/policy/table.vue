@@ -34,42 +34,42 @@
           <span>{{ row.orderNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保单号">
+      <el-table-column label="保单号" align="center">
         <template slot-scope="{row}">
           <span>{{ row.policyNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总人数" width="80" align="center">
+      <el-table-column label="总人数" align="center">
         <template slot-scope="{row}">
           <span>{{ row.insuredList.length }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="起保时间" width="140" align="center">
+      <el-table-column label="起保时间" align="center">
         <template slot-scope="{row}">
           <span>{{ row.effectiveTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="终止时间" width="140" align="center">
+      <el-table-column label="终止时间" align="center">
         <template slot-scope="{row}">
           <span>{{ row.expiryTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保险公司" width="120" align="center">
+      <el-table-column label="保险公司" align="center">
         <template slot-scope="{row}">
           <span>{{ row.partnerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出单时间" width="140" align="center">
+      <el-table-column label="出单时间" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出单人" width="105" align="center">
+      <el-table-column label="出单人" align="center">
         <template slot-scope="{row}">
           <span>{{ row.creator }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="投保人" width="105" align="center">
+      <el-table-column label="投保人" align="center">
         <template slot-scope="{row}">
           <span>{{ row.holder.name }}</span>
         </template>
