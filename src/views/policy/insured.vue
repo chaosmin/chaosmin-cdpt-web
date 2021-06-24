@@ -630,6 +630,51 @@ export default {
             })
             return
           }
+          let skip = false
+          this.temp.insuredList.forEach((item, index) => {
+            if (item.name === undefined || item.name === '') {
+              this.$notify.error({
+                title: '错误',
+                message: '被保人[' + (index + 1) + ']的姓名不能为空'
+              })
+              skip = true
+              return
+            }
+            if (item.gender === undefined || item.gender === '') {
+              this.$notify.error({
+                title: '错误',
+                message: '被保人[' + (index + 1) + ']的性别不能为空'
+              })
+              skip = true
+              return
+            }
+            if (item.certiType === undefined || item.certiType === '') {
+              this.$notify.error({
+                title: '错误',
+                message: '被保人[' + (index + 1) + ']的证件类型不能为空'
+              })
+              skip = true
+              return
+            }
+            if (item.certiNo === undefined || item.certiNo === '') {
+              this.$notify.error({
+                title: '错误',
+                message: '被保人[' + (index + 1) + ']的证件号不能为空'
+              })
+              skip = true
+              return
+            }
+            if (item.dateOfBirth === undefined || item.dateOfBirth === '') {
+              this.$notify.error({
+                title: '错误',
+                message: '被保人[' + (index + 1) + ']的生日不能为空'
+              })
+              skip = true
+            }
+          })
+          if (skip) {
+            return
+          }
           if (this.temp.checked === false) {
             this.$notify.error({
               title: '错误',
@@ -647,7 +692,9 @@ export default {
             })
             issuePolicy(this.temp).then(response => {
               this.uploading.close()
-              this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
+              if (response.success === true) {
+                this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
+              }
             })
           }
         }
