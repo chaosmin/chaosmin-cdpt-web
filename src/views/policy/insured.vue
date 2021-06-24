@@ -522,9 +522,10 @@ export default {
     },
     limitEndTime(date) {
       const oneDay = 1000 * 60 * 60 * 24
-      const days = this.productPlan.goodsRateTable[this.productPlan.goodsRateTable.length - 1].dayEnd
-      const limitStartTime = new Date(this.temp.startTime + (oneDay))
-      const limitEndTime = new Date(this.temp.startTime + (oneDay * days))
+      // 获取最大天数
+      const maxDays = this.productPlan.goodsRateTable[this.productPlan.goodsRateTable.length - 1].dayEnd
+      const limitStartTime = new Date(this.temp.startTime)
+      const limitEndTime = new Date(this.temp.startTime + (oneDay * maxDays))
       return date < limitStartTime || date > limitEndTime
     },
     changeEndTime() {
@@ -637,21 +638,19 @@ export default {
             })
             return
           }
-          this.uploading = this.$loading({
-            lock: true,
-            text: '正在出单中, 请稍后...',
-            spinner: 'el-icon-loading',
-            background: 'rgba(0, 0, 0, 0.7)'
-          })
-          // 创建确认投保截图
-          this.setImage('投保确认').then(response => {
-            if (response) {
-              issuePolicy(this.temp).then(response => {
-                this.uploading.close()
-                this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
-              })
-            }
-          })
+          const success = this.setImage('投保确认')
+          if (success) {
+            this.uploading = this.$loading({
+              lock: true,
+              text: '正在出单中, 请稍后...',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            })
+            issuePolicy(this.temp).then(response => {
+              this.uploading.close()
+              this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
+            })
+          }
         }
       })
     },
