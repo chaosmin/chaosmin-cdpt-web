@@ -751,6 +751,7 @@ export default {
       insured.premium = unitPremium.toFixed(2)
       insured.price = (unitPremium * ratio).toFixed(2)
       this.temp.insuredList.push(insured)
+      this.updateUnitPremium()
     },
     smartPaste() {
       this.dialogSmartPasteFormVisible = false
