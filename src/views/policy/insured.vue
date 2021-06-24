@@ -385,8 +385,8 @@
 </template>
 
 <script>
-import { fetchGoodsCategories, fetchGoods, getBizNo, issuePolicy } from '@/api/insure'
-import { put, signatureUrl, getFileNameUUID } from '@/utils/oss'
+import { fetchGoods, fetchGoodsCategories, getBizNo, issuePolicy } from '@/api/insure'
+import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
 import { parseTime } from '@/utils'
 import waves from '@/directive/waves'
 import jschardet from 'jschardet'
@@ -529,8 +529,7 @@ export default {
       return date < limitStartTime || date > limitEndTime
     },
     changeEndTime() {
-      const number = Math.ceil(((this.temp.endTime + 1000) - this.temp.startTime)) / 1000 / 3600 / 24
-      this.temp.days = number
+      this.temp.days = Math.ceil(((this.temp.endTime + 1000) - this.temp.startTime)) / 1000 / 3600 / 24
       this.updatePremiumInTable()
     },
     getBizNo() {
