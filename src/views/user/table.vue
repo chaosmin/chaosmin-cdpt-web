@@ -233,7 +233,8 @@ export default {
       dialogPvVisible: false,
       rules: {
         loginName: [{ required: true, message: '请输入登录名', trigger: 'change' }],
-        username: [{ required: true, message: '请输入联系人名称', trigger: 'change' }]
+        username: [{ required: true, message: '请输入联系人名称', trigger: 'change' }],
+        roleIds: [{ required: true, message: '请分配角色', trigger: 'change' }]
       },
       downloadLoading: false
     }

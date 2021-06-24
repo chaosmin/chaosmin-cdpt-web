@@ -81,7 +81,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="220" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="280" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;">
             详情
@@ -94,6 +94,11 @@
               保单
             </el-button>
           </el-link>
+          <el-popconfirm v-if="row.status === 'SUCCESS' && afterNow(row.effectiveTime)" title="您确定取消该保单吗？" @onConfirm="cancelPolicy(row.id, row)">
+            <el-button slot="reference" size="mini" type="warning" style="margin-left: 5px;">
+              退保
+            </el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -168,7 +173,7 @@
 </template>
 
 <script>
-import { fetchPolicy, fetchPolicyKhs } from '@/api/policies'
+import { fetchPolicy, fetchPolicyKhs, cancelPolicy } from '@/api/policies'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -215,7 +220,7 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      uploading: undefined,
       tableKey: 0,
       list: null,
       khsObj: {
@@ -274,6 +279,37 @@ export default {
         this.khsObj = response.data
         this.policyKhsFormVisible = true
       })
+    },
+    cancelPolicy(id, row) {
+      this.uploading = this.$loading({
+        lock: true,
+        text: '正在操作中, 请稍后...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      cancelPolicy(id, {}).then(response => {
+        this.uploading.close()
+        if (response.success === true) {
+          row.status = 'REFUND'
+          this.$notify({
+            title: '成功',
+            message: '退保成功',
+            type: 'success',
+            duration: 2000
+          })
+        } else {
+          this.$notify({
+            title: '失败',
+            message: '退保失败',
+            type: 'danger',
+            duration: 2000
+          })
+        }
+      })
+    },
+    afterNow(date) {
+      const dateTime = Date.parse(date)
+      return dateTime > new Date().getTime()
     }
   }
 }

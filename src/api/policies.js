@@ -14,3 +14,11 @@ export function fetchPolicyKhs(id) {
     method: 'GET'
   })
 }
+
+export function cancelPolicy(id, data) {
+  return request({
+    url: `/v1/api/policies/${id}`,
+    method: 'PUT',
+    data
+  })
+}
