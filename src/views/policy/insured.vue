@@ -123,6 +123,9 @@
             <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="addNewInsured">
               添加被保人
             </el-button>
+            <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="warning" icon="el-icon-delete" @click="clearInsured">
+              清空被保人列表
+            </el-button>
             <el-button v-waves class="filter-item" size="mini" type="success" icon="el-icon-edit-outline" @click="dialogSmartPasteFormVisible = true">
               智能粘贴
             </el-button>
@@ -753,8 +756,16 @@ export default {
       this.temp.insuredList.push(insured)
       this.updateUnitPremium()
     },
+    clearInsured() {
+      // 清空被保人列表
+      this.temp.insuredList = []
+      // 更新保费合计
+      this.updateUnitPremium()
+    },
     smartPaste() {
       this.dialogSmartPasteFormVisible = false
+      // 清空被保人列表
+      this.temp.insuredList = []
       const unitPremium = this.temp.unitPremium
       const ratio = (100 - this.temp.comsRatio) / 100
       this.smartPasteText.split(/[\n]/).forEach(v => {
@@ -791,10 +802,12 @@ export default {
           this.temp.insuredList.push(insured)
         }
       })
+      // 更新保费合计
       this.updateUnitPremium()
     },
     deleteRow(row, index) {
       this.temp.insuredList.splice(index, 1)
+      // 更新保费合计
       this.updateUnitPremium()
     },
     confirmEdit(row) {
@@ -883,6 +896,8 @@ export default {
       fReader.readAsDataURL(file.raw)
       fReader.onload = evt => {
         const encoding = this.checkEncoding(evt.target.result)
+        // 清空被保人列表
+        this.temp.insuredList = []
         // 将csv转换成二维数组
         this.$papa.parse(file.raw, {
           encoding,
@@ -910,6 +925,8 @@ export default {
             }
           }
         })
+        // 更新保费合计
+        this.updateUnitPremium()
       }
     },
     checkEncoding(base64Str) {
