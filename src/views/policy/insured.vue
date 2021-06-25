@@ -914,7 +914,7 @@ export default {
                 gender: data[num][1],
                 certiType: data[num][2],
                 certiNo: data[num][3],
-                dateOfBirth: data[num][4],
+                dateOfBirth: Date.parse(data[num][4]),
                 mobile: data[num][5],
                 edit: false
               }
