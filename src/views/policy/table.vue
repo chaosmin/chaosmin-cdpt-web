@@ -64,6 +64,16 @@
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="保费(元)" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.totalPremium }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="结算保费(元)" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.actualPremium }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="出单人" align="center">
         <template slot-scope="{row}">
           <span>{{ row.creator }}</span>
@@ -250,6 +260,7 @@ export default {
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
+        O_policy_createTime: 0,
         EQ_policyNo: undefined
       },
       policyKhsFormVisible: false
