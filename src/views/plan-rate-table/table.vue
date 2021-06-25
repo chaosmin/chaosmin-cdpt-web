@@ -19,7 +19,7 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="所属计划" align="center" width="100px">
+      <el-table-column label="所属计划" align="center" width="135px">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.productPlanCode }}</span>
         </template>
@@ -42,6 +42,11 @@
       <el-table-column label="保费(元)" align="center">
         <template slot-scope="{row}">
           <span>{{ row.premium }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="展示文本" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.remark }}</span>
         </template>
       </el-table-column>
       <el-table-column v-if="false" label="保费币种" align="center">
@@ -70,6 +75,9 @@
         </el-form-item>
         <el-form-item label="保费" prop="premium">
           <el-input v-model="temp.premium" />
+        </el-form-item>
+        <el-form-item label="展示文本" prop="remark">
+          <el-input v-model="temp.remark" />
         </el-form-item>
         <el-form-item label="保费币种" prop="premiumCurrency">
           <el-input v-model="temp.premiumCurrency" />
@@ -127,6 +135,7 @@ export default {
         dayStart: undefined,
         dayEnd: undefined,
         premium: undefined,
+        remark: undefined,
         premiumCurrency: undefined,
         sort: undefined
       },
@@ -141,7 +150,8 @@ export default {
         productPlanCode: [{ required: true, message: '计划编码不能为空', trigger: 'change' }],
         dayStart: [{ required: true, message: '天数起不能为空', trigger: 'change' }],
         dayEnd: [{ required: true, message: '天数止不能为空', trigger: 'change' }],
-        premium: [{ required: true, message: '保费不能为空', trigger: 'change' }]
+        premium: [{ required: true, message: '保费不能为空', trigger: 'change' }],
+        remark: [{ required: true, message: '展示文本不能为空', trigger: 'change' }]
       }
     }
   },
