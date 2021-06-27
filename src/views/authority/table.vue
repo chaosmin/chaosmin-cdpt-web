@@ -111,7 +111,7 @@ import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 export default {
-  name: 'ComplexTable',
+  name: 'AuthorityTable',
   components: { Pagination },
   directives: { waves },
   data() {

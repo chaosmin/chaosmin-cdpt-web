@@ -394,6 +394,7 @@ export default {
     return {
       uuid: getFileNameUUID(),
       uploading: undefined,
+      timer: undefined,
       text: '',
       dialogSmartPasteFormVisible: false,
       centerDialogVisible: false,
@@ -472,7 +473,14 @@ export default {
   created() {
     this.getGoodsCategories()
     this.getBizNo()
-    this.setImage('定时截图')
+    this.temp.khsUrl.push({
+      'type': '进入页面',
+      'time': new Date(),
+      'url': ''
+    })
+  },
+  beforeDestroy() {
+    clearTimeout(this.timer)
   },
   methods: {
     setImage(step) {
@@ -496,7 +504,6 @@ export default {
           })
         }, 'image/jpeg')
       })
-      return true
     },
     setStartAndEndTime(n) {
       if (n === 0) {
@@ -553,12 +560,10 @@ export default {
       this.listQuery.EQ_categorySubName = subCategory
       fetchUserGoods(this.$store.getters.userId, this.listQuery).then(response => {
         this.goodsPlanList = response.data
-        console.log('list:' + this.goodsPlanList[0].id)
         this.partners = Array.from(new Set(this.goodsPlanList.map((v, i) => {
           return v.partnerName
         })))
         this.partner = this.partners[0]
-        console.log('partner:' + this.partner)
         this.changePartner()
       })
     },
@@ -567,7 +572,6 @@ export default {
       this.currentGoodsPlanList = this.goodsPlanList.filter(function(v) {
         return v.partnerName === currentPartner
       })
-      console.log('changePartner left:' + this.currentGoodsPlanList.length)
       this.temp.goodsPlanId = this.currentGoodsPlanList[0].id
       this.changeGoodsPlan()
     },
@@ -576,7 +580,6 @@ export default {
       this.goodsPlan = this.goodsPlanList.filter(function(v) {
         return v.id === goodsPlanId
       })[0]
-      console.log(this.goodsPlan)
       this.temp.comsRatio = this.goodsPlan.comsRatio
       this.setStartAndEndTime(this.goodsPlan.waitingDays)
       this.updatePremiumInTable()
@@ -683,23 +686,24 @@ export default {
             })
             return
           }
-          const success = this.setImage('投保确认')
-          if (success) {
-            this.uploading = this.$loading({
-              lock: true,
-              text: '正在出单中, 请稍后...',
-              spinner: 'el-icon-loading',
-              background: 'rgba(0, 0, 0, 0.7)'
-            })
-            issuePolicy(this.temp).then(response => {
-              if (response.success === true) {
-                this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
-              }
-            }).finally(() => {
-              this.uploading.close()
-            })
-          }
+          this.setImage('投保确认')
+          this.uploading = this.$loading({
+            lock: true,
+            text: '正在出单中, 请稍后...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          })
+          this.timer = setTimeout(this.createPolicy, 1000)
         }
+      })
+    },
+    createPolicy() {
+      issuePolicy(this.temp).then(response => {
+        if (response.success === true) {
+          this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
+        }
+      }).finally(() => {
+        this.uploading.close()
       })
     },
     classGroup(category) {
