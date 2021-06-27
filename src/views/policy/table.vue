@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.EQ_policyNo" placeholder="保单号" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.EQ_policyNo" placeholder="保单号" style="width: 180px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.EQ_policy_status" placeholder="保单状态" style="width: 180px;margin-left: 10px;" class="filter-item" @change="handleFilter">
         <el-option
           v-for="item in statusOptions"
@@ -41,7 +41,7 @@
       </el-table-column>
       <el-table-column label="总人数" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.insuredList.length }}</span>
+          <span>{{ row.insuredSize }}</span>
         </template>
       </el-table-column>
       <el-table-column label="起保时间" align="center">
@@ -56,7 +56,7 @@
       </el-table-column>
       <el-table-column label="保险公司" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.partnerName }}</span>
+          <span>{{ row.goodsPlan.partnerName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出单时间" align="center">
@@ -93,7 +93,7 @@
       </el-table-column>
       <el-table-column label="操作" align="left" width="280" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;">
+          <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="goToDetail(row.orderNo)">
             详情
           </el-button>
           <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="handleKhsList(row.id)">
@@ -321,6 +321,9 @@ export default {
     afterNow(date) {
       const dateTime = Date.parse(date)
       return dateTime > new Date().getTime()
+    },
+    goToDetail(orderNo) {
+      this.$router.push({ name: 'PolicyDetail', params: { orderNo: orderNo }})
     }
   }
 }

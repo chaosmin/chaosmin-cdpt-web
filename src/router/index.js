@@ -137,16 +137,6 @@ export const asyncRoutes = [
         }
       },
       {
-        path: '/product-categories',
-        component: resolve => require.ensure([], () => resolve(require('@/views/product-category/table')), 'ProductCategory'),
-        name: 'ProductCategory',
-        meta: {
-          title: 'ProductCategory',
-          icon: 'el-icon-crop',
-          roles: ['administrator']
-        }
-      },
-      {
         path: '/products',
         component: resolve => require.ensure([], () => resolve(require('@/views/product/table')), 'Product'),
         name: 'Product',
@@ -170,9 +160,9 @@ export const asyncRoutes = [
         path: '/plan-liabilities',
         component: resolve => require.ensure([], () => resolve(require('@/views/plan-liability/table')), 'Liability'),
         name: 'Liability',
+        hidden: true,
         meta: {
           title: 'Liability',
-          icon: 'el-icon-paperclip',
           roles: ['administrator']
         }
       },
@@ -180,9 +170,9 @@ export const asyncRoutes = [
         path: '/plan-rate-table',
         component: resolve => require.ensure([], () => resolve(require('@/views/plan-rate-table/table')), 'RateTable'),
         name: 'RateTable',
+        hidden: true,
         meta: {
           title: 'RateTable',
-          icon: 'el-icon-coin',
           roles: ['administrator']
         }
       },
@@ -220,6 +210,16 @@ export const asyncRoutes = [
         }
       },
       {
+        path: '/policy-detail',
+        component: resolve => require.ensure([], () => resolve(require('@/views/policy/detail')), 'PolicyDetail'),
+        name: 'PolicyDetail',
+        hidden: true,
+        meta: {
+          title: 'PolicyDetail',
+          roles: ['administrator', 'sales', 'manager', 'officer']
+        }
+      },
+      {
         path: '/orders',
         component: resolve => require.ensure([], () => resolve(require('@/views/order/table')), 'Order'),
         name: 'Order',
@@ -240,7 +240,7 @@ export const asyncRoutes = [
         path: 'index',
         component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
         name: 'Insured',
-        meta: { title: 'Insured', icon: 'el-icon-document-add', roles: ['administrator', 'officer'] }
+        meta: { title: 'Insured', icon: 'el-icon-document-add', roles: ['officer'] }
       }
     ]
   },

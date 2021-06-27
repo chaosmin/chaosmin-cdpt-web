@@ -30,3 +30,18 @@ export function removeGoodsPlan(id) {
     method: 'DELETE'
   })
 }
+
+export function fetchUserCategories(id) {
+  return request({
+    url: `/v1/api/goods-plans/user/${id}/categories`,
+    method: 'get'
+  })
+}
+
+export function fetchUserGoods(id, query) {
+  return request({
+    url: `/v1/api/goods-plans/user/${id}`,
+    method: 'get',
+    params: query
+  })
+}

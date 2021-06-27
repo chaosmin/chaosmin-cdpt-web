@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function getPolicyDetail(orderNo) {
+  return request({
+    url: `/v1/api/policies/${orderNo}/detail`,
+    method: 'GET'
+  })
+}
+
 export function fetchPolicy(query) {
   return request({
     url: '/v1/api/policies',

@@ -18,7 +18,7 @@
       </el-menu>
     </el-aside>
     <div ref="imageTofile">
-      <el-main v-if="productPlan">
+      <el-main v-if="goodsPlan">
         <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true">
           <el-divider content-position="left">投保信息</el-divider>
           <table border="1" cellspacing="0" width="100%">
@@ -35,12 +35,12 @@
             <tr>
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>产品选择</span></td>
               <td colspan="5">
-                <el-select v-model="temp.productPlanId" size="mini" placeholder="请选择产品" style="width: 300px;" class="filter-item" @change="changeProductPlan">
+                <el-select v-model="temp.goodsPlanId" size="mini" placeholder="请选择产品" style="width: 300px;" class="filter-item" @change="changeGoodsPlan">
                   <el-option
-                    v-for="item in productPlans"
-                    :key="item.productPlanId"
+                    v-for="item in goodsPlanList"
+                    :key="item.id"
                     :label="'[' + item.productName+ ']-' + item.productPlanName + '-' + item.primaryCoverage"
-                    :value="item.productPlanId"
+                    :value="item.id"
                   />
                 </el-select>
               </td>
@@ -96,19 +96,9 @@
               </td>
               <td><span style="padding-left: 17px">团号/备注</span></td>
               <td colspan="2">
-                <el-input v-model="temp.remark" size="mini" placeholder="请输入内容" />
+                <el-input v-model="temp.groupNo" size="mini" placeholder="请输入内容" />
               </td>
             </tr>
-            <!--            <tr>-->
-            <!--              <td><span style="padding-left: 17px">投保提示</span></td>-->
-            <!--              <td colspan="5">-->
-            <!--                <span>1.投保范围：被保险人为0天至85周岁、身体健康、能正常工作或正常生活的自然人，若多份保单保险期间重叠，我司对的总赔偿额度以其中一份保单保额最高的保额为限。</span><br>-->
-            <!--                <span>2.本保险产品计划承保自由行、自驾、高原地区和高风险运动。</span><br>-->
-            <!--                <span>3.承包地域不包括战争恐怖地区。具体除外承包地域以<a class="link-type" href="http://baoxian.pingan.com/dangerous_zone/war.shtml">http://baoxian.pingan.com/dangerous_zone/war.shtml</a>所列国家为准。</span><br>-->
-            <!--                <span style="color: red;">4.务必下载右上方详细条款交于客户，并仔细阅读保单上的保障内容、特别约定及责任免除条款。</span><br>-->
-            <!--                <span>5.支持当天投保，投保2小时后生效。</span><br>-->
-            <!--              </td>-->
-            <!--            </tr>-->
           </table>
           <el-divider content-position="left">被保人列表</el-divider>
           <div class="filter-container" style="display: flex;align-items: center;">
@@ -214,9 +204,9 @@
             </el-table-column>
             <el-table-column label="操作" align="left" width="140px" class-name="small-padding fixed-width">
               <template slot-scope="{row,$index}">
-                <el-button v-if="row.edit" type="success" size="mini" icon="el-icon-circle-check-outline" @click="confirmEdit(row)">确认</el-button>
-                <el-button v-else type="primary" size="mini" icon="el-icon-edit" @click="row.edit=!row.edit">编辑</el-button>
-                <el-button type="danger" size="mini" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)">删除</el-button>
+                <el-button v-if="row.edit" type="success" size="mini" icon="el-icon-check" @click="confirmEdit(row)" />
+                <el-button v-else type="primary" size="mini" icon="el-icon-edit" @click="row.edit=!row.edit" />
+                <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)" />
               </template>
             </el-table-column>
           </el-table>
@@ -269,12 +259,12 @@
             </tr>
           </table>
           <br>
-          <div v-if="productPlan">
+          <div v-if="goodsPlan">
             <div style="text-align:center">
               <!-- `checked` 为 true 或 false -->
               <el-checkbox v-model="temp.checked" disabled>我已详细阅读并理解</el-checkbox>
               <el-button type="text" @click="centerDialogVisible = true">投保注意事项</el-button> |
-              <el-link icon="el-icon-document" :href="productPlan.clauseUrl" target="_blank">保险条款</el-link>
+              <el-link icon="el-icon-document" :href="goodsPlan.clauseUrl" target="_blank">保险条款</el-link>
             </div>
             <br>
             <div style="text-align:center">
@@ -283,13 +273,13 @@
             </div>
           </div>
           <br>
-          <div v-if="productPlan">
+          <div v-if="goodsPlan">
             <el-table
-              :data="productPlan.goodsLiabilities"
+              :data="goodsPlan.liabilities"
               :span-method="spanMethod"
               style="width: 100%;font-size: 12px"
             >
-              <el-table-column align="center" :label="'[' + productPlan.productName+ ']-' + productPlan.productPlanName + '-' + productPlan.primaryCoverage">
+              <el-table-column align="center" :label="'[' + goodsPlan.productName+ ']-' + goodsPlan.productPlanName + '-' + goodsPlan.primaryCoverage">
                 <el-table-column
                   align="center"
                   prop="liabilityCategory"
@@ -308,7 +298,7 @@
               </el-table-column>
             </el-table>
             <el-table
-              :data="productPlan.goodsRateTable"
+              :data="goodsPlan.rateTable"
               style="width: 100%;font-size: 12px"
             >
               <el-table-column align="center" label="保障金额/人 （人民币：元）">
@@ -325,7 +315,7 @@
               </el-table-column>
             </el-table>
             <br>
-            <div v-html="productPlan.productExternal" />
+            <div v-html="goodsPlan.productExternal" />
           </div>
         </el-form>
       </el-main>
@@ -388,7 +378,8 @@
 </template>
 
 <script>
-import { fetchGoods, fetchGoodsCategories, getBizNo, issuePolicy } from '@/api/insure'
+import { getBizNo, issuePolicy } from '@/api/insure'
+import { fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
 import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
 import { parseTime } from '@/utils'
 import waves from '@/directive/waves'
@@ -414,14 +405,14 @@ export default {
       dateSelectionOption: [],
       temp: {
         orderId: undefined,
-        productPlanId: undefined,
         orderNo: undefined,
+        goodsPlanId: undefined,
         khsUrl: [],
         days: 1,
         startTime: undefined,
         endTime: undefined,
         address: undefined,
-        remark: undefined,
+        groupNo: undefined,
         insuredList: [],
         policyHolderName: undefined,
         policyHolderCerti: undefined,
@@ -433,13 +424,14 @@ export default {
         checked: false
       },
       listQuery: {
-        EQ_productCategory_id: undefined
+        EQ_categoryName: undefined,
+        EQ_categorySubName: undefined
       },
-      list: [],
       fileList: [],
       categories: [],
-      productPlan: undefined,
-      productPlans: [],
+      goodsPlan: undefined,
+      goodsPlanList: [],
+      currentGoodsPlanList: [],
       partner: undefined,
       partners: [],
       genderOptions: [
@@ -473,7 +465,7 @@ export default {
   },
   computed: {
     groupNum() {
-      return new Set(this.productPlan.goodsLiabilities.map(o => o.liabilityCategory))
+      return new Set(this.goodsPlan.liabilities.map(o => o.liabilityCategory))
     }
   },
   created() {
@@ -521,12 +513,12 @@ export default {
     },
     limitStartTime(date) {
       const oneDay = 1000 * 60 * 60 * 24
-      return date < new Date().getTime() + oneDay * (this.productPlan.waitingDays - 1)
+      return date < new Date().getTime() + oneDay * (this.goodsPlan.waitingDays - 1)
     },
     limitEndTime(date) {
       const oneDay = 1000 * 60 * 60 * 24
       // 获取最大天数
-      const maxDays = this.productPlan.goodsRateTable[this.productPlan.goodsRateTable.length - 1].dayEnd
+      const maxDays = this.goodsPlan.rateTable[this.goodsPlan.rateTable.length - 1].dayEnd
       const limitStartTime = new Date(this.temp.startTime)
       const limitEndTime = new Date(this.temp.startTime + (oneDay * maxDays))
       return date < limitStartTime || date > limitEndTime
@@ -543,7 +535,7 @@ export default {
       }
     },
     getGoodsCategories() {
-      fetchGoodsCategories().then(response => {
+      fetchUserCategories(this.$store.getters.userId).then(response => {
         this.categories = response.data
         if (this.categories.length > 0) {
           const openMenu = []
@@ -551,43 +543,48 @@ export default {
             openMenu.push(item.id)
           })
           this.defaultMenu = openMenu
-          this.getGoodsPlan(this.categories[0].children[0].id)
+          this.getGoodsPlan(this.categories[0].id, this.categories[0].children[0].id)
         }
       })
     },
-    getGoodsPlan(categoryId) {
-      this.listQuery.EQ_productCategory_id = categoryId
-      fetchGoods(this.listQuery).then(response => {
-        this.list = response.data
-        this.partners = Array.from(new Set(this.list.map((v, i) => {
+    getGoodsPlan(category, subCategory) {
+      this.listQuery.EQ_categoryName = category
+      this.listQuery.EQ_categorySubName = subCategory
+      fetchUserGoods(this.$store.getters.userId, this.listQuery).then(response => {
+        this.goodsPlanList = response.data
+        console.log('list:' + this.goodsPlanList[0].id)
+        this.partners = Array.from(new Set(this.goodsPlanList.map((v, i) => {
           return v.partnerName
         })))
         this.partner = this.partners[0]
+        console.log('partner:' + this.partner)
         this.changePartner()
       })
     },
     changePartner() {
       const currentPartner = this.partner
-      this.productPlans = this.list.filter(function(v) {
+      this.currentGoodsPlanList = this.goodsPlanList.filter(function(v) {
         return v.partnerName === currentPartner
       })
-      this.temp.productPlanId = this.productPlans[0].productPlanId
-      this.changeProductPlan()
+      console.log('changePartner left:' + this.currentGoodsPlanList.length)
+      this.temp.goodsPlanId = this.currentGoodsPlanList[0].id
+      this.changeGoodsPlan()
     },
-    changeProductPlan() {
-      const productPlanId = this.temp.productPlanId
-      this.productPlan = this.productPlans.filter(function(v) {
-        return v.productPlanId === productPlanId
+    changeGoodsPlan() {
+      const goodsPlanId = this.temp.goodsPlanId
+      this.goodsPlan = this.goodsPlanList.filter(function(v) {
+        return v.id === goodsPlanId
       })[0]
-      this.temp.comsRatio = this.productPlan.comsRatio
-      this.setStartAndEndTime(this.productPlan.waitingDays)
+      console.log(this.goodsPlan)
+      this.temp.comsRatio = this.goodsPlan.comsRatio
+      this.setStartAndEndTime(this.goodsPlan.waitingDays)
       this.updatePremiumInTable()
       this.updateDateSelectionOption()
     },
     updateDateSelectionOption() {
       let max = 1
       let min = 99999
-      this.productPlan.goodsRateTable.forEach(function(item, index) {
+      this.goodsPlan.rateTable.forEach(function(item, index) {
         if (item.dayStart < min) {
           min = item.dayStart
         }
@@ -612,8 +609,8 @@ export default {
     updateUnitPremium() {
       let unitPremium = 0
       const days = this.temp.days
-      if (this.productPlan !== undefined && this.productPlan.goodsRateTable !== undefined) {
-        this.productPlan.goodsRateTable.forEach(function(item, index) {
+      if (this.goodsPlan !== undefined && this.goodsPlan.rateTable !== undefined) {
+        this.goodsPlan.rateTable.forEach(function(item, index) {
           if (days >= item.dayStart && days <= item.dayEnd) {
             unitPremium = item.premium
           }
@@ -705,7 +702,7 @@ export default {
       })
     },
     classGroup(category) {
-      return this.productPlan.goodsLiabilities.filter(o => o.liabilityCategory === category).length
+      return this.goodsPlan.liabilities.filter(o => o.liabilityCategory === category).length
     },
     classNameLen(name) {
       const tmp = Array.from(this.groupNum)

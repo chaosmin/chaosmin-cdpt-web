@@ -1,20 +1,5 @@
 import request from '@/utils/request'
 
-export function fetchGoodsCategories() {
-  return request({
-    url: '/v1/api/insure/goods-categories',
-    method: 'get'
-  })
-}
-
-export function fetchGoods(query) {
-  return request({
-    url: '/v1/api/insure/goods',
-    method: 'get',
-    params: query
-  })
-}
-
 export function getBizNo() {
   return request({
     url: 'v1/api/insure/biz-no',

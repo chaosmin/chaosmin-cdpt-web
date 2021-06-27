@@ -11,6 +11,7 @@ export default {
     PolicyMgmt: '保单服务',
     Insured: '投保',
     Policy: '保单管理',
+    PolicyDetail: '保单详情',
     Order: '订单管理',
     ProductCenter: '产品中心',
     ProductCategory: '产品大类',
