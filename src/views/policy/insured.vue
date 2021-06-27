@@ -269,7 +269,7 @@
             <br>
             <div style="text-align:center">
               <el-button type="primary" size="mini" @click="issuePolicy">确定投保</el-button>
-              <el-button size="mini">存草稿</el-button>
+              <el-button size="mini" @click="saveToDraftBox">存草稿</el-button>
             </div>
           </div>
           <br>
@@ -379,6 +379,7 @@
 
 <script>
 import { getBizNo, issuePolicy } from '@/api/insure'
+import { saveDraft } from '@/api/orders'
 import { fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
 import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
 import { parseTime } from '@/utils'
@@ -925,6 +926,16 @@ export default {
         // 更新保费合计
         this.updateUnitPremium()
       }
+    },
+    saveToDraftBox() {
+      saveDraft(this.temp.orderNo, this.temp).then(response => {
+        this.$notify({
+          title: '成功',
+          message: '保存草稿箱成功',
+          type: 'success',
+          duration: 2000
+        })
+      })
     },
     checkEncoding(base64Str) {
       // 这种方式得到的是一种二进制串

@@ -7,3 +7,18 @@ export function fetchOrder(query) {
     params: query
   })
 }
+
+export function loadDraft(orderNo) {
+  return request({
+    url: `/v1/api/orders/${orderNo}/draft-box`,
+    method: 'GET'
+  })
+}
+
+export function saveDraft(orderNo, data) {
+  return request({
+    url: `/v1/api/orders/${orderNo}/draft-box`,
+    method: 'POST',
+    data
+  })
+}
