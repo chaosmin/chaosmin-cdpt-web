@@ -378,7 +378,7 @@
 </template>
 
 <script>
-import { getBizNo, issuePolicy } from '@/api/insure'
+import { getBizNo, issuePolicy, saveKhsImg } from '@/api/insure'
 import { saveDraft } from '@/api/orders'
 import { fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
 import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
@@ -409,7 +409,6 @@ export default {
         orderId: undefined,
         orderNo: undefined,
         goodsPlanId: undefined,
-        khsUrl: [],
         days: 1,
         startTime: undefined,
         endTime: undefined,
@@ -473,11 +472,7 @@ export default {
   created() {
     this.getGoodsCategories()
     this.getBizNo()
-    this.temp.khsUrl.push({
-      'type': '进入页面',
-      'time': new Date(),
-      'url': ''
-    })
+    saveKhsImg(this.temp.orderNo, { 'type': '进入页面', 'time': new Date(), 'url': '' })
   },
   beforeDestroy() {
     clearTimeout(this.timer)
@@ -494,12 +489,7 @@ export default {
         canvas.toBlob((blobObj) => {
           put(`${dateStr}/${objName}`, blobObj).then(_ => {
             signatureUrl(`${dateStr}/${objName}`).then(res => {
-              const data = {
-                'type': step,
-                'time': date,
-                'url': res.split('?')
-              }
-              this.temp.khsUrl.push(data)
+              saveKhsImg(this.temp.orderNo, { 'type': step, 'time': date, 'url': res.split('?')[0] })
             })
           })
         }, 'image/jpeg')
@@ -693,17 +683,14 @@ export default {
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
           })
-          this.timer = setTimeout(this.createPolicy, 1000)
+          issuePolicy(this.temp).then(response => {
+            if (response.success === true) {
+              this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
+            }
+          }).finally(() => {
+            this.uploading.close()
+          })
         }
-      })
-    },
-    createPolicy() {
-      issuePolicy(this.temp).then(response => {
-        if (response.success === true) {
-          this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
-        }
-      }).finally(() => {
-        this.uploading.close()
       })
     },
     classGroup(category) {
@@ -788,7 +775,7 @@ export default {
               } else if (this.isGender(s)) {
                 insured.gender = this.formatGender(s)
               } else if (this.isDateOfBirth(s)) {
-                insured.dateOfBirth = s
+                insured.dateOfBirth = Date.parse(s)
               } else if (this.isPhoneNumber(s)) {
                 insured.mobile = s
               } else if (this.isCertiNo(s)) {

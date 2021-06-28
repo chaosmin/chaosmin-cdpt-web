@@ -14,3 +14,11 @@ export function issuePolicy(data) {
     data
   })
 }
+
+export function saveKhsImg(orderNo, data) {
+  return request({
+    url: `/v1/api/insure/${orderNo}/khs`,
+    method: 'POST',
+    data
+  })
+}
