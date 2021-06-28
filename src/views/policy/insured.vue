@@ -262,9 +262,9 @@
           <div v-if="goodsPlan">
             <div style="text-align:center">
               <!-- `checked` 为 true 或 false -->
-              <el-checkbox v-model="temp.checked" disabled>我已详细阅读并理解</el-checkbox>
+              <el-checkbox v-model="checked" disabled>我已详细阅读并理解</el-checkbox>
               <el-button type="text" @click="centerDialogVisible = true">投保注意事项</el-button> |
-              <el-link icon="el-icon-document" :href="goodsPlan.clauseUrl" target="_blank">保险条款</el-link>
+              <el-button icon="el-icon-document" type="text" @click="pdfDialogVisible = true">保险条款</el-button>
             </div>
             <br>
             <div style="text-align:center">
@@ -370,10 +370,20 @@
         <span>本人已经理解并完整阅读以上须知及投保险种的保险条款，尤其是其中免除保险人责任的条款或者约定。</span>
         <span slot="footer" class="dialog-footer">
           <el-button size="mini" @click="centerDialogVisible = false">取 消</el-button>
-          <el-button size="mini" type="primary" @click="setImage('投保须知');centerDialogVisible = false;temp.checked = true">我已阅读并确认</el-button>
+          <el-button size="mini" type="primary" @click="confirmNotice">我已阅读并确认</el-button>
         </span>
       </el-dialog>
-    </div>
+
+      <el-dialog title="保险条款" :visible.sync="pdfDialogVisible" width="50%" center>
+        <div class="showPdf">
+          <iframe :src="goodsPlan.clauseUrl" width="100%" height="550px" />
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="mini" @click="pdfDialogVisible = false">取 消</el-button>
+          <el-button size="mini" type="primary" @click="confirmPdf">我已阅读并确认</el-button>
+        </span>
+      </el-dialog>
+    </div>7
   </el-container>
 </template>
 
@@ -398,7 +408,11 @@ export default {
       text: '',
       dialogSmartPasteFormVisible: false,
       centerDialogVisible: false,
+      pdfDialogVisible: false,
       smartPasteText: undefined,
+      check_1: false,
+      check_2: false,
+      checked: false,
       specialDateFormat: 'yyyy-mm-dd',
       rowStyle: {
         height: 12
@@ -421,8 +435,7 @@ export default {
         unitPremium: 0.00,
         totalPremium: 0.00,
         actualPremium: 0.00,
-        payMethod: 'MONTHLY',
-        checked: false
+        payMethod: 'MONTHLY'
       },
       listQuery: {
         EQ_categoryName: undefined,
@@ -671,10 +684,10 @@ export default {
           if (skip) {
             return
           }
-          if (this.temp.checked === false) {
+          if (this.checked === false) {
             this.$notify.error({
               title: '错误',
-              message: '请先阅读投保须知并勾选确认'
+              message: '请先阅读投保须知及保险条款并确认!'
             })
             return
           }
@@ -929,6 +942,20 @@ export default {
           duration: 2000
         })
       })
+    },
+    confirmNotice() {
+      this.setImage('投保须知')
+      this.centerDialogVisible = false
+      this.check_1 = true
+      this.checked = this.check_1 && this.check_2
+      console.log('c1:' + this.check_1 + ', c:' + this.checked)
+    },
+    confirmPdf() {
+      this.setImage('保险条款')
+      this.pdfDialogVisible = false
+      this.check_2 = true
+      this.checked = this.check_1 && this.check_2
+      console.log('c2:' + this.check_2 + ', c:' + this.checked)
     },
     checkEncoding(base64Str) {
       // 这种方式得到的是一种二进制串
