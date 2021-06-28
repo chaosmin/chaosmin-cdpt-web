@@ -240,7 +240,7 @@ export const asyncRoutes = [
         path: 'index',
         component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
         name: 'Insured',
-        meta: { title: 'Insured', icon: 'el-icon-document-add', roles: ['officer'] }
+        meta: { title: 'Insured', icon: 'el-icon-document-add', roles: ['administrator', 'officer'] }
       }
     ]
   },
