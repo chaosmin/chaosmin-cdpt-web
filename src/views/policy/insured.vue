@@ -472,7 +472,6 @@ export default {
   created() {
     this.getGoodsCategories()
     this.getBizNo()
-    saveKhsImg(this.temp.orderNo, { 'type': '进入页面', 'time': new Date(), 'url': '' })
   },
   beforeDestroy() {
     clearTimeout(this.timer)
@@ -574,8 +573,11 @@ export default {
       this.setStartAndEndTime(this.goodsPlan.waitingDays)
       this.updatePremiumInTable()
       this.updateDateSelectionOption()
+      // 每次切换产品时都记录一下进入页面时间
+      saveKhsImg(this.temp.orderNo, { 'type': '进入页面', 'time': new Date(), 'url': '' })
     },
     updateDateSelectionOption() {
+      this.dateSelectionOption = []
       let max = 1
       let min = 99999
       this.goodsPlan.rateTable.forEach(function(item, index) {
