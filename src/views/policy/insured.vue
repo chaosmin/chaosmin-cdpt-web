@@ -497,7 +497,7 @@ export default {
               const data = {
                 'type': step,
                 'time': date,
-                'url': res
+                'url': res.split('?')
               }
               this.temp.khsUrl.push(data)
             })

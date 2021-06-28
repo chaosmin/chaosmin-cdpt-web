@@ -168,16 +168,20 @@
         <el-row type="flex" class="row-bg">
           <el-col>
             <el-form-item label="阅读条款须知截图" prop="readPicUrl">
-              <el-link icon="el-icon-document" :href="khsObj.readPicUrl" target="_blank">查看图片</el-link>
+              <el-link icon="el-icon-document" @click="openKhsImg('阅读条款须知截图', khsObj.readPicUrl)">查看图片</el-link>
             </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="投保页面截图" prop="issuePicUrl">
-              <el-link icon="el-icon-document" :href="khsObj.issuePicUrl" target="_blank">查看图片</el-link>
+            <el-form-item label="确认投保页面截图" prop="issuePicUrl">
+              <el-link icon="el-icon-document" @click="openKhsImg('确认投保页面截图', khsObj.issuePicUrl)">查看图片</el-link>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
+    </el-dialog>
+
+    <el-dialog :title="khsImgName" :visible.sync="khsImgFormVisible" custom-class="customWidth">
+      <el-image :src="khsImgUrl" alt="khsImg" />
     </el-dialog>
   </div>
 </template>
@@ -245,6 +249,8 @@ export default {
         readPicUrl: null,
         issuePicUrl: null
       },
+      khsImgName: undefined,
+      khsImgUrl: undefined,
       total: 0,
       listLoading: true,
       statusOptions: [{
@@ -263,7 +269,8 @@ export default {
         O_policy_createTime: 0,
         EQ_policyNo: undefined
       },
-      policyKhsFormVisible: false
+      policyKhsFormVisible: false,
+      khsImgFormVisible: false
     }
   },
   created() {
@@ -317,6 +324,11 @@ export default {
           })
         }
       })
+    },
+    openKhsImg(imgName, imgUrl) {
+      this.khsImgFormVisible = true
+      this.khsImgName = imgName
+      this.khsImgUrl = imgUrl
     },
     afterNow(date) {
       const dateTime = Date.parse(date)
