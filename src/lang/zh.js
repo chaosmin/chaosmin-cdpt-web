@@ -22,7 +22,9 @@ export default {
     ProductAuthorization: '产品授权',
     Knowledge: '知识库',
     Report: '报表管理',
-    DebitNote: '应收账单'
+    DebitNote: '应收账单',
+    SltComs: '个人佣金结算表',
+    SltCheck: '结算清单'
   },
   navbar: {
     logOut: '退出登录',

@@ -888,6 +888,7 @@ export default {
         return '女'
       }
     },
+    // 下载导入模板
     downloadTemplate() {
       const data = '姓名,性别,证件类型,证件号码,生日,手机'
       const filename = 'template.csv'
@@ -909,6 +910,7 @@ export default {
         }, 0)
       }
     },
+    // 读取模板内容
     handleChange(file, fileList) {
       const fReader = new FileReader()
       fReader.readAsDataURL(file.raw)

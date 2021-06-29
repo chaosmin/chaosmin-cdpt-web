@@ -252,17 +252,20 @@ export const asyncRoutes = [
     meta: {
       title: 'Report',
       icon: 'el-icon-tickets',
-      roles: ['administrator']
+      roles: ['administrator', 'officer']
     },
     children: [
       {
-        path: '/debitNotes',
-        name: 'DebitNote',
-        meta: {
-          title: 'DebitNote',
-          icon: 'el-icon-wallet',
-          roles: ['administrator']
-        }
+        path: '/sltCheck',
+        component: resolve => require.ensure([], () => resolve(require('@/views/report/sltcheck')), 'SltCheck'),
+        name: 'SltCheck',
+        meta: { title: 'SltCheck', icon: 'el-icon-wallet', roles: ['administrator'] }
+      },
+      {
+        path: '/sltComs',
+        component: resolve => require.ensure([], () => resolve(require('@/views/report/sltcoms')), 'SltComs'),
+        name: 'SltComs',
+        meta: { title: 'SltComs', icon: 'el-icon-wallet', roles: ['administrator', 'officer'] }
       }
     ]
   },

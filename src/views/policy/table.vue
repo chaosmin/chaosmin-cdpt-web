@@ -14,7 +14,9 @@
         搜索
       </el-button>
     </div>
+
     <el-divider content-position="left">保单</el-divider>
+
     <el-table
       :key="tableKey"
       v-loading="listLoading"
