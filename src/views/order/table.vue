@@ -68,9 +68,9 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="left" width="75px" class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="loadDraft(row.orderNo)">加载</el-button>
-        </template>
+        <!--        <template slot-scope="{row}">-->
+        <!--          <el-button size="mini" type="primary" @click="loadDraft(row.orderNo)">加载</el-button>-->
+        <!--        </template>-->
       </el-table-column>
     </el-table>
 

@@ -279,7 +279,7 @@
             <br>
             <div style="text-align:center">
               <el-button type="primary" size="mini" @click="issuePolicy">确定投保</el-button>
-              <el-button size="mini" @click="saveToDraftBox">存草稿</el-button>
+              <!--              <el-button size="mini" @click="saveToDraftBox">存草稿</el-button>-->
             </div>
           </div>
           <br>
