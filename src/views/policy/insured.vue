@@ -784,8 +784,8 @@ export default {
       const ratio = (100 - this.temp.comsRatio) / 100
       const insured = {
         name: '',
-        gender: '其他',
-        certiType: '其他',
+        gender: '男',
+        certiType: '身份证',
         certiNo: '',
         dateOfBirth: '',
         mobile: '',
