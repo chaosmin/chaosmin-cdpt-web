@@ -56,7 +56,7 @@
             <span>￥{{ policy.unitPremium }}</span>
           </el-table-column>
           <el-table-column label="结算价" width="75px" align="center">
-            <span>￥{{ policy.unitPremium * policy.comsRatio }}</span>
+            <span>￥{{ policy.unitPremium * (100 - policy.comsRatio) / 100 }}</span>
           </el-table-column>
         </el-table>
         <el-divider content-position="left">投保人信息</el-divider>
