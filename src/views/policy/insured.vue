@@ -406,6 +406,7 @@ import { parseTime } from '@/utils'
 import waves from '@/directive/waves'
 import jschardet from 'jschardet'
 import html2canvas from 'html2canvas'
+import { mapState } from 'vuex'
 
 export default {
   name: 'PolicyIndex',
@@ -491,6 +492,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      sidebar: state => state.app.sidebar
+    }),
     groupNum() {
       return new Set(this.goodsPlan.liabilities.map(o => o.liabilityCategory))
     }
@@ -498,6 +502,7 @@ export default {
   created() {
     this.getGoodsCategories()
     this.getBizNo()
+    this.sidebar.opened = false
   },
   beforeDestroy() {
     clearTimeout(this.timer)
