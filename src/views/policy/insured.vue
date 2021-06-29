@@ -714,7 +714,7 @@ export default {
           })
           issuePolicy(this.temp).then(response => {
             if (response.success === true) {
-              this.$router.push({ name: 'Policy', params: { policyNo: response.data.policyNo }})
+              this.$router.push({ name: 'Policy' })
             }
           }).finally(() => {
             this.uploading.close()
