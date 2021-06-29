@@ -35,7 +35,7 @@
             <tr>
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>产品选择</span></td>
               <td colspan="5">
-                <el-select v-model="temp.goodsPlanId" size="mini" placeholder="请选择产品" style="width: 300px;" class="filter-item" @change="changeGoodsPlan">
+                <el-select v-model="temp.goodsPlanId" size="mini" placeholder="请选择产品" style="width: 100%" class="filter-item" @change="changeGoodsPlan">
                   <el-option
                     v-for="item in goodsPlanList"
                     :key="item.id"
@@ -49,7 +49,7 @@
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险期限</span></td>
               <td>
                 <el-form-item prop="days" size="mini" style="margin-bottom: 0;">
-                  <el-select v-model="temp.days" size="mini" placeholder="请选择保障天数" @change="setEndTime">
+                  <el-select v-model="temp.days" size="mini" style="width: 100%" placeholder="请选择保障天数" @change="setEndTime">
                     <el-option
                       v-for="item in dateSelectionOption"
                       :key="item.value"
@@ -63,9 +63,11 @@
               <td>
                 <el-date-picker
                   v-model="temp.startTime"
+                  class="date_picker"
                   size="mini"
                   value-format="timestamp"
                   type="datetime"
+                  style="width: 100%"
                   placeholder="请选择起保时间"
                   default-time="00:00:00"
                   :clearable="false"
@@ -78,9 +80,11 @@
               <td>
                 <el-date-picker
                   v-model="temp.endTime"
+                  class="date_picker"
                   size="mini"
                   value-format="timestamp"
                   type="datetime"
+                  style="width: 100%"
                   placeholder="请选择终止时间"
                   default-time="23:59:59"
                   :editable="false"
@@ -97,6 +101,12 @@
               <td><span style="padding-left: 17px">团号/备注</span></td>
               <td colspan="2">
                 <el-input v-model="temp.groupNo" size="mini" placeholder="请输入内容" />
+              </td>
+            </tr>
+            <tr>
+              <td><span style="padding-left: 17px">投保提示</span></td>
+              <td colspan="5">
+                <div v-html="goodsPlan.insuranceNotice" />
               </td>
             </tr>
           </table>
@@ -216,13 +226,13 @@
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>公司名称</span></td>
               <td>
                 <el-form-item prop="policyHolderName" size="mini" style="margin-bottom: 0;">
-                  <el-input v-model="temp.policyHolderName" size="mini" style="width: 75%" placeholder="请输入投保公司名称" />
+                  <el-input v-model="temp.policyHolderName" size="mini" style="width: 100%" placeholder="请输入投保公司名称" />
                 </el-form-item>
               </td>
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>证件号码</span></td>
               <td>
                 <el-form-item prop="policyHolderCerti" size="mini" style="margin-bottom: 0;">
-                  <el-input v-model="temp.policyHolderCerti" size="mini" style="width: 75%" placeholder="请输入投保公司证件号" />
+                  <el-input v-model="temp.policyHolderCerti" size="mini" style="width: 100%" placeholder="请输入投保公司证件号" />
                 </el-form-item>
               </td>
             </tr>
@@ -383,7 +393,7 @@
           <el-button size="mini" type="primary" @click="confirmPdf">我已阅读并确认</el-button>
         </span>
       </el-dialog>
-    </div>7
+    </div>
   </el-container>
 </template>
 
@@ -443,7 +453,10 @@ export default {
       },
       fileList: [],
       categories: [],
-      goodsPlan: undefined,
+      goodsPlan: {
+        insuranceNotice: null,
+        productExternal: null
+      },
       goodsPlanList: [],
       currentGoodsPlanList: [],
       partner: undefined,
@@ -560,6 +573,7 @@ export default {
     getGoodsPlan(category, subCategory) {
       this.listQuery.EQ_categoryName = category
       this.listQuery.EQ_categorySubName = subCategory
+      this.goodsPlanList = []
       fetchUserGoods(this.$store.getters.userId, this.listQuery).then(response => {
         this.goodsPlanList = response.data
         this.partners = Array.from(new Set(this.goodsPlanList.map((v, i) => {
@@ -984,10 +998,8 @@ table {
 div .el-tabs__content {
   padding-top: 5px;
 }
-</style>
 
-<style lang="scss">
-.date_picker .el-picker__footer .el-button--text {
+.el-picker-panel__footer .el-button--text.el-picker-panel__link-btn {
   display: none;
 }
 </style>
