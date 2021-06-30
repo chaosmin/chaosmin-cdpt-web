@@ -2,6 +2,8 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.EQ_policyNo" placeholder="保单号" style="width: 180px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.LIKE_certiNo" placeholder="证件号" style="width: 180px;margin-left: 10px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_policyInsurant_name" placeholder="姓名" style="width: 180px;margin-left: 10px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.EQ_policy_status" placeholder="保单状态" style="width: 180px;margin-left: 10px;" class="filter-item" @change="handleFilter">
         <el-option
           v-for="item in statusOptions"
@@ -269,6 +271,9 @@ export default {
         P_NUM: 1,
         P_SIZE: 20,
         O_policy_createTime: 0,
+        LIKE_certiNo: undefined,
+        ALIKE_policyInsurant_name: undefined,
+        EQ_policy_status: undefined,
         EQ_policyNo: undefined
       },
       policyKhsFormVisible: false,
