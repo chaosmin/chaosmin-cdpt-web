@@ -59,7 +59,7 @@ export function validAlphabets(str) {
  * @returns {Boolean}
  */
 export function validNumber(str) {
-  const reg = /\d+$/
+  const reg = /\d+/
   return reg.test(str)
 }
 
