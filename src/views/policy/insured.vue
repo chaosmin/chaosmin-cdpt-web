@@ -481,13 +481,14 @@ export default {
         { label: '前往港澳通行证', value: '前往港澳通行证' },
         { label: '大陆居民往来台湾通行证', value: '大陆居民往来台湾通行证' },
         { label: '外国人居留证', value: '外国人居留证' },
-        { label: '未知个人证件', value: '未知个人证件' },
-        { label: '组织机构代码证', value: '组织机构代码证' },
-        { label: '税务登记证', value: '税务登记证' },
-        { label: '营业执照', value: '营业执照' },
-        { label: '统一社会信用代码', value: '统一社会信用代码' },
-        { label: '其他企业有效证件', value: '其他企业有效证件' },
-        { label: '未知企业证件', value: '未知企业证件' }
+        { label: '未知个人证件', value: '未知个人证件' }
+        // 2021-06-30 09:49:34 去除企业相关证件类型
+        // { label: '组织机构代码证', value: '组织机构代码证' },
+        // { label: '税务登记证', value: '税务登记证' },
+        // { label: '营业执照', value: '营业执照' },
+        // { label: '统一社会信用代码', value: '统一社会信用代码' },
+        // { label: '其他企业有效证件', value: '其他企业有效证件' },
+        // { label: '未知企业证件', value: '未知企业证件' }
       ],
       pickerStartOptions: {
         disabledDate: (date) => {
