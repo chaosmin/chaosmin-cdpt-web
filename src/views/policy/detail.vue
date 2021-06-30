@@ -30,6 +30,12 @@
             <td><span style="padding-left: 17px">团号/备注</span></td>
             <td colspan="2"><span>{{ policy.groupNo }}</span></td>
           </tr>
+          <tr>
+            <td><span style="padding-left: 17px">投保提示</span></td>
+            <td colspan="5">
+              <div v-html="policy.goodsPlan.insuranceNotice" />
+            </td>
+          </tr>
         </table>
         <el-divider content-position="left">被保人列表</el-divider>
         <el-table :data="policy.insuredList" border fit highlight-current-row style="width: 100%;" :header-row-style="rowStyle" :row-style="rowStyle">
@@ -171,7 +177,12 @@ export default {
       centerDialogVisible: false,
       defaultMenu: [],
       orderNo: this.$route.params.orderNo,
-      policy: undefined,
+      policy: {
+        insuredList: [],
+        goodsPlan: {
+          partnerName: null
+        }
+      },
       rowStyle: {
         height: 12
       }

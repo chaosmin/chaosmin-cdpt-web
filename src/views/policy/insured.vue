@@ -877,9 +877,10 @@ export default {
               if (validNumber(s)) {
                 // console.log('数字')
                 // 包含'日'或'月'或'年'或'-', 则定义为【生日】
-                if (/[\u65e5\u6708\u5e74-]+/.test(s)) {
+                if (/[/\u65e5\u6708\u5e74-]+/.test(s)) {
                   s = s.replace(/([\u6708\u5e74])/g, '-')
                   s = s.replace(/\u65e5/g, '')
+                  s = s.replace(/\//g, '-')
                   insured.dateOfBirth = Date.parse(s)
                   // 11位数字且1开头, 则定义为【手机号】
                 } else if (validPhoneNumber(s)) {
@@ -985,21 +986,30 @@ export default {
               data.pop()
             }
             const line = []
+            console.log('开始解析被保人清单模板文件, 共' + data.length + '条数据需要处理.')
             for (let num = 1; num < data.length; num++) {
-              const r = []
-              r.push(data[num][0])
-              r.push(data[num][1])
-              r.push(data[num][2])
-              r.push(data[num][3])
-              r.push(Date.parse(data[num][4]))
-              r.push(data[num][5])
-              line.push(r.join(' '))
+              if (data[num][0] !== '' && data[num][0] !== 'undefined') {
+                const r = []
+                // console.log('姓名: ' + data[num][0])
+                r.push(data[num][0])
+                // console.log('性别: ' + data[num][1])
+                r.push(data[num][1])
+                // console.log('证件类型: ' + data[num][2])
+                r.push(data[num][2])
+                // console.log('证件号: ' + data[num][3])
+                r.push(data[num][3])
+                // console.log('生日: ' + data[num][4])
+                r.push(data[num][4])
+                // console.log('手机号: ' + data[num][5])
+                r.push(data[num][5])
+                line.push(r.join(' '))
+              }
             }
             this.smartPasteText = line.join('\n')
+            this.smartPaste()
+            this.recalculatePremium()
           }
         })
-        this.smartPaste()
-        this.recalculatePremium()
       }
     },
     saveToDraftBox() {
