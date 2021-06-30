@@ -55,6 +55,45 @@ export function validAlphabets(str) {
 }
 
 /**
+ * @param {string} str
+ * @returns {Boolean}
+ */
+export function validNumber(str) {
+  const reg = /\d+$/
+  return reg.test(str)
+}
+
+/**
+ * @param {string} str
+ * @returns {Boolean}
+ */
+export function validPhoneNumber(str) {
+  const exp = /^[1][3,4,5,7,8,9][0-9]{9}$/
+  return exp.test(str)
+}
+
+/**
+ * @param {string} str
+ * @returns {Boolean}
+ */
+export function validGender(str) {
+  if (str === '男' || str === '男性') {
+    return true
+  }
+  if (str === '女' || str === '女性') {
+    return true
+  }
+  const v = str.toLowerCase()
+  if (v === 'male' || str === 'm') {
+    return true
+  }
+  if (str === 'female' || str === 'f') {
+    return true
+  }
+  return false
+}
+
+/**
  * @param {string} email
  * @returns {Boolean}
  */

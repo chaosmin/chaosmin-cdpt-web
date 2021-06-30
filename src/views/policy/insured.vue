@@ -398,10 +398,11 @@
 </template>
 
 <script>
-import { getBizNo, issuePolicy, saveKhsImg } from '@/api/insure'
 import { saveDraft } from '@/api/orders'
+import { getBizNo, issuePolicy, saveKhsImg } from '@/api/insure'
 import { fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
 import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
+import { validGender, validNumber, validPhoneNumber } from '@/utils/validate'
 import { parseTime } from '@/utils'
 import waves from '@/directive/waves'
 import jschardet from 'jschardet'
@@ -420,7 +421,7 @@ export default {
       dialogSmartPasteFormVisible: false,
       centerDialogVisible: false,
       pdfDialogVisible: false,
-      smartPasteText: undefined,
+      smartPasteText: '',
       check_1: false,
       check_2: false,
       checked: false,
@@ -526,6 +527,9 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    /**
+     * 可回溯页面截图上传oss并返回下载链接
+     */
     setImage(step) {
       const date = new Date()
       html2canvas(this.$refs.imageTofile, {
@@ -555,7 +559,7 @@ export default {
     setEndTime() {
       const startTime = this.temp.startTime
       this.temp.endTime = startTime + (this.temp.days * 24 * 3600 * 1000) - 1000
-      this.updatePremiumInTable()
+      this.recalculatePremium()
     },
     limitStartTime(date) {
       const oneDay = 1000 * 60 * 60 * 24
@@ -571,8 +575,11 @@ export default {
     },
     changeEndTime() {
       this.temp.days = Math.ceil(((this.temp.endTime + 1000) - this.temp.startTime)) / 1000 / 3600 / 24
-      this.updatePremiumInTable()
+      this.recalculatePremium()
     },
+    /**
+     * 生成后端唯一保单号
+     */
     getBizNo() {
       if (this.temp.orderNo === undefined) {
         getBizNo().then(response => {
@@ -580,6 +587,9 @@ export default {
         })
       }
     },
+    /**
+     * 获取当前用户可用的产品的分类信息
+     */
     getGoodsCategories() {
       fetchUserCategories(this.$store.getters.userId).then(response => {
         this.categories = response.data
@@ -589,44 +599,52 @@ export default {
             openMenu.push(item.id)
           })
           this.defaultMenu = openMenu
+          // 默认获取第一大类下第一分类的产品列表
           this.getGoodsPlan(this.categories[0].id, this.categories[0].children[0].id)
         }
       })
     },
+    /**
+     * 根据产品大类及产品分类获取该项目下的所有保险产品
+     */
     getGoodsPlan(category, subCategory) {
       this.listQuery.EQ_categoryName = category
       this.listQuery.EQ_categorySubName = subCategory
+      // 先清空当前产品列表
       this.goodsPlanList = []
       fetchUserGoods(this.$store.getters.userId, this.listQuery).then(response => {
         this.goodsPlanList = response.data
+        // 填充该分类下的保司列表
         this.partners = Array.from(new Set(this.goodsPlanList.map((v, i) => {
           return v.partnerName
         })))
+        // 默认第一个为当前选中保司
         this.partner = this.partners[0]
         this.changePartner()
       })
     },
+    /**
+     * 更换保险公司
+     */
     changePartner() {
-      const currentPartner = this.partner
-      this.currentGoodsPlanList = this.goodsPlanList.filter(function(v) {
-        return v.partnerName === currentPartner
+      console.log('current partner: ' + this.partner)
+      this.currentGoodsPlanList = this.goodsPlanList.filter(v => {
+        return v.partnerName === this.partner
       })
       this.temp.goodsPlanId = this.currentGoodsPlanList[0].id
       this.changeGoodsPlan()
     },
+    /**
+     * 更换产品后更新当前页面产品信息
+     */
     changeGoodsPlan() {
-      const goodsPlanId = this.temp.goodsPlanId
-      this.goodsPlan = this.goodsPlanList.filter(function(v) {
-        return v.id === goodsPlanId
+      console.log('current goodsPlan: ' + this.temp.goodsPlanId)
+      // 获取当前产品
+      this.goodsPlan = this.goodsPlanList.filter(v => {
+        return v.id === this.temp.goodsPlanId
       })[0]
       this.temp.comsRatio = this.goodsPlan.comsRatio
-      this.setStartAndEndTime(this.goodsPlan.waitingDays)
-      this.updatePremiumInTable()
-      this.updateDateSelectionOption()
-      // 每次切换产品时都记录一下进入页面时间
-      saveKhsImg(this.temp.orderNo, { 'type': '进入页面', 'time': new Date(), 'url': '' })
-    },
-    updateDateSelectionOption() {
+      // 更换产品刷新时间内范围
       this.dateSelectionOption = []
       let max = 1
       let min = 99999
@@ -642,30 +660,36 @@ export default {
         const option = { label: i + '天', value: i }
         this.dateSelectionOption.push(option)
       }
+      // 根据产品的等待期重设起止时间
+      this.setStartAndEndTime(this.goodsPlan.waitingDays)
+      // 每次切换产品时都记录一下进入页面时间
+      saveKhsImg(this.temp.orderNo, { 'type': '进入页面', 'time': new Date(), 'url': '' })
     },
-    updatePremiumInTable() {
-      this.updateUnitPremium()
-      const unitPremium = this.temp.unitPremium
-      const ratio = (100 - this.temp.comsRatio) / 100
-      this.temp.insuredList.forEach(function(item, index) {
-        item.premium = unitPremium.toFixed(2)
-        item.price = (unitPremium * ratio).toFixed(2)
-      })
-    },
-    updateUnitPremium() {
-      let unitPremium = 0
+    /**
+     * 更新单位保费及结算保费
+     * 更新被保人列表+保费总计栏
+     */
+    recalculatePremium() {
       const days = this.temp.days
+      const ratio = (100 - this.temp.comsRatio) / 100
       if (this.goodsPlan !== undefined && this.goodsPlan.rateTable !== undefined) {
-        this.goodsPlan.rateTable.forEach(function(item, index) {
+        this.goodsPlan.rateTable.forEach(item => {
           if (days >= item.dayStart && days <= item.dayEnd) {
-            unitPremium = item.premium
+            this.temp.unitPremium = item.premium
           }
         })
       }
-      this.temp.unitPremium = unitPremium
-      this.temp.totalPremium = (this.temp.insuredList.length * unitPremium).toFixed(2)
-      this.temp.actualPremium = (this.temp.totalPremium * ((100 - this.temp.comsRatio) / 100)).toFixed(2)
+      this.temp.totalPremium = (this.temp.insuredList.length * this.temp.unitPremium).toFixed(2)
+      this.temp.actualPremium = (this.temp.totalPremium * ratio).toFixed(2)
+      this.temp.insuredList.forEach(item => {
+        item.premium = this.temp.unitPremium.toFixed(2)
+        item.price = (this.temp.unitPremium * ratio).toFixed(2)
+      })
     },
+    /**
+     * 出单逻辑
+     * 出单完成后跳转至保单列表页面
+     */
     issuePolicy() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -745,6 +769,9 @@ export default {
         }
       })
     },
+    /**
+     * 合并单元格
+     */
     classGroup(category) {
       return this.goodsPlan.liabilities.filter(o => o.liabilityCategory === category).length
     },
@@ -780,9 +807,10 @@ export default {
         }
       }
     },
+    /**
+     * 手动添加新被保人
+     */
     addNewInsured() {
-      const unitPremium = this.temp.unitPremium
-      const ratio = (100 - this.temp.comsRatio) / 100
       const insured = {
         name: '',
         gender: '男',
@@ -792,65 +820,26 @@ export default {
         mobile: '',
         edit: true
       }
-      insured.premium = unitPremium.toFixed(2)
-      insured.price = (unitPremium * ratio).toFixed(2)
       this.temp.insuredList.push(insured)
-      this.updateUnitPremium()
+      this.recalculatePremium()
     },
-    clearInsured() {
-      // 清空被保人列表
-      this.temp.insuredList = []
-      // 更新保费合计
-      this.updateUnitPremium()
-    },
-    smartPaste() {
-      this.dialogSmartPasteFormVisible = false
-      // 清空被保人列表
-      this.temp.insuredList = []
-      const unitPremium = this.temp.unitPremium
-      const ratio = (100 - this.temp.comsRatio) / 100
-      this.smartPasteText.split(/[\n]/).forEach(v => {
-        if (v !== undefined && v !== '') {
-          const insured = {
-            name: '',
-            gender: '其他',
-            certiType: '其他',
-            certiNo: '',
-            dateOfBirth: '',
-            mobile: '',
-            edit: false
-          }
-          v.split(/[\s]/).forEach(s => {
-            if (s !== undefined && s !== '') {
-              if (this.isCertiType(s)) {
-                insured.certiType = s
-              } else if (this.isGender(s)) {
-                insured.gender = this.formatGender(s)
-              } else if (this.isDateOfBirth(s)) {
-                insured.dateOfBirth = Date.parse(s)
-              } else if (this.isPhoneNumber(s)) {
-                insured.mobile = s
-              } else if (this.isCertiNo(s)) {
-                insured.certiNo = s
-                this.parseSFZ(s, insured)
-              } else {
-                insured.name = s
-              }
-            }
-          })
-          insured.premium = unitPremium.toFixed(2)
-          insured.price = (unitPremium * ratio).toFixed(2)
-          this.temp.insuredList.push(insured)
-        }
-      })
-      // 更新保费合计
-      this.updateUnitPremium()
-    },
+    /**
+     * 删除被保人
+     */
     deleteRow(row, index) {
       this.temp.insuredList.splice(index, 1)
-      // 更新保费合计
-      this.updateUnitPremium()
+      this.recalculatePremium()
     },
+    /**
+     * 清空被保人列表
+     */
+    clearInsured() {
+      this.temp.insuredList = []
+      this.recalculatePremium()
+    },
+    /**
+     * 被保人列表确认修改
+     */
     confirmEdit(row) {
       row.edit = false
       this.$message({
@@ -858,32 +847,81 @@ export default {
         type: 'success'
       })
     },
-    isDateOfBirth(str) {
-      return str.indexOf('-') !== -1 || str.indexOf('/') !== -1 || str.indexOf('年') !== -1
-    },
-    isPhoneNumber(str) {
-      const exp = /^[1][3,4,5,7,8,9][0-9]{9}$/
-      return exp.test(str)
-    },
-    isCertiNo(str) {
-      if (str.length > 6) {
-        for (const c of str) {
-          if (c > '0' && c < '9') {
-            return true
-          }
-        }
+    /**
+     * 智能粘贴确认解析处理逻辑
+     */
+    smartPaste() {
+      this.dialogSmartPasteFormVisible = false
+      // 清空被保人列表
+      this.temp.insuredList = []
+      if (this.smartPasteText === '') {
+        return
       }
-      return false
+      // 解析文本
+      this.smartPasteText.split(/[\n]/).forEach(v => {
+        // v 为切割后的每一行
+        if (v !== undefined && v !== '') {
+          const insured = {
+            name: '',
+            gender: '未知',
+            certiType: '未知个人证件',
+            certiNo: '',
+            dateOfBirth: '',
+            mobile: '',
+            edit: false
+          }
+          v.split(/[\s]/).forEach(s => {
+            if (s !== undefined && s !== '') {
+              // 优先判断是否包含数字, 若包含数字则初步定义为【证件号】【生日】【手机号】
+              if (validNumber(s)) {
+                // 包含'日'或'月'或'年'或'-', 则定义为【生日】
+                if (/[\u65e5\u6708\u5e74-]+/.test(s)) {
+                  insured.dateOfBirth = Date.parse(s)
+                  // 11位数字且1开头, 则定义为【手机号】
+                } else if (validPhoneNumber(s)) {
+                  insured.mobile = s
+                  // 定义为【证件号】
+                } else {
+                  insured.certiNo = s
+                }
+                // 如果不包含数字, 则初步定义为【姓名】【性别】【证件类型】
+              } else {
+                // 如果在证件类型列表里面, 则定义为【证件类型】
+                if (this.certiTypeOptions.map((v, i) => { return v.value }).indexOf(s) !== -1) {
+                  insured.certiType = s
+                  // 如果包含性别关键字, 则定义为【性别】
+                } else if (validGender(s)) {
+                  const lc = s.toLowerCase()
+                  if (lc.indexOf('男') !== -1 || lc === 'male' || lc === 'm') {
+                    insured.gender = '男'
+                  } else if (lc.indexOf('女') !== -1 || lc === 'female' || lc === 'f') {
+                    insured.gender = '女'
+                  } else {
+                    insured.gender = '未知'
+                  }
+                  // 定义为【姓名】
+                } else {
+                  insured.name = s
+                }
+              }
+            }
+          })
+          if (insured.certiType === '身份证') {
+            this.loadInfoFromCertiNo(insured)
+          }
+          this.temp.insuredList.push(insured)
+        }
+      })
+      // 重新计算保费
+      this.recalculatePremium()
     },
-    isCertiType(str) {
-      return str === '身份证' || str === '护照'
-    },
-    isGender(str) {
-      return str === '男' || str === '女' || str === 'M' || str === 'F' || str === 'm' || str === 'f'
-    },
-    parseSFZ(s, insured) {
+    /**
+     * 从证件号加载性别及出生日期, 回写给被保人
+     * @param insured 被保人信息
+     */
+    loadInfoFromCertiNo(insured) {
+      const s = insured.certiNo
       if (s.length === 15) {
-        insured.certiType = '身份证'
         if (parseInt(s.charAt(14)) % 2 === 0) {
           insured.gender = '女'
         } else {
@@ -895,20 +933,12 @@ export default {
           insured.dateOfBirth = '19' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
         }
       } else if (s.length === 18) {
-        insured.certiType = '身份证'
         if (parseInt(s.charAt(16)) % 2 === 0) {
           insured.gender = '女'
         } else {
           insured.gender = '男'
         }
         insured.dateOfBirth = s.substring(6, 10) + '-' + s.substring(10, 12) + '-' + s.substring(12, 14)
-      }
-    },
-    formatGender(str) {
-      if (str === '男' || str === 'M' || str === 'm') {
-        return '男'
-      } else {
-        return '女'
       }
     },
     // 下载导入模板
@@ -949,27 +979,22 @@ export default {
             if (data[data.length - 1] === '') {
               data.pop()
             }
-            const unitPremium = this.temp.unitPremium
-            const ratio = (100 - this.temp.comsRatio) / 100
+            const line = []
             for (let num = 1; num < data.length; num++) {
-              const insured = {
-                name: data[num][0],
-                gender: data[num][1],
-                certiType: data[num][2],
-                certiNo: data[num][3],
-                dateOfBirth: Date.parse(data[num][4]),
-                mobile: data[num][5],
-                edit: false
-              }
-              this.parseSFZ(data[num][3], insured)
-              insured.premium = unitPremium.toFixed(2)
-              insured.price = (unitPremium * ratio).toFixed(2)
-              this.temp.insuredList.push(insured)
+              const r = []
+              r.push(data[num][0])
+              r.push(data[num][1])
+              r.push(data[num][2])
+              r.push(data[num][3])
+              r.push(Date.parse(data[num][4]))
+              r.push(data[num][5])
+              line.push(r.join(' '))
             }
+            this.smartPasteText = line.join('\n')
           }
         })
-        // 更新保费合计
-        this.updateUnitPremium()
+        this.smartPaste()
+        this.recalculatePremium()
       }
     },
     saveToDraftBox() {
