@@ -73,16 +73,16 @@ export const asyncRoutes = [
       roles: ['administrator', 'sales', 'manager']
     },
     children: [
-      {
-        path: '/departments',
-        component: resolve => require.ensure([], () => resolve(require('@/views/department/table')), 'Department'),
-        name: 'Department',
-        meta: {
-          title: 'Department',
-          icon: 'tree',
-          roles: ['administrator']
-        }
-      },
+      // {
+      //   path: '/departments',
+      //   component: resolve => require.ensure([], () => resolve(require('@/views/department/table')), 'Department'),
+      //   name: 'Department',
+      //   meta: {
+      //     title: 'Department',
+      //     icon: 'tree',
+      //     roles: ['administrator']
+      //   }
+      // },
       {
         path: '/users',
         component: resolve => require.ensure([], () => resolve(require('@/views/user/table')), 'User'),
