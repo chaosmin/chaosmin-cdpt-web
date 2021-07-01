@@ -7,7 +7,7 @@
             <el-option
               v-for="item in userOptions"
               :key="item.id"
-              :label="item.userName"
+              :label="item.username"
               :value="item.id"
             />
           </el-select>
@@ -83,6 +83,7 @@
 </template>
 
 <script>
+import { fetchSubordinate } from '@/api/users'
 import { getSltComsReport } from '@/api/reports'
 import waves from '@/directive/waves'
 
@@ -91,10 +92,7 @@ export default {
   directives: { waves },
   data() {
     return {
-      userOptions: [{
-        userName: 'line1121',
-        id: 47
-      }],
+      userOptions: [],
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now()
@@ -138,7 +136,15 @@ export default {
       }
     }
   },
+  created() {
+    this.getUserOptions()
+  },
   methods: {
+    getUserOptions() {
+      fetchSubordinate(this.$store.getters.userId).then(response => {
+        this.userOptions = response.data
+      })
+    },
     getReport() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {

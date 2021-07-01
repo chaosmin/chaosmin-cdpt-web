@@ -7,9 +7,9 @@ export function getOneUser(id) {
   })
 }
 
-export function fetchSubordinates(id) {
+export function fetchSubordinate(id) {
   return request({
-    url: `/v1/api/users/${id}/subordinates`,
+    url: `/v1/api/users/${id}/subordinate`,
     method: 'GET'
   })
 }
