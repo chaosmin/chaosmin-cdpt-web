@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             累计保单
           </div>
-          <count-to :start-val="0" :end-val="policies" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.policies.value" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             累计保费
           </div>
-          <count-to :start-val="0" :end-val="premium" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.premium.value" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             被保人数
           </div>
-          <count-to :start-val="0" :end-val="insureds" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.insureds.value" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             出单员数
           </div>
-          <count-to :start-val="0" :end-val="issuers" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.issuers.value" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -62,12 +62,10 @@ export default {
   components: {
     CountTo
   },
-  data() {
-    return {
-      policies: 514,
-      premium: 102400,
-      insureds: 762,
-      issuers: 10
+  props: {
+    data: {
+      type: Object,
+      required: true
     }
   },
   methods: {

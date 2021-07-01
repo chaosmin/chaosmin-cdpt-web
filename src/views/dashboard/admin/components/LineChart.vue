@@ -90,10 +90,10 @@ export default {
           }
         },
         legend: {
-          data: ['上周', '本周']
+          data: ['有诚保险', '大地保险']
         },
         series: [{
-          name: '上周', itemStyle: {
+          name: '有诚保险', itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -109,7 +109,7 @@ export default {
           animationEasing: 'cubicInOut'
         },
         {
-          name: '本周',
+          name: '大地保险',
           smooth: true,
           type: 'line',
           itemStyle: {

@@ -76,17 +76,17 @@
           <span>{{ row.unitPremium }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="标准保费" prop="unitPremium" width="105" align="center">
+      <el-table-column label="标准保费" prop="totalPremium" width="105" align="center">
         <template slot-scope="{row}">
           <span>{{ row.totalPremium }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="实收单价" prop="unitPremium" width="105" align="center">
+      <el-table-column label="实收单价" prop="actualUnitPremium" width="105" align="center">
         <template slot-scope="{row}">
           <span>{{ row.actualUnitPremium }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="实收保费" prop="unitPremium" width="105" align="center">
+      <el-table-column label="实收保费" prop="actualPremium" width="105" align="center">
         <template slot-scope="{row}">
           <span>{{ row.actualPremium }}</span>
         </template>
@@ -209,8 +209,7 @@ export default {
       columns.forEach((column, index) => {
         if (index === 0) {
           sums[index] = '合计'
-          return
-        } else if (index >= 3 && index <= 7) {
+        } else if (index === 3 || index === 5 || index === 7) {
           const values = data.map(item => Number(item[column.property]))
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {

@@ -48,32 +48,32 @@
           <span>{{ row.partnerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="原价" prop="unitPremium" align="center">
+      <el-table-column label="原价" prop="originalPrice" align="center">
         <template slot-scope="{row}">
           <span>{{ row.originalPrice }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结算价" prop="unitPremium" align="center">
+      <el-table-column label="结算价" prop="settlementPrice" align="center">
         <template slot-scope="{row}">
           <span>{{ row.settlementPrice }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="折扣" prop="unitPremium" align="center">
+      <el-table-column label="折扣" prop="discount" align="center">
         <template slot-scope="{row}">
           <span>{{ row.discount }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="协议佣金比" prop="unitPremium" align="center">
+      <el-table-column label="协议佣金比" prop="agreementComsRatio" align="center">
         <template slot-scope="{row}">
           <span>{{ row.agreementComsRatio }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结算佣金比" prop="unitPremium" align="center">
+      <el-table-column label="结算佣金比" prop="settlementComsRatio" align="center">
         <template slot-scope="{row}">
           <span>{{ row.settlementComsRatio }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结算佣金" prop="unitPremium" align="center">
+      <el-table-column label="结算佣金" prop="settlementComs" align="center">
         <template slot-scope="{row}">
           <span>{{ row.settlementComs }}</span>
         </template>
@@ -174,7 +174,6 @@ export default {
       columns.forEach((column, index) => {
         if (index === 0) {
           sums[index] = '合计'
-          return
         } else if (index === 3 || index === 4 || index === 8) {
           const values = data.map(item => Number(item[column.property]))
           if (!values.every(value => isNaN(value))) {
