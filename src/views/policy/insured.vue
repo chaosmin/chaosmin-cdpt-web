@@ -189,7 +189,7 @@
             <el-table-column label="出生日期" width="155px" align="center">
               <template slot-scope="{row}">
                 <template v-if="row.edit">
-                  <el-date-picker v-model="row.dateOfBirth" size="mini" style="width: 130px" type="date" placeholder="选择生日" />
+                  <el-date-picker v-model="row.dateOfBirth" size="mini" value-format="timestamp" style="width: 130px" type="date" placeholder="选择生日" />
                 </template>
                 <span v-else>{{ row.dateOfBirth | parseTime('{y}-{m}-{d}') }}</span>
               </template>
