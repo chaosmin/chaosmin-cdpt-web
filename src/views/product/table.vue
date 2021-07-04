@@ -2,17 +2,6 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.ALIKE_partnerName" size="mini" placeholder="保司名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.EQ_productCategoryId" size="mini" placeholder="产品大类" style="width: 165px;margin-left: 10px;" class="filter-item" @change="handleFilter">
-        <el-option
-          v-for="item in categories"
-          :key="item.id"
-          :label="item.categoryName + ' ' + item.categorySubName"
-          :value="item.id"
-        >
-          <span style="float: left">{{ item.categoryName }}</span>
-          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.categorySubName }}</span>
-        </el-option>
-      </el-select>
       <el-input v-model="listQuery.ALIKE_productCode" size="mini" placeholder="产品编码" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.ALIKE_productName" size="mini" placeholder="产品名称" style="width: 180px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-delete" @click="resetQuery">
@@ -124,19 +113,7 @@
         <el-form-item label="产品编码" prop="productCode">
           <el-input v-model="temp.productCode" :disabled="dialogStatus==='update'" />
         </el-form-item>
-        <el-form-item label="产品大类" prop="productCategoryId">
-          <el-select v-model="temp.productCategoryId" placeholder="请选择">
-            <el-option
-              v-for="item in categories"
-              :key="item.id"
-              :label="item.categoryName + ' ' + item.categorySubName"
-              :value="item.id"
-            >
-              <span style="float: left">{{ item.categoryName }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.categorySubName }}</span>
-            </el-option>
-          </el-select>
-        </el-form-item>
+        <el-form-item label="产品大类" prop="productCategoryId" />
         <el-form-item label="产品名称" prop="productName">
           <el-input v-model="temp.productName" />
         </el-form-item>
@@ -165,7 +142,6 @@
 <script>
 import Tinymce from '@/components/Tinymce'
 import { fetchProduct, updateProduct } from '@/api/products'
-import { fetchCategory } from '@/api/product-categories'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -201,7 +177,6 @@ export default {
       categoryId: undefined,
       loading: false,
       tableKey: 0,
-      categories: [],
       list: null,
       total: 0,
       listLoading: true,
@@ -243,9 +218,6 @@ export default {
     this.listQuery.ALIKE_productName = this.$route.params.productName
     this.getList()
   },
-  mounted() {
-    this.getCategories()
-  },
   methods: {
     getList() {
       this.listLoading = true
@@ -255,11 +227,6 @@ export default {
         setTimeout(() => {
           this.listLoading = false
         }, 1000)
-      })
-    },
-    getCategories() {
-      fetchCategory().then(response => {
-        this.categories = response.data.records
       })
     },
     handleFilter() {
