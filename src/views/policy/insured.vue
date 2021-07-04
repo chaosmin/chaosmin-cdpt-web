@@ -384,7 +384,7 @@
         </span>
       </el-dialog>
 
-      <el-dialog title="保险条款" :visible.sync="pdfDialogVisible" width="50%" center>
+      <el-dialog title="保险条款" :visible.sync="pdfDialogVisible" width="58%" center>
         <div class="showPdf">
           <iframe :src="goodsPlan.clauseUrl" width="100%" height="550px" />
         </div>
@@ -842,6 +842,13 @@ export default {
      */
     confirmEdit(row) {
       row.edit = false
+      // 2021-07-04 16:30:47 15或18位的证件号尝试解析为【身份证】
+      if (row.certiNo.length === 15 || row.certiNo.length === 18) {
+        row.certiType = '身份证'
+      }
+      if (row.certiType === '身份证') {
+        this.loadInfoFromCertiNo(row)
+      }
       this.$message({
         message: '更新成功',
         type: 'success'
@@ -912,6 +919,10 @@ export default {
               }
             }
           })
+          // 2021-07-04 16:30:47 15或18位的证件号尝试解析为【身份证】
+          if (insured.certiNo.length === 15 || insured.certiNo.length === 18) {
+            insured.certiType = '身份证'
+          }
           if (insured.certiType === '身份证') {
             this.loadInfoFromCertiNo(insured)
           }

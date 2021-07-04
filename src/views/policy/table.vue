@@ -159,20 +159,32 @@
         </el-row>
         <el-row type="flex" class="row-bg">
           <el-col>
-            <el-form-item label="阅读条款须知时间" prop="readTime">
+            <el-form-item label="阅读投保须知时间" prop="readTime">
               <el-input v-model="khsObj.readTime" :disabled="true" />
             </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="点击投保时间" prop="issueTime">
-              <el-input v-model="khsObj.issueTime" :disabled="true" />
+            <el-form-item label="阅读投保须知截图" prop="readPicUrl">
+              <el-link icon="el-icon-document" @click="openKhsImg('阅读条款须知截图', khsObj.readPicUrl)">查看图片</el-link>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" class="row-bg">
           <el-col>
-            <el-form-item label="阅读条款须知截图" prop="readPicUrl">
-              <el-link icon="el-icon-document" @click="openKhsImg('阅读条款须知截图', khsObj.readPicUrl)">查看图片</el-link>
+            <el-form-item label="阅读保险条款时间" prop="readTime">
+              <el-input v-model="khsObj.confirmTime" :disabled="true" />
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="阅读保险条款截图" prop="readPicUrl">
+              <el-link icon="el-icon-document" @click="openKhsImg('阅读条款须知截图', khsObj.confirmPicUrl)">查看图片</el-link>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" class="row-bg">
+          <el-col>
+            <el-form-item label="确认投保时间" prop="issueTime">
+              <el-input v-model="khsObj.issueTime" :disabled="true" />
             </el-form-item>
           </el-col>
           <el-col>
@@ -249,8 +261,10 @@ export default {
         enterPageTime: null,
         leavePageTime: null,
         readTime: null,
+        confirmTime: null,
         issueTime: null,
         readPicUrl: null,
+        confirmPicUrl: null,
         issuePicUrl: null
       },
       khsImgName: undefined,
