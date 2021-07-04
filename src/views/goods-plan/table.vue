@@ -352,7 +352,7 @@ export default {
       })
     },
     getProductPlanList() {
-      fetchContract().then(response => {
+      fetchContract(this.$store.getters.userId).then(response => {
         this.productPlans = response.data.records
       })
     },

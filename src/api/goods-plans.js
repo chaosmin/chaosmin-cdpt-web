@@ -33,14 +33,14 @@ export function removeGoodsPlan(id) {
 
 export function fetchUserCategories(id) {
   return request({
-    url: `/v1/api/goods-plans/user/${id}/categories`,
+    url: `/v1/api/goods-plans/users/${id}/categories`,
     method: 'get'
   })
 }
 
 export function fetchUserGoods(id, query) {
   return request({
-    url: `/v1/api/goods-plans/user/${id}`,
+    url: `/v1/api/goods-plans/users/${id}`,
     method: 'get',
     params: query
   })

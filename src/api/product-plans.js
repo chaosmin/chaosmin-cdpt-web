@@ -8,9 +8,9 @@ export function fetchPlan(query) {
   })
 }
 
-export function fetchContract() {
+export function fetchContract(id) {
   return request({
-    url: '/v1/api/product-plans/contract',
+    url: `/v1/api/product-plans/users/${id}/contract`,
     method: 'GET'
   })
 }
