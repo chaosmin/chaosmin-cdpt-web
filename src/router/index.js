@@ -200,6 +200,16 @@ export const asyncRoutes = [
     },
     children: [
       {
+        path: '/orders',
+        component: resolve => require.ensure([], () => resolve(require('@/views/order/table')), 'Order'),
+        name: 'Order',
+        meta: {
+          title: 'Order',
+          icon: 'el-icon-document',
+          roles: ['administrator', 'sales', 'manager', 'officer']
+        }
+      },
+      {
         path: '/policies',
         component: resolve => require.ensure([], () => resolve(require('@/views/policy/table')), 'Policy'),
         name: 'Policy',
@@ -216,16 +226,6 @@ export const asyncRoutes = [
         hidden: true,
         meta: {
           title: 'PolicyDetail',
-          roles: ['administrator', 'sales', 'manager', 'officer']
-        }
-      },
-      {
-        path: '/orders',
-        component: resolve => require.ensure([], () => resolve(require('@/views/order/table')), 'Order'),
-        name: 'Order',
-        meta: {
-          title: 'Order',
-          icon: 'el-icon-document',
           roles: ['administrator', 'sales', 'manager', 'officer']
         }
       }

@@ -27,37 +27,37 @@
       </el-table-column>
       <el-table-column label="实收保费">
         <template slot-scope="{row}">
-          <span>{{ row.orderNo }}</span>
+          <span>{{ row.actualPremium }}</span>
         </template>
       </el-table-column>
       <el-table-column label="人数">
         <template slot-scope="{row}">
-          <span>{{ row.orderNo }}</span>
+          <span>{{ row.insuredSize }}</span>
         </template>
       </el-table-column>
       <el-table-column label="生效时间">
         <template slot-scope="{row}">
-          <span>{{ row.orderNo }}</span>
+          <span>{{ row.effectiveTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="止保时间">
         <template slot-scope="{row}">
-          <span>{{ row.orderNo }}</span>
+          <span>{{ row.expiryTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="保险公司">
         <template slot-scope="{row}">
-          <span>{{ row.orderNo }}</span>
+          <span>{{ row.partnerName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出单时间">
         <template slot-scope="{row}">
-          <span>{{ row.orderNo }}</span>
+          <span>{{ row.issueTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出单人">
         <template slot-scope="{row}">
-          <span>{{ row.orderNo }}</span>
+          <span>{{ row.issuer }}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" class-name="status-col" width="100">
@@ -139,9 +139,8 @@ export default {
       listQuery: {
         P_NUM: 1,
         P_SIZE: 20,
-        O_createTime: 0,
-        EQ_status: undefined,
-        LIKE_partnerName: undefined
+        O_order_createTime: 0,
+        EQ_order_status: undefined
       }
     }
   },
