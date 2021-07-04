@@ -28,6 +28,7 @@ export default {
   },
   navbar: {
     logOut: '退出登录',
+    editPassword: '修改密码',
     profile: '个人中心',
     theme: '换肤',
     size: '布局大小'

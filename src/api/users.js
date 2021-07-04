@@ -14,6 +14,14 @@ export function fetchSubordinate(id) {
   })
 }
 
+export function updateUserPassword(id, data) {
+  return request({
+    url: `/v1/api/users/${id}/password`,
+    method: 'PUT',
+    data
+  })
+}
+
 export function fetchUser(query) {
   return request({
     url: '/v1/api/users',

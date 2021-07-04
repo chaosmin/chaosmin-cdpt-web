@@ -10,7 +10,7 @@
         <el-dropdown-menu slot="dropdown">
           <router-link to="/profile/index">
             <el-dropdown-item>
-              {{ $t('navbar.profile') }}
+              {{ $t('navbar.editPassword') }}
             </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">
