@@ -4,7 +4,7 @@
 const fs = require('fs')
 const path = require('path')
 // env 文件 判断打包环境指定对应的服务器id
-const envfile = process.env.NODE_ENV === 'prod' ? '../.env.production' : '../.env.development'
+const envfile = process.env.NODE_ENV === 'production' ? '../.env.production' : '../.env.development'
 // env环境变量的路径
 const envPath = path.resolve(__dirname, envfile)
 // env对象
@@ -51,11 +51,11 @@ const SERVER_LIST = [
   {
     id: 1,
     name: 'prod-environment',
-    host: '',
+    host: '139.224.211.162',
     port: 22,
-    username: 'chaosmin_app',
-    password: 'root',
-    path: '/mdm/nginx/dist'
+    username: 'root',
+    password: 'wmylEtVW1G9DaRit',
+    path: '/root/service/chaosmin_cdpt/web'
   }
 ]
 

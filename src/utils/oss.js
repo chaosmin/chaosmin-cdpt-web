@@ -9,9 +9,9 @@ const OSS = require('ali-oss')
  */
 const client = new OSS({
   region: 'oss-cn-shanghai',
-  accessKeyId: 'LTAI5t9YxtGwnUAebNehAPtR',
-  accessKeySecret: 'd80k1fetOOX5DHHvqibQrpB2EaMUrd',
-  bucket: 'chaosmin-static'
+  accessKeyId: 'LTAI5tM2NYbsL591Eus5jwPy',
+  accessKeySecret: 'sOm6LDInPkrFvbpHUi75SsRZDGAYQ8',
+  bucket: 'cdpt-policy-khs'
 })
 
 /**

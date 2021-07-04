@@ -2,7 +2,7 @@ const scpClient = require('scp2')
 const ora = require('ora')
 const chalk = require('chalk')
 const server = require('./products')
-const spinner = ora('正在发布到' + (process.env.NODE_ENV === 'prod' ? '生产' : '测试') + '服务器...')
+const spinner = ora('正在发布到' + (process.env.NODE_ENV === 'production' ? '生产' : '测试') + '服务器...')
 
 const Client = require('ssh2').Client
 const conn = new Client()
@@ -25,7 +25,7 @@ conn.on('ready', function() {
           console.log(chalk.red('发布失败.\n'))
           throw err
         } else {
-          console.log(chalk.green('Success! 成功发布到' + (process.env.NODE_ENV === 'prod' ? '生产' : '测试') + '服务器! \n'))
+          console.log(chalk.green('Success! 成功发布到' + (process.env.NODE_ENV === 'production' ? '生产' : '测试') + '服务器! \n'))
         }
       })
       conn.end()
