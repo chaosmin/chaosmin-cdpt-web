@@ -12,7 +12,7 @@
       </el-button>
       <el-upload
         v-waves
-        action="http://cdpt.chaosmin.tech/v1/api/products/file"
+        action="http://bl.senhaobx.com/v1/api/products/file"
         :headers="{'Authorization': 'Bearer ' + this.$store.getters.token}"
         class="filter-item"
         style="margin-top: 10px;"
