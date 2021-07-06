@@ -26,7 +26,7 @@
           点击上传
         </el-button>
       </el-upload>
-      <el-link target="_blank" href="https://chaosmin-static.oss-cn-shanghai.aliyuncs.com/template/%E4%BF%9D%E9%99%A9%E4%BA%A7%E5%93%81%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx" :underline="false">
+      <el-link target="_blank" href="https://cdpt-partner.oss-cn-shanghai.aliyuncs.com/%E4%BF%9D%E9%99%A9%E4%BA%A7%E5%93%81%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx" :underline="false">
         <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-download">
           下载模板
         </el-button>

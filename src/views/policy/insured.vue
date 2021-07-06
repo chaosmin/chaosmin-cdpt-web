@@ -23,7 +23,7 @@
           <el-divider content-position="left">投保信息</el-divider>
           <table border="1" cellspacing="0" width="100%">
             <tr>
-              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险公司</span></td>
+              <td width="180px"><span style="padding: 5px;color: red;"><b>*</b></span><span>保险公司</span></td>
               <td colspan="5">
                 <el-radio-group v-model="partner" size="mini" @change="changePartner">
                   <template v-for="p in partners">
