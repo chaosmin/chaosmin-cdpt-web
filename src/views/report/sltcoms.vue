@@ -21,6 +21,9 @@
         <el-form-item>
           <el-button size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="download">下载</el-button>
+        </el-form-item>
       </el-form>
     </div>
 
@@ -84,7 +87,7 @@
 
 <script>
 import { fetchSubordinate } from '@/api/users'
-import { getSltComsReport } from '@/api/reports'
+import { getSltComsReport, downloadSltComsReport } from '@/api/reports'
 import waves from '@/directive/waves'
 
 export default {
@@ -92,6 +95,7 @@ export default {
   directives: { waves },
   data() {
     return {
+      uploading: undefined,
       userOptions: [],
       pickerOptions: {
         disabledDate(time) {
@@ -160,6 +164,35 @@ export default {
     },
     handleFilter() {
       this.getReport()
+    },
+    download() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          this.uploading = this.$loading({
+            lock: true,
+            text: '正在生成报表, 请稍后...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          })
+          downloadSltComsReport(this.queryParam.userId, this.queryParam.startTime, this.queryParam.endTime).then((res) => {
+            if (!res) return
+            const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+            if (window.navigator.msSaveOrOpenBlob) {
+              navigator.msSaveBlob(blob, '个人计算佣金表.xlsx')
+            } else {
+              const href = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.style.display = 'none'
+              a.href = href
+              a.download = '个人计算佣金表.xlsx'
+              a.click()
+              URL.revokeObjectURL(a.href)
+            }
+          }).finally(() => {
+            this.uploading.close()
+          })
+        }
+      })
     },
     resetTemp() {
       this.queryParam = {

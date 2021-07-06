@@ -27,14 +27,12 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
-
-    if (res.code !== 'SUCCESS') {
+    if (res.code !== undefined && res.code !== 'SUCCESS') {
       Message({
         message: res.msg || '系统异常, 请稍后重试',
         type: 'error',
         duration: 5 * 1000
       })
-
       // TOKEN_00001: Illegal token; TOKEN_00002: Token expired; TOKEN_00003: Other clients logged in
       if (res.code === 'TOKEN_00001' || res.code === 'TOKEN_00002' || res.code === 'TOKEN_00003') {
         MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
