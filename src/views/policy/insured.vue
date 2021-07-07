@@ -10,7 +10,7 @@
             </template>
             <el-menu-item-group>
               <template v-for="child in category.children">
-                <el-menu-item :key="child.id" :index="child.id" @click="getGoodsPlan(child.id)">{{ child.name }}</el-menu-item>
+                <el-menu-item :key="child.id" :index="child.id" @click="getGoodsPlan(category.id, child.id)">{{ child.name }}</el-menu-item>
               </template>
             </el-menu-item-group>
           </el-submenu>
@@ -19,11 +19,10 @@
     </el-aside>
     <div ref="imageTofile">
       <el-main v-if="goodsPlan">
-        <el-link :href="goodsPlan.clauseUrl" target="_blank" style="float:right;"><svg-icon icon-class="pdf" /> 详细条款下载</el-link>
-        <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true">
-          <el-divider content-position="left">投保信息</el-divider>
+        <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true" style="width: 920px">
+          <el-link :href="goodsPlan.clauseUrl" target="_blank" style="float:right;padding-bottom: 5px;"><svg-icon icon-class="pdf" /> 详细条款下载</el-link>
           <table border="1" cellspacing="0" width="100%">
-            <tr>
+            <tr style="height:25pt;">
               <td width="180px"><span style="padding: 5px;color: red;"><b>*</b></span><span>保险公司</span></td>
               <td colspan="5">
                 <el-radio-group v-model="partner" size="mini" @change="changePartner">
@@ -33,7 +32,7 @@
                 </el-radio-group>
               </td>
             </tr>
-            <tr>
+            <tr style="height:25pt;">
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>产品选择</span></td>
               <td colspan="5">
                 <el-select v-model="temp.goodsPlanId" size="mini" placeholder="请选择产品" style="width: 100%" class="filter-item" @change="changeGoodsPlan">
@@ -46,7 +45,7 @@
                 </el-select>
               </td>
             </tr>
-            <tr>
+            <tr style="height:25pt;">
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险期限</span></td>
               <td>
                 <el-form-item prop="days" size="mini" style="margin-bottom: 0;">
@@ -94,7 +93,7 @@
                 />
               </td>
             </tr>
-            <tr>
+            <tr style="height:25pt;">
               <td><span style="padding-left: 17px">旅行目的地</span></td>
               <td colspan="2">
                 <el-input v-model="temp.address" size="mini" placeholder="请输入内容" />
@@ -104,15 +103,14 @@
                 <el-input v-model="temp.groupNo" size="mini" placeholder="请输入内容" />
               </td>
             </tr>
-            <tr>
+            <tr style="height:25pt;">
               <td><span style="padding-left: 17px">投保提示</span></td>
               <td colspan="5">
                 <div v-html="goodsPlan.insuranceNotice" />
               </td>
             </tr>
           </table>
-          <el-divider content-position="left">被保人列表</el-divider>
-          <div class="filter-container" style="display: flex;align-items: center;">
+          <div class="filter-container" style="display: flex;align-items: center;margin-top: 8px">
             <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-download" @click="downloadTemplate">
               下载模板
             </el-button>
@@ -146,7 +144,7 @@
                 <el-input v-model="row.name" class="edit-input" size="mini" />
               </template>
             </el-table-column>
-            <el-table-column label="性别" width="95px" align="center">
+            <el-table-column label="性别" width="80px" align="center">
               <template slot-scope="{row}">
                 <el-select v-model="row.gender" class="edit-input" size="mini">
                   <el-option
@@ -175,9 +173,9 @@
                 <el-input v-model="row.certiNo" class="edit-input" size="mini" @blur="confirmEdit(row)" />
               </template>
             </el-table-column>
-            <el-table-column label="出生日期" width="155px" align="center">
+            <el-table-column label="出生日期" width="148px" align="center">
               <template slot-scope="{row}">
-                <el-date-picker v-model="row.dateOfBirth" size="mini" value-format="timestamp" style="width: 130px" type="date" placeholder="选择生日" />
+                <el-date-picker v-model="row.dateOfBirth" size="mini" value-format="timestamp" style="width: 123px" :clearable="false" type="date" placeholder="选择生日" />
               </template>
             </el-table-column>
             <el-table-column label="手机号" width="125px" align="center">
@@ -185,20 +183,19 @@
                 <el-input v-model="row.mobile" class="edit-input" size="mini" />
               </template>
             </el-table-column>
-            <el-table-column label="原价" width="75px" align="center">
+            <el-table-column label="原价" width="70px" align="center">
               <template slot-scope="{row}">
                 <span>￥{{ row.premium }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="结算价" width="75px" align="center">
+            <el-table-column label="结算价" width="70px" align="center">
               <template slot-scope="{row}">
                 <span>￥{{ row.price }}</span>
               </template>
             </el-table-column>
           </el-table>
-          <el-divider content-position="left">投保人信息</el-divider>
-          <table border="1" cellspacing="0" width="100%">
-            <tr>
+          <table border="1" cellspacing="0" width="100%" style="margin-top: 16px">
+            <tr style="height:25pt;">
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>公司名称</span></td>
               <td>
                 <el-form-item prop="policyHolderName" size="mini" style="margin-bottom: 0;">
@@ -215,7 +212,7 @@
           </table>
           <br>
           <table border="1" cellspacing="0" width="100%">
-            <tr>
+            <tr style="height:25pt;">
               <td><span style="padding-left: 17px">人数合计：</span></td>
               <td><span style="padding-left: 10px"><b>{{ temp.insuredList.length }}</b> 人</span></td>
               <td><span style="padding-left: 17px">原价合计：</span></td>
@@ -226,7 +223,7 @@
           </table>
           <br>
           <table border="1" cellspacing="0" width="100%">
-            <tr>
+            <tr style="height:25pt;">
               <td width="200px"><span style="padding-left: 10px">选择支付方式：</span></td>
               <td>
                 <template>
@@ -239,7 +236,7 @@
                 </template>
               </td>
             </tr>
-            <tr>
+            <tr style="height:25pt;">
               <td><span style="padding-left: 10px">支付方式说明：</span></td>
               <td><span style="padding-left: 10px">默认支持月结</span></td>
             </tr>
