@@ -143,64 +143,46 @@
             <el-table-column type="index" label="序" align="center" />
             <el-table-column label="姓名" align="center" width="100px" style="font-size: 12px">
               <template slot-scope="{row}">
-                <template v-if="row.edit">
-                  <el-input v-model="row.name" class="edit-input" size="mini" />
-                </template>
-                <span v-else>{{ row.name }}</span>
+                <el-input v-model="row.name" class="edit-input" size="mini" />
               </template>
             </el-table-column>
             <el-table-column label="性别" width="95px" align="center">
               <template slot-scope="{row}">
-                <template v-if="row.edit">
-                  <el-select v-model="row.gender" class="edit-input" size="mini">
-                    <el-option
-                      v-for="item in genderOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </template>
-                <span v-else>{{ row.gender }}</span>
+                <el-select v-model="row.gender" class="edit-input" size="mini">
+                  <el-option
+                    v-for="item in genderOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
               </template>
             </el-table-column>
             <el-table-column label="证件类型" width="110px" align="center">
               <template slot-scope="{row}">
-                <template v-if="row.edit">
-                  <el-select v-model="row.certiType" class="edit-input" size="mini">
-                    <el-option
-                      v-for="item in certiTypeOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </template>
-                <span v-else>{{ row.certiType }}</span>
+                <el-select v-model="row.certiType" class="edit-input" size="mini">
+                  <el-option
+                    v-for="item in certiTypeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
               </template>
             </el-table-column>
             <el-table-column label="证件号码" align="center">
               <template slot-scope="{row}">
-                <template v-if="row.edit">
-                  <el-input v-model="row.certiNo" class="edit-input" size="mini" @change="parseSFZ(row.certiNo, row)" />
-                </template>
-                <span v-else>{{ row.certiNo }}</span>
+                <el-input v-model="row.certiNo" class="edit-input" size="mini" @blur="confirmEdit(row)" />
               </template>
             </el-table-column>
             <el-table-column label="出生日期" width="155px" align="center">
               <template slot-scope="{row}">
-                <template v-if="row.edit">
-                  <el-date-picker v-model="row.dateOfBirth" size="mini" value-format="timestamp" style="width: 130px" type="date" placeholder="选择生日" />
-                </template>
-                <span v-else>{{ row.dateOfBirth | parseTime('{y}-{m}-{d}') }}</span>
+                <el-date-picker v-model="row.dateOfBirth" size="mini" value-format="timestamp" style="width: 130px" type="date" placeholder="选择生日" />
               </template>
             </el-table-column>
             <el-table-column label="手机号" width="125px" align="center">
               <template slot-scope="{row}">
-                <template v-if="row.edit">
-                  <el-input v-model="row.mobile" class="edit-input" size="mini" />
-                </template>
-                <span v-else>{{ row.mobile }}</span>
+                <el-input v-model="row.mobile" class="edit-input" size="mini" />
               </template>
             </el-table-column>
             <el-table-column label="原价" width="75px" align="center">
@@ -211,13 +193,6 @@
             <el-table-column label="结算价" width="75px" align="center">
               <template slot-scope="{row}">
                 <span>￥{{ row.price }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" align="left" width="140px" class-name="small-padding fixed-width">
-              <template slot-scope="{row,$index}">
-                <el-button v-if="row.edit" type="success" size="mini" icon="el-icon-check" @click="confirmEdit(row)" />
-                <el-button v-else type="primary" size="mini" icon="el-icon-edit" @click="row.edit=!row.edit" />
-                <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)" />
               </template>
             </el-table-column>
           </el-table>
@@ -273,9 +248,10 @@
           <div v-if="goodsPlan">
             <div style="text-align:center">
               <!-- `checked` 为 true 或 false -->
-              <el-checkbox v-model="checked" disabled>我已详细阅读并理解</el-checkbox>
-              <el-button type="text" @click="centerDialogVisible = true">投保注意事项</el-button> |
-              <el-button icon="el-icon-document" type="text" @click="pdfDialogVisible = true">保险条款</el-button>
+              <el-checkbox v-model="checked">我已详细阅读并理解
+                <el-button type="text" @click="centerDialogVisible = true"> 投保注意事项</el-button> |
+                <el-button icon="el-icon-document" type="text" @click="pdfDialogVisible = true">保险条款</el-button>
+              </el-checkbox>
             </div>
             <br>
             <div style="text-align:center">
@@ -615,7 +591,6 @@ export default {
      * 更换保险公司
      */
     changePartner() {
-      console.log('current partner: ' + this.partner)
       this.currentGoodsPlanList = this.goodsPlanList.filter(v => {
         return v.partnerName === this.partner
       })
@@ -626,7 +601,6 @@ export default {
      * 更换产品后更新当前页面产品信息
      */
     changeGoodsPlan() {
-      console.log('current goodsPlan: ' + this.temp.goodsPlanId)
       // 获取当前产品
       this.goodsPlan = this.goodsPlanList.filter(v => {
         return v.id === this.temp.goodsPlanId
@@ -805,8 +779,7 @@ export default {
         certiType: '身份证',
         certiNo: '',
         dateOfBirth: '',
-        mobile: '',
-        edit: true
+        mobile: ''
       }
       this.temp.insuredList.push(insured)
       this.recalculatePremium()
@@ -829,7 +802,6 @@ export default {
      * 被保人列表确认修改
      */
     confirmEdit(row) {
-      row.edit = false
       // 2021-07-04 16:30:47 15或18位的证件号尝试解析为【身份证】
       if (row.certiNo.length === 15 || row.certiNo.length === 18) {
         row.certiType = '身份证'
@@ -837,10 +809,6 @@ export default {
       if (row.certiType === '身份证') {
         this.loadInfoFromCertiNo(row)
       }
-      this.$message({
-        message: '更新成功',
-        type: 'success'
-      })
     },
     /**
      * 智能粘贴确认解析处理逻辑
@@ -862,15 +830,12 @@ export default {
             certiType: '未知个人证件',
             certiNo: '',
             dateOfBirth: '',
-            mobile: '',
-            edit: false
+            mobile: ''
           }
           v.split(/[\s]/).forEach(s => {
-            // console.log('s: ' + s)
             if (s !== undefined && s !== '') {
               // 优先判断是否包含数字, 若包含数字则初步定义为【证件号】【生日】【手机号】
               if (validNumber(s)) {
-                // console.log('数字')
                 // 包含'日'或'月'或'年'或'-', 则定义为【生日】
                 if (/[/\u65e5\u6708\u5e74-]+/.test(s)) {
                   s = s.replace(/([\u6708\u5e74])/g, '-')
@@ -886,7 +851,6 @@ export default {
                 }
                 // 如果不包含数字, 则初步定义为【姓名】【性别】【证件类型】
               } else {
-                // console.log('非数字')
                 // 如果在证件类型列表里面, 则定义为【证件类型】
                 if (this.certiTypeOptions.map((v, i) => { return v.value }).indexOf(s) !== -1) {
                   insured.certiType = s
@@ -933,9 +897,11 @@ export default {
           insured.gender = '男'
         }
         if (parseInt(s.charAt(6) + s.charAt(7)) < 10) {
-          insured.dateOfBirth = '20' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
+          const date = '20' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
+          insured.dateOfBirth = Date.parse(date)
         } else {
-          insured.dateOfBirth = '19' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
+          const date = '19' + s.substring(6, 8) + '-' + s.substr(8, 10) + '-' + s.substr(10, 12)
+          insured.dateOfBirth = Date.parse(date)
         }
       } else if (s.length === 18) {
         if (parseInt(s.charAt(16)) % 2 === 0) {
@@ -943,7 +909,8 @@ export default {
         } else {
           insured.gender = '男'
         }
-        insured.dateOfBirth = s.substring(6, 10) + '-' + s.substring(10, 12) + '-' + s.substring(12, 14)
+        const date = s.substring(6, 10) + '-' + s.substring(10, 12) + '-' + s.substring(12, 14)
+        insured.dateOfBirth = Date.parse(date)
       }
     },
     // 下载导入模板
@@ -985,21 +952,14 @@ export default {
               data.pop()
             }
             const line = []
-            console.log('开始解析被保人清单模板文件, 共' + data.length + '条数据需要处理.')
             for (let num = 1; num < data.length; num++) {
               if (data[num][0] !== '' && data[num][0] !== 'undefined') {
                 const r = []
-                // console.log('姓名: ' + data[num][0])
                 r.push(data[num][0])
-                // console.log('性别: ' + data[num][1])
                 r.push(data[num][1])
-                // console.log('证件类型: ' + data[num][2])
                 r.push(data[num][2])
-                // console.log('证件号: ' + data[num][3])
                 r.push(data[num][3])
-                // console.log('生日: ' + data[num][4])
                 r.push(data[num][4])
-                // console.log('手机号: ' + data[num][5])
                 r.push(data[num][5])
                 line.push(r.join(' '))
               }
@@ -1026,14 +986,12 @@ export default {
       this.centerDialogVisible = false
       this.check_1 = true
       this.checked = this.check_1 && this.check_2
-      console.log('c1:' + this.check_1 + ', c:' + this.checked)
     },
     confirmPdf() {
       this.setImage('保险条款')
       this.pdfDialogVisible = false
       this.check_2 = true
       this.checked = this.check_1 && this.check_2
-      console.log('c2:' + this.check_2 + ', c:' + this.checked)
     },
     checkEncoding(base64Str) {
       // 这种方式得到的是一种二进制串
