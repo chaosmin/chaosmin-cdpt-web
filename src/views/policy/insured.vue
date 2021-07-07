@@ -19,6 +19,7 @@
     </el-aside>
     <div ref="imageTofile">
       <el-main v-if="goodsPlan">
+        <el-link :href="goodsPlan.clauseUrl" target="_blank" style="float:right;"><svg-icon icon-class="pdf" /> 详细条款下载</el-link>
         <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true">
           <el-divider content-position="left">投保信息</el-divider>
           <table border="1" cellspacing="0" width="100%">
