@@ -100,9 +100,10 @@
           <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="goToDetail(row.orderNo)">
             详情
           </el-button>
-          <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="handleKhsList(row.id)">
-            可回溯
-          </el-button>
+          <!-- 2021-07-07 13:34:04 去除可回溯按钮 -->
+          <!-- <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="handleKhsList(row.id)"> -->
+          <!--  可回溯 -->
+          <!-- </el-button> -->
           <el-link target="_blank" :href="row.epolicyUrl" :underline="false">
             <el-button v-waves class="filter-item" size="mini" style="margin-left: 5px;" type="primary" icon="el-icon-download">
               保单
