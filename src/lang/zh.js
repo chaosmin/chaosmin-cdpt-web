@@ -1,7 +1,7 @@
 export default {
   route: {
     dashboard: '首页',
-    profile: '个人中心',
+    Profile: '修改密码',
     Admin: '系统管理',
     Partner: '保司管理',
     Department: '机构管理',
@@ -27,10 +27,13 @@ export default {
     SltCheck: '结算清单'
   },
   navbar: {
-    logOut: '退出登录',
+    logOut: '退出',
     editPassword: '修改密码',
     profile: '个人中心',
     theme: '换肤',
+    reCharge: '充值',
+    reChargeRecord: '充值记录',
+    consumptionDetails: '消费明细',
     size: '布局大小'
   },
   login: {
