@@ -396,6 +396,7 @@ export default {
         payMethod: 'MONTHLY'
       },
       listQuery: {
+        O_id: 1,
         EQ_categoryName: undefined,
         EQ_categorySubName: undefined
       },
