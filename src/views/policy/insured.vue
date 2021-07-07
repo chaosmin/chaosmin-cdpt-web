@@ -261,44 +261,16 @@
           </div>
           <br>
           <div v-if="goodsPlan">
-            <el-table
-              :data="goodsPlan.liabilities"
-              :span-method="spanMethod"
-              style="width: 100%;font-size: 12px"
-            >
+            <el-table :data="goodsPlan.liabilities" style="width: 100%;font-size: 12px">
               <el-table-column align="center" :label="'[' + goodsPlan.productName+ ']-' + goodsPlan.productPlanName + '-' + goodsPlan.primaryCoverage">
-                <el-table-column
-                  align="center"
-                  prop="liabilityCategory"
-                  label="责任大类"
-                />
-                <el-table-column
-                  align="center"
-                  prop="liabilityName"
-                  label="保障内容"
-                />
-                <el-table-column
-                  align="center"
-                  prop="amount"
-                  label="保障金额（人民币：元）"
-                />
+                <el-table-column align="center" prop="liabilityName" label="保障内容" />
+                <el-table-column align="center" prop="amount" label="保障金额（人民币：元）" />
               </el-table-column>
             </el-table>
-            <el-table
-              :data="goodsPlan.rateTable"
-              style="width: 100%;font-size: 12px"
-            >
+            <el-table :data="goodsPlan.rateTable" style="width: 100%;font-size: 12px">
               <el-table-column align="center" label="保障金额/人 （人民币：元）">
-                <el-table-column
-                  align="center"
-                  prop="remark"
-                  label="旅行天数"
-                />
-                <el-table-column
-                  align="center"
-                  prop="premium"
-                  label="价格"
-                />
+                <el-table-column align="center" prop="remark" label="旅行天数" />
+                <el-table-column align="center" prop="premium" label="价格" />
               </el-table-column>
             </el-table>
             <br>
@@ -730,44 +702,6 @@ export default {
           })
         }
       })
-    },
-    /**
-     * 合并单元格
-     */
-    classGroup(category) {
-      return this.goodsPlan.liabilities.filter(o => o.liabilityCategory === category).length
-    },
-    classNameLen(name) {
-      const tmp = Array.from(this.groupNum)
-      const index = tmp.indexOf(name)
-      let len = 0
-      for (let i = 0; i < index; i++) {
-        len += this.classGroup(tmp[i])
-      }
-      return len
-    },
-    spanMethod(data) {
-      const { row, rowIndex, columnIndex } = data
-      if (columnIndex < 1) {
-        const len = this.classGroup(row.liabilityCategory)
-        const lenName = this.classNameLen(row.liabilityCategory)
-        if (rowIndex === lenName) {
-          return {
-            rowspan: len,
-            colspan: 1
-          }
-        } else {
-          return {
-            rowspan: 0,
-            colspan: 0
-          }
-        }
-      } else {
-        return {
-          rowspan: 1,
-          colspan: 1
-        }
-      }
     },
     /**
      * 手动添加新被保人
