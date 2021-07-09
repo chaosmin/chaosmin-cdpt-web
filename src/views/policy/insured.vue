@@ -19,7 +19,7 @@
     </el-aside>
     <div ref="imageTofile">
       <el-main v-if="goodsPlan">
-        <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true" style="width: 920px">
+        <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true" style="width: 1080px">
           <el-link :href="goodsPlan.clauseUrl" target="_blank" style="float:right;padding-bottom: 5px;"><svg-icon icon-class="pdf" /> 详细条款下载</el-link>
           <table border="1" cellspacing="0" width="100%">
             <tr style="height:25pt;">
@@ -173,9 +173,9 @@
                 <el-input v-model="row.certiNo" class="edit-input" size="mini" @blur="confirmEdit(row)" />
               </template>
             </el-table-column>
-            <el-table-column label="出生日期" width="148px" align="center">
+            <el-table-column label="出生日期" width="155px" align="center">
               <template slot-scope="{row}">
-                <el-date-picker v-model="row.dateOfBirth" size="mini" value-format="timestamp" style="width: 123px" :clearable="false" type="date" placeholder="选择生日" />
+                <el-date-picker v-model="row.dateOfBirth" size="mini" value-format="timestamp" style="width: 130px" :clearable="false" type="date" placeholder="选择生日" />
               </template>
             </el-table-column>
             <el-table-column label="手机号" width="125px" align="center">
@@ -191,6 +191,11 @@
             <el-table-column label="结算价" width="70px" align="center">
               <template slot-scope="{row}">
                 <span>￥{{ row.price }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="left" width="80px" class-name="small-padding fixed-width">
+              <template slot-scope="{row,$index}">
+                <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)" />
               </template>
             </el-table-column>
           </el-table>
