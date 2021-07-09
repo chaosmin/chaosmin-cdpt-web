@@ -130,6 +130,7 @@
             </el-button>
           </div>
           <el-table
+            :key="insuredTable"
             :data="temp.insuredList"
             border
             fit
@@ -367,6 +368,7 @@ export default {
     return {
       uuid: getFileNameUUID(),
       uploading: undefined,
+      insuredTable: undefined,
       timer: undefined,
       text: '',
       dialogSmartPasteFormVisible: false,
@@ -600,7 +602,7 @@ export default {
       // 根据产品的等待期重设起止时间
       this.setStartAndEndTime(this.goodsPlan.waitingDays)
       // 每次切换产品时都记录一下进入页面时间
-      saveKhsImg(this.temp.orderNo, { 'type': '进入页面', 'time': new Date(), 'url': '' })
+      // saveKhsImg(this.temp.orderNo, { 'type': '进入页面', 'time': new Date(), 'url': '' })
     },
     /**
      * 更新单位保费及结算保费
@@ -622,6 +624,7 @@ export default {
         item.premium = this.temp.unitPremium.toFixed(2)
         item.price = (this.temp.unitPremium * ratio).toFixed(2)
       })
+      this.insuredTable = !this.insuredTable
     },
     /**
      * 出单逻辑
