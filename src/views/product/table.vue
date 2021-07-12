@@ -12,7 +12,7 @@
       </el-button>
       <el-upload
         v-waves
-        action="http://bl.senhaobx.com/v1/api/products/file"
+        :action="uploadUrl"
         :headers="{'Authorization': 'Bearer ' + this.$store.getters.token}"
         class="filter-item"
         style="margin-top: 10px;"
@@ -22,14 +22,10 @@
         :on-success="uploadSuccess"
         :on-error="uploadError"
       >
-        <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-upload">
-          点击上传
-        </el-button>
+        <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-upload">点击上传</el-button>
       </el-upload>
-      <el-link target="_blank" href="https://cdpt-partner.oss-cn-shanghai.aliyuncs.com/%E4%BF%9D%E9%99%A9%E4%BA%A7%E5%93%81%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx" :underline="false">
-        <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-download">
-          下载模板
-        </el-button>
+      <el-link target="_blank" :href="downloadUrl" :underline="false">
+        <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-download">下载模板</el-button>
       </el-link>
     </div>
     <el-divider content-position="left" class="app-divider">保险产品</el-divider>
@@ -174,6 +170,8 @@ export default {
   data() {
     return {
       uploading: undefined,
+      uploadUrl: process.env.VUE_APP_PRODUCT_TEMPLATE_UPLOAD_API,
+      downloadUrl: process.env.VUE_APP_PRODUCT_TEMPLATE_DOWNLOAD_URL,
       categoryId: undefined,
       loading: false,
       tableKey: 0,
