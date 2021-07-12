@@ -63,6 +63,19 @@ export const constantRoutes = [
 
 export const asyncRoutes = [
   {
+    path: '/insured',
+    component: Layout,
+    meta: { roles: ['administrator', 'officer'] },
+    children: [
+      {
+        path: 'index',
+        component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
+        name: 'Insured',
+        meta: { title: 'Insured', icon: 'el-icon-document-add', roles: ['administrator', 'officer'] }
+      }
+    ]
+  },
+  {
     path: '/admin',
     component: Layout,
     alwaysShow: true,
@@ -73,16 +86,6 @@ export const asyncRoutes = [
       roles: ['administrator', 'sales', 'manager']
     },
     children: [
-      // {
-      //   path: '/departments',
-      //   component: resolve => require.ensure([], () => resolve(require('@/views/department/table')), 'Department'),
-      //   name: 'Department',
-      //   meta: {
-      //     title: 'Department',
-      //     icon: 'tree',
-      //     roles: ['administrator']
-      //   }
-      // },
       {
         path: '/users',
         component: resolve => require.ensure([], () => resolve(require('@/views/user/table')), 'User'),
@@ -228,19 +231,6 @@ export const asyncRoutes = [
           title: 'PolicyDetail',
           roles: ['administrator', 'sales', 'manager', 'officer']
         }
-      }
-    ]
-  },
-  {
-    path: '/insured',
-    component: Layout,
-    meta: { roles: ['administrator', 'officer'] },
-    children: [
-      {
-        path: 'index',
-        component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
-        name: 'Insured',
-        meta: { title: 'Insured', icon: 'el-icon-document-add', roles: ['administrator', 'officer'] }
       }
     ]
   },
