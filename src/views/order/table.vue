@@ -27,7 +27,7 @@
       </el-table-column>
       <el-table-column label="实收保费">
         <template slot-scope="{row}">
-          <span>{{ row.actualPremium }}</span>
+          <span>{{ row.actualPremium | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="人数">
@@ -111,6 +111,9 @@ export default {
         'PROCESS': 'warning'
       }
       return statusMap[status]
+    },
+    rounding(value) {
+      return value.toFixed(2)
     },
     valueFilter(type) {
       return statusTypeKeyValue[type]

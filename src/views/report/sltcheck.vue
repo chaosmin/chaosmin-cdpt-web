@@ -35,12 +35,12 @@
       </el-table-column>
       <el-table-column label="标准保费" prop="totalPremium" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.totalPremium }}</span>
+          <span>{{ row.totalPremium | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="实收保费" prop="actualPremium" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.actualPremium }}</span>
+          <span>{{ row.actualPremium | rounding }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -76,22 +76,22 @@
       </el-table-column>
       <el-table-column label="标准单价" prop="unitPremium" width="105" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.unitPremium }}</span>
+          <span>{{ row.unitPremium | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="标准保费" prop="totalPremium" width="105" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.totalPremium }}</span>
+          <span>{{ row.totalPremium | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="实收单价" prop="actualUnitPremium" width="105" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.actualUnitPremium }}</span>
+          <span>{{ row.actualUnitPremium | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="实收保费" prop="actualPremium" width="105" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.actualPremium }}</span>
+          <span>{{ row.actualPremium | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="生效时间" prop="effectiveTime" align="center">
@@ -140,6 +140,11 @@ import waves from '@/directive/waves'
 export default {
   name: 'SltCheckReport',
   directives: { waves },
+  filters: {
+    rounding(value) {
+      return value.toFixed(2)
+    }
+  },
   data() {
     return {
       uploading: undefined,

@@ -70,12 +70,12 @@
       </el-table-column>
       <el-table-column label="保费(元)" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.totalPremium }}</span>
+          <span>{{ row.totalPremium | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="结算保费(元)" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.actualPremium }}</span>
+          <span>{{ row.actualPremium | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出单人" align="center">
@@ -241,6 +241,9 @@ export default {
         'REFUND': 'danger'
       }
       return statusMap[status]
+    },
+    rounding(value) {
+      return value.toFixed(2)
     },
     valueFilter(type) {
       return statusTypeKeyValue[type]

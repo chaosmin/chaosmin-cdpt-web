@@ -53,12 +53,12 @@
       </el-table-column>
       <el-table-column label="原价" prop="originalPrice" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.originalPrice }}</span>
+          <span>{{ row.originalPrice | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="结算价" prop="settlementPrice" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.settlementPrice }}</span>
+          <span>{{ row.settlementPrice | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="折扣" prop="discount" align="center">
@@ -78,7 +78,7 @@
       </el-table-column>
       <el-table-column label="结算佣金" prop="settlementComs" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.settlementComs }}</span>
+          <span>{{ row.settlementComs | rounding }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -93,6 +93,11 @@ import waves from '@/directive/waves'
 export default {
   name: 'SltCheckReport',
   directives: { waves },
+  filters: {
+    rounding(value) {
+      return value.toFixed(2)
+    }
+  },
   data() {
     return {
       uploading: undefined,
