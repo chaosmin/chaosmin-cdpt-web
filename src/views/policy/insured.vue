@@ -259,7 +259,7 @@
             <br>
             <div style="text-align:center">
               <el-button type="primary" size="mini" @click="issuePolicy">确定投保</el-button>
-              <!--              <el-button size="mini" @click="saveToDraftBox">存草稿</el-button>-->
+              <el-button size="mini" @click="saveToDraftBox">存草稿</el-button>
             </div>
           </div>
           <br>
@@ -369,7 +369,6 @@ export default {
       uuid: getFileNameUUID(),
       uploading: undefined,
       insuredTable: undefined,
-      timer: undefined,
       text: '',
       dialogSmartPasteFormVisible: false,
       centerDialogVisible: false,
@@ -454,18 +453,15 @@ export default {
   computed: {
     ...mapState({
       sidebar: state => state.app.sidebar
-    }),
-    groupNum() {
-      return new Set(this.goodsPlan.liabilities.map(o => o.liabilityCategory))
-    }
+    })
   },
   created() {
     this.getGoodsCategories()
-    this.getBizNo()
+    if (this.$route.params.temp !== undefined) {
+      this.temp = this.$route.params.temp
+    }
     this.sidebar.opened = false
-  },
-  beforeDestroy() {
-    clearTimeout(this.timer)
+    this.getBizNo()
   },
   methods: {
     /**
@@ -522,7 +518,8 @@ export default {
      * 生成后端唯一保单号
      */
     getBizNo() {
-      if (this.temp.orderNo === undefined) {
+      console.log('orderNo:' + this.temp.orderNo)
+      if (this.temp.orderNo === undefined || this.temp.orderNo === null) {
         getBizNo().then(response => {
           this.temp.orderNo = response.data
         })
@@ -913,12 +910,18 @@ export default {
     },
     saveToDraftBox() {
       saveDraft(this.temp.orderNo, this.temp).then(response => {
-        this.$notify({
-          title: '成功',
-          message: '保存草稿箱成功',
-          type: 'success',
-          duration: 2000
-        })
+        if (response.success === true) {
+          this.$confirm('保存草稿箱成功, 是否退出当前页面?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+            center: true
+          }).then(() => {
+            this.$router.push({ name: 'Order', params: { orderNo: this.temp.orderNo }})
+          })
+        } else {
+          this.$notify.error({ title: '错误', message: '保存草稿箱失败!' })
+        }
       })
     },
     confirmNotice() {

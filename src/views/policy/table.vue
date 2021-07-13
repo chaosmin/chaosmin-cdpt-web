@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.EQ_policyNo" placeholder="保单号" style="width: 180px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.LIKE_certiNo" placeholder="证件号" style="width: 180px;margin-left: 10px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_policyInsurant_name" placeholder="姓名" style="width: 180px;margin-left: 10px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.EQ_policy_status" placeholder="保单状态" style="width: 180px;margin-left: 10px;" class="filter-item" @change="handleFilter">
+      <el-input v-model="listQuery.EQ_policyNo" size="mini" placeholder="保单号" style="width: 180px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.LIKE_policyInsurant_certiNo" size="mini" placeholder="证件号" style="width: 180px;margin-left: 10px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_policyInsurant_name" size="mini" placeholder="姓名" style="width: 180px;margin-left: 10px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.EQ_policy_status" size="mini" placeholder="保单状态" style="width: 180px;margin-left: 10px;" class="filter-item" @change="handleFilter">
         <el-option
           v-for="item in statusOptions"
           :key="item.value"
@@ -12,7 +12,7 @@
           :value="item.value"
         />
       </el-select>
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
     </div>
@@ -63,7 +63,7 @@
           <span>{{ row.goodsPlan.partnerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出单时间" align="center">
+      <el-table-column label="出单时间" align="center" width="135">
         <template slot-scope="{row}">
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
@@ -88,14 +88,14 @@
           <span>{{ row.holder.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保单状态" class-name="status-col" width="100">
+      <el-table-column label="保单状态" class-name="status-col" width="90">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status | valueFilter }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="280" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="215" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="goToDetail(row.orderNo)">
             详情
@@ -289,7 +289,7 @@ export default {
         P_NUM: 1,
         P_SIZE: 20,
         O_policy_createTime: 0,
-        LIKE_certiNo: undefined,
+        LIKE_policyInsurant_certiNo: undefined,
         ALIKE_policyInsurant_name: undefined,
         EQ_policy_status: undefined,
         EQ_policyNo: undefined

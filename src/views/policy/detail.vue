@@ -6,39 +6,38 @@
 
     <el-main>
       <el-form ref="dataForm" :model="policy" :inline-message="true">
-        <el-divider content-position="left">投保信息</el-divider>
+        <el-link :href="policy.goodsPlan.clauseUrl" target="_blank" style="float:right;padding-bottom: 5px;"><svg-icon icon-class="pdf" /> 详细条款下载</el-link>
         <table border="1" cellspacing="0" width="100%">
-          <tr>
+          <tr style="height:25pt;">
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险公司</span></td>
             <td colspan="5"><span>{{ policy.goodsPlan.partnerName }}</span></td>
           </tr>
-          <tr>
+          <tr style="height:25pt;">
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险产品</span></td>
             <td colspan="5"><span>[{{ policy.goodsPlan.productName }}]-{{ policy.goodsPlan.productPlanName }}-{{ policy.goodsPlan.primaryCoverage }}</span></td>
           </tr>
-          <tr>
+          <tr style="height:25pt;">
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险期限</span></td>
-            <td><span>{{ policy.days }}</span></td>
+            <td><span> {{ policy.days }}天</span></td>
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>起保时间</span></td>
             <td><span>{{ policy.startTime }}</span></td>
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>终止时间</span></td>
             <td><span>{{ policy.endTime }}</span></td>
           </tr>
-          <tr>
+          <tr style="height:25pt;">
             <td><span style="padding-left: 17px">旅行目的地</span></td>
             <td colspan="2"><span>{{ policy.address }}</span></td>
             <td><span style="padding-left: 17px">团号/备注</span></td>
             <td colspan="2"><span>{{ policy.groupNo }}</span></td>
           </tr>
-          <tr>
+          <tr style="height:25pt;">
             <td><span style="padding-left: 17px">投保提示</span></td>
             <td colspan="5">
               <div v-html="policy.goodsPlan.insuranceNotice" />
             </td>
           </tr>
         </table>
-        <el-divider content-position="left">被保人列表</el-divider>
-        <el-table :data="policy.insuredList" border fit highlight-current-row style="width: 100%;" :header-row-style="rowStyle" :row-style="rowStyle">
+        <el-table :data="policy.insuredList" border fit highlight-current-row style="width: 100%;margin-top: 8px" :header-row-style="rowStyle" :row-style="rowStyle">
           <el-table-column type="index" label="序" align="center" />
           <el-table-column label="姓名" align="center" width="100px" style="font-size: 12px">
             <template slot-scope="{row}"><span>{{ row.name }}</span></template>
@@ -65,9 +64,8 @@
             <span>￥{{ policy.unitPremium * (100 - policy.comsRatio) / 100 }}</span>
           </el-table-column>
         </el-table>
-        <el-divider content-position="left">投保人信息</el-divider>
-        <table border="1" cellspacing="0" width="100%">
-          <tr>
+        <table border="1" cellspacing="0" width="100%" style="margin-top: 8px;">
+          <tr style="height:25pt;">
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>公司名称</span></td>
             <td>
               <el-form-item prop="policyHolderName" size="mini" style="margin-bottom: 0;">
@@ -82,9 +80,8 @@
             </td>
           </tr>
         </table>
-        <br>
-        <table border="1" cellspacing="0" width="100%">
-          <tr>
+        <table border="1" cellspacing="0" width="100%" style="margin-top: 8px;">
+          <tr style="height:25pt;">
             <td><span style="padding-left: 17px">人数合计：</span></td>
             <td><span style="padding-left: 10px"><b>{{ policy.insuredList.length }}</b> 人</span></td>
             <td><span style="padding-left: 17px">原价合计：</span></td>
@@ -93,9 +90,7 @@
             <td><span style="padding-left: 17px"><b>{{ policy.actualPremium }}</b> 元</span></td>
           </tr>
         </table>
-        <br>
-        <br>
-        <div style="text-align:center">
+        <div style="text-align:center;margin-top: 8px;">
           <!-- `checked` 为 true 或 false -->
           <el-checkbox v-model="checked" disabled>我已详细阅读并理解</el-checkbox>
           <el-button type="text" @click="centerDialogVisible = true">投保注意事项</el-button> |
@@ -162,11 +157,6 @@ export default {
       rowStyle: {
         height: 12
       }
-    }
-  },
-  computed: {
-    groupNum() {
-      return new Set(this.policy.goodsPlan.liabilities.map(o => o.liabilityCategory))
     }
   },
   created() {
