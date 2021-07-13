@@ -8,6 +8,13 @@ export function fetchOrder(query) {
   })
 }
 
+export function deleteOrder(id) {
+  return request({
+    url: `/v1/api/orders/${id}`,
+    method: 'DELETE'
+  })
+}
+
 export function loadDraft(orderNo) {
   return request({
     url: `/v1/api/orders/${orderNo}/draft-box`,
