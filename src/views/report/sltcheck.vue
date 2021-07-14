@@ -257,7 +257,7 @@ export default {
               } else {
                 return prev
               }
-            }, 0)
+            }, 0).toFixed(2)
             if (index !== 3) {
               sums[index] += ' 元'
             }
