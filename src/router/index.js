@@ -62,19 +62,19 @@ export const constantRoutes = [
 ]
 
 export const asyncRoutes = [
-  {
-    path: '/insured',
-    component: Layout,
-    meta: { roles: ['administrator', 'officer'] },
-    children: [
-      {
-        path: 'index',
-        component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
-        name: 'Insured',
-        meta: { title: 'Insured', icon: 'el-icon-document-add', roles: ['administrator', 'officer'] }
-      }
-    ]
-  },
+  // {
+  //   path: '/insured',
+  //   component: Layout,
+  //   meta: { roles: ['administrator', 'officer'] },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
+  //       name: 'Insured',
+  //       meta: { title: 'Insured', icon: 'el-icon-document-add', roles: ['administrator', 'officer'] }
+  //     }
+  //   ]
+  // },
   {
     path: '/admin',
     component: Layout,
