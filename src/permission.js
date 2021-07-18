@@ -5,10 +5,38 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
+import { fetchUserCategories } from '@/api/goods-plans'
+import Layout from '@/layout'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
+
+// 动态导航境内导航
+function asyncPushRoutes(userId) {
+  return fetchUserCategories(userId).then(({ data }) => {
+    console.log(data)
+    sessionStorage.setItem('addRoute', JSON.stringify(routeList(data, false)))
+    return routeList(data, false, '')
+    function routeList(data, children, id) {
+      console.log(data)
+      var routeArr = []
+      if (data) {
+        data.forEach((i, index) => {
+          routeArr.push({
+            path: !children ? '/insured' : `/insured/${index}`,
+            props: !children ? '' : { selfId: i.id, parentId: id },
+            name: !children ? 'Insured' : `Insured${index}`,
+            component: !children ? Layout : resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
+            meta: { title: !children ? 'Insured' : `Insured${index}`, icon: !children ? 'el-icon-location' : 'el-icon-document-add', roles: ['administrator', 'officer'] },
+            children: i.children ? routeList(i.children, true, i.id) : []
+          })
+        })
+      }
+      return routeArr
+    }
+  })
+}
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -36,12 +64,16 @@ router.beforeEach(async(to, from, next) => {
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
           const { roles } = await store.dispatch('user/getInfo')
 
+          const asyncRouteList = await asyncPushRoutes(store.getters.userId)
+          console.log(asyncRouteList)
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
 
+          console.log(accessRoutes)
+          console.log(asyncRouteList)
           // dynamically add accessible routes
-          router.addRoutes(accessRoutes)
-
+          router.addRoutes(asyncRouteList.concat(accessRoutes))
+          // console.log(router)
           // hack method to ensure that addRoutes is complete
           // set the replace: true, so the navigation will not leave a history record
           next({ ...to, replace: true })
