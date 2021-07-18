@@ -47,13 +47,16 @@ const mutations = {
 }
 
 const actions = {
-  generateRoutes({ commit }, roles) {
+  async generateRoutes({ commit }, roles) {
+    console.log(roles)
+
     return new Promise(resolve => {
+      var list = JSON.parse(sessionStorage.addRoute)
       let accessedRoutes
       if (roles.includes('admin')) {
-        accessedRoutes = asyncRoutes || []
+        accessedRoutes = list.concat(asyncRoutes) || []
       } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+        accessedRoutes = filterAsyncRoutes(list.concat(asyncRoutes), roles)
       }
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
