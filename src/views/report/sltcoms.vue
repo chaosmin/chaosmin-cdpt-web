@@ -181,18 +181,20 @@ export default {
           })
           downloadSltComsReport(this.queryParam.userId, this.queryParam.startTime, this.queryParam.endTime).then((res) => {
             if (!res) return
-            const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-            if (window.navigator.msSaveOrOpenBlob) {
-              navigator.msSaveBlob(blob, '个人计算佣金表.xlsx')
-            } else {
-              const href = URL.createObjectURL(blob)
-              const a = document.createElement('a')
-              a.style.display = 'none'
-              a.href = href
-              a.download = '个人计算佣金表.xlsx'
-              a.click()
-              URL.revokeObjectURL(a.href)
-            }
+            const filename = decodeURIComponent(res.headers['filename'])
+            const type = res.headers['content-type'].split(';')[0]
+            const blob = new Blob([res.data], { type: type })
+            const a = document.createElement('a')
+            // 创建URL
+            const blobUrl = window.URL.createObjectURL(blob)
+            a.download = filename
+            a.href = blobUrl
+            document.body.appendChild(a)
+            // 下载文件
+            a.click()
+            // 释放内存
+            URL.revokeObjectURL(blobUrl)
+            document.body.removeChild(a)
           }).finally(() => {
             this.uploading.close()
           })
@@ -222,7 +224,7 @@ export default {
               } else {
                 return prev
               }
-            }, 0)
+            }, 0).toFixed(2)
             sums[index] += ' 元'
           }
         } else {
