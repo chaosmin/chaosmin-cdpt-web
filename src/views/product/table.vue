@@ -119,7 +119,10 @@
         <el-form-item label="产品描述" prop="productDesc">
           <el-input v-model="temp.productDesc" />
         </el-form-item>
-        <el-form-item label="特约&须知" prop="notice" style="margin-bottom: 30px;">
+        <el-form-item label="投保提示" prop="notice" style="margin-bottom: 30px;">
+          <Tinymce ref="editor" v-model="temp.insuranceNotice" :height="400" />
+        </el-form-item>
+        <el-form-item label="特约&须知" prop="external" style="margin-bottom: 30px;">
           <Tinymce ref="editor" v-model="temp.externalText" :height="400" />
         </el-form-item>
       </el-form>
@@ -195,6 +198,7 @@ export default {
         productSubName: undefined,
         productDesc: undefined,
         waitingDays: undefined,
+        insuranceNotice: undefined,
         externalText: undefined
       },
       dialogFormVisible: false,
