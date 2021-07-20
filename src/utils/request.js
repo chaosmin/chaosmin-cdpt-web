@@ -27,7 +27,9 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
-    if (res.code !== undefined && res.code !== 'SUCCESS') {
+    if (res.code === undefined) {
+      return response
+    } else if (res.code !== 'SUCCESS') {
       Message({
         message: res.msg || '系统异常, 请稍后重试',
         type: 'error',
