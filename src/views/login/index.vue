@@ -1,56 +1,109 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+    <div class="login_top">
+      <!-- <img src="../../assets/login/template_logo.jpg" width="470" height="50" style="margin-top:20px;"> -->
+    </div>
 
-      <div class="title-container">
-        <h3 class="title">
-          {{ $t('login.title') }}
-        </h3>
+    <div class="login_main">
+      <div class="main_container">
+        <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+
+          <div class="title-container">
+            <h3 class="title">
+              {{ $t('login.title') }}
+            </h3>
+          </div>
+
+          <el-form-item prop="loginName">
+            <span class="svg-container">
+              <svg-icon icon-class="user" />
+            </span>
+            <el-input
+              ref="loginName"
+              v-model="loginForm.loginName"
+              :placeholder="$t('login.loginName')"
+              name="loginName"
+              type="text"
+              tabindex="1"
+              autocomplete="on"
+            />
+          </el-form-item>
+
+          <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+            <el-form-item prop="password">
+              <span class="svg-container">
+                <svg-icon icon-class="password" />
+              </span>
+              <el-input
+                :key="passwordType"
+                ref="password"
+                v-model="loginForm.password"
+                :type="passwordType"
+                :placeholder="$t('login.password')"
+                name="password"
+                tabindex="2"
+                autocomplete="on"
+                @keyup.native="checkCapslock"
+                @blur="capsTooltip = false"
+                @keyup.enter.native="handleLogin"
+              />
+              <span class="show-pwd" @click="showPwd">
+                <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+              </span>
+            </el-form-item>
+          </el-tooltip>
+
+          <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
+            {{ $t('login.logIn') }}
+          </el-button>
+        </el-form>
       </div>
+    </div>
 
-      <el-form-item prop="loginName">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="loginName"
-          v-model="loginForm.loginName"
-          :placeholder="$t('login.loginName')"
-          name="loginName"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
-
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            :placeholder="$t('login.password')"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </el-form-item>
-      </el-tooltip>
-
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
-        {{ $t('login.logIn') }}
-      </el-button>
-    </el-form>
+    <div class="login_bottom">
+      <div class="panel">
+        <div class="panel-heading">
+          <div>产品丰富</div>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <i class="el-icon-connection" />
+            <p class="col col-md-9 feature-description">
+              险种丰富多样，全面保障<br>
+              优选保险公司，紧密合作<br>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-heading">
+          <div>操作简单</div>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <i class="el-icon-edit-outline" />
+            <p class="col col-md-9 feature-description">
+              团单批量投保，省时省心<br>
+              系统接口直连，实时出单<br>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-heading">
+          <div>服务专业</div>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <i class="el-icon-service" />
+            <p class="col col-md-9 feature-description">
+              专业一对一客服，急您所急<br>
+              理赔材料在线传，快速简单<br>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
       {{ $t('login.thirdpartyTips') }}
@@ -244,16 +297,82 @@ $light_gray:#eee;
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
+  //background-color: $bg;
   overflow: hidden;
+  .login_top{
+    max-width:1160px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    height:91px;//暂定
+    background:#f8f8f8;
+  }
+  .login_main{
+    height:480px;
+    background:url('../../assets/login/login_bg.jpg');
+    background-size:100% 480px;
+    .main_container{
+      width:1160px;
+      margin:0 auto;
+      height:100%;
+      .login-form {
+        position: relative;
+        width: 320px;
+        max-width: 100%;
+        padding: 0px 16px 0;
+        float:right;
+        background:#f8f8f8;
+        margin-top:75px;
+        background:rgba(0,0,0,.6);
+        padding-top:20px;
+        border-radius:7px;
+        //margin: 0 auto;
+        overflow: hidden;
+      }
+    }
+  }
+  .login_bottom{
+    max-width:1160px;
+    display:flex;
+    margin:24px auto 0;
+    justify-content: space-around;
+    .panel{
+       margin-bottom:20px;
+       background-color: #fff;
+       border-radius: 4px;
+       font-size:14px;
+       flex-grow: 1;
+       margin-right:22px;
+       .panel-heading{
+        color:#888;
+        padding: 8px 15px;
+        border-bottom: 1px solid #ddd;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+       }
+       .panel-body{
+        color: #888;
+        padding: 15px;
+         .row{
+          margin-right:-10px;
+          margin-left:-10px;
+          i{
+            font-size:72px;
+            color:#ddd;
+            float:left;
+          }
+         .feature-description{
+          float:right;
+         text-align: center;
+         line-height: 32px;
+         margin-top: 5px;
+         width:75%;
+         }
+         }
 
-  .login-form {
-    position: relative;
-    width: 520px;
-    max-width: 100%;
-    padding: 160px 35px 0;
-    margin: 0 auto;
-    overflow: hidden;
+       }
+    }
   }
 
   .tips {
@@ -280,7 +399,7 @@ $light_gray:#eee;
     position: relative;
 
     .title {
-      font-size: 26px;
+      font-size: 22px;
       color: $light_gray;
       margin: 0px auto 40px auto;
       text-align: center;
