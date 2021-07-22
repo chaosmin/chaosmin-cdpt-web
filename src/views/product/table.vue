@@ -173,8 +173,8 @@ export default {
   data() {
     return {
       uploading: undefined,
-      uploadUrl: process.env.VUE_APP_PRODUCT_TEMPLATE_UPLOAD_API,
-      downloadUrl: process.env.VUE_APP_PRODUCT_TEMPLATE_DOWNLOAD_URL,
+      uploadUrl: 'http://bl.senhaobx.com/v1/api/products/file',
+      downloadUrl: 'https://cdpt-partner.oss-cn-shanghai.aliyuncs.com/%E4%BF%9D%E9%99%A9%E4%BA%A7%E5%93%81%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx',
       categoryId: undefined,
       loading: false,
       tableKey: 0,

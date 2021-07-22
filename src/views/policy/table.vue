@@ -95,7 +95,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="215" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="225" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="goToDetail(row.orderNo)">
             详情
