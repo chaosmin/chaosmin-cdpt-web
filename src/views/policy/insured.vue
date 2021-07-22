@@ -1,6 +1,6 @@
 <template>
   <el-container style="border: 1px solid #eee">
-    <el-aside width="225px" style="background-color: rgb(238, 241, 246);padding-left: 12px;padding-right: 12px;">
+    <!-- <el-aside width="225px" style="background-color: rgb(238, 241, 246);padding-left: 12px;padding-right: 12px;">
       <el-menu class="el-menu-vertical-demo" :collapse="false" :default-openeds="defaultMenu">
         <template v-for="category in categories">
           <el-submenu :key="category.id" :index="category.id">
@@ -16,14 +16,23 @@
           </el-submenu>
         </template>
       </el-menu>
-    </el-aside>
+    </el-aside> -->
+
     <div ref="imageTofile">
       <el-main v-if="goodsPlan">
         <el-form ref="dataForm" :rules="rules" :model="temp" :inline-message="true" style="width: 1080px">
-          <el-link :href="goodsPlan.clauseUrl" target="_blank" style="float:right;padding-bottom: 5px;"><svg-icon icon-class="pdf" /> 详细条款下载</el-link>
-          <table border="1" cellspacing="0" width="100%">
+          <ul style="border-bottom:1px solid #ddd;list-style:none;height:30px;padding-left:0;">
+            <li style="float:left;margin-bottom:-1px;">
+              <span style="border-top:3px solid #1890ff;color:#5a5e66;cursor:pointer;border:1px solid #ddd;background:#fff;display:block;border-radius:4px 4px 0 0;padding:8px 15px;border-bottom-color:transparent">投保信息</span>
+            </li>
+            <li style="float:right;padding-bottom: 5px;">
+              <el-link :href="goodsPlan.clauseUrl" target="_blank"><svg-icon icon-class="pdf" /> 详细条款下载</el-link>
+            </li>
+          </ul>
+
+          <table cellspacing="0" width="100%">
             <tr style="height:25pt;">
-              <td width="180px"><span style="padding: 5px;color: red;"><b>*</b></span><span>保险公司</span></td>
+              <td width="180px"><span style="padding: 5px;color: red;"><b>*</b></span><span class="fontWeight">保险公司</span></td>
               <td colspan="5">
                 <el-radio-group v-model="partner" size="mini" @change="changePartner">
                   <template v-for="p in partners">
@@ -33,7 +42,7 @@
               </td>
             </tr>
             <tr style="height:25pt;">
-              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>产品选择</span></td>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span class="fontWeight">产品选择</span></td>
               <td colspan="5">
                 <el-select v-model="temp.goodsPlanId" size="mini" placeholder="请选择产品" style="width: 100%" class="filter-item" @change="changeGoodsPlan">
                   <el-option
@@ -46,7 +55,7 @@
               </td>
             </tr>
             <tr style="height:25pt;">
-              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险期限</span></td>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span class="fontWeight">保险期限</span></td>
               <td>
                 <el-form-item prop="days" size="mini" style="margin-bottom: 0;">
                   <el-select v-model="temp.days" size="mini" style="width: 100%" placeholder="请选择保障天数" @change="setEndTime">
@@ -59,7 +68,7 @@
                   </el-select>
                 </el-form-item>
               </td>
-              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>起保时间</span></td>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span class="fontWeight">起保时间</span></td>
               <td>
                 <el-date-picker
                   v-model="temp.startTime"
@@ -76,7 +85,7 @@
                   @change="setEndTime"
                 />
               </td>
-              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>终止时间</span></td>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span class="fontWeight">终止时间</span></td>
               <td>
                 <el-date-picker
                   v-model="temp.endTime"
@@ -106,11 +115,11 @@
             <tr style="height:25pt;">
               <td><span style="padding-left: 17px">投保提示</span></td>
               <td colspan="5">
-                <div v-html="goodsPlan.insuranceNotice" />
+                <div style="line-height:1.8em;font-size:13px" v-html="goodsPlan.insuranceNotice" />
               </td>
             </tr>
           </table>
-          <div class="filter-container" style="display: flex;align-items: center;margin-top: 8px">
+          <div class="filter-container" style="display: flex;align-items: center;margin-top: 10px;margin-bottom:8px">
             <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-download" @click="downloadTemplate">
               下载模板
             </el-button>
@@ -138,6 +147,7 @@
             style="width: 100%;"
             :header-row-style="rowStyle"
             :row-style="rowStyle"
+            :header-cell-style="rowThStyle"
           >
             <el-table-column type="index" label="序" align="center" />
             <el-table-column label="姓名" align="center" width="100px" style="font-size: 12px">
@@ -196,19 +206,19 @@
             </el-table-column>
             <el-table-column label="操作" align="left" width="80px" class-name="small-padding fixed-width">
               <template slot-scope="{row,$index}">
-                <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)" />
+                <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-left: 5px;" :disabled="!$index" @click.native.prevent="deleteRow(row,$index)" />
               </template>
             </el-table-column>
           </el-table>
-          <table border="1" cellspacing="0" width="100%" style="margin-top: 16px">
+          <table cellspacing="0" width="100%" style="margin-top: 16px">
             <tr style="height:25pt;">
-              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>公司名称</span></td>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span class="fontWeight">公司名称</span></td>
               <td>
                 <el-form-item prop="policyHolderName" size="mini" style="margin-bottom: 0;">
                   <el-input v-model="temp.policyHolderName" size="mini" style="width: 100%" placeholder="请输入投保公司名称" />
                 </el-form-item>
               </td>
-              <td><span style="padding: 5px;color: red;"><b>*</b></span><span>证件号码</span></td>
+              <td><span style="padding: 5px;color: red;"><b>*</b></span><span class="fontWeight">证件号码</span></td>
               <td>
                 <el-form-item prop="policyHolderCerti" size="mini" style="margin-bottom: 0;">
                   <el-input v-model="temp.policyHolderCerti" size="mini" style="width: 100%" placeholder="请输入投保公司证件号" />
@@ -217,7 +227,7 @@
             </tr>
           </table>
           <br>
-          <table border="1" cellspacing="0" width="100%">
+          <table cellspacing="0" width="100%">
             <tr style="height:25pt;">
               <td><span style="padding-left: 17px">人数合计：</span></td>
               <td><span style="padding-left: 10px"><b>{{ temp.insuredList.length }}</b> 人</span></td>
@@ -228,7 +238,7 @@
             </tr>
           </table>
           <br>
-          <table border="1" cellspacing="0" width="100%">
+          <table cellspacing="0" width="100%">
             <tr style="height:25pt;">
               <td width="200px"><span style="padding-left: 10px">选择支付方式：</span></td>
               <td>
@@ -277,7 +287,7 @@
               </el-table-column>
             </el-table>
             <br>
-            <div v-html="goodsPlan.productExternal" />
+            <div style="font-size:14px;line-height:1.8em" v-html="goodsPlan.productExternal" />
           </div>
         </el-form>
       </el-main>
@@ -364,6 +374,10 @@ import { mapState } from 'vuex'
 export default {
   name: 'PolicyIndex',
   directives: { waves },
+  props: {
+    selfId: String,
+    parentId: String
+  },
   data() {
     return {
       uuid: getFileNameUUID(),
@@ -381,6 +395,10 @@ export default {
       rowStyle: {
         height: 12
       },
+      rowThStyle: {
+        color: '#444',
+        background: '#f8f8f8'
+      },
       defaultMenu: [],
       dateSelectionOption: [],
       temp: {
@@ -392,7 +410,14 @@ export default {
         endTime: undefined,
         address: undefined,
         groupNo: undefined,
-        insuredList: [],
+        insuredList: [{ // 需要默认一条显示数据
+          name: '',
+          gender: '男',
+          certiType: '身份证',
+          certiNo: '',
+          dateOfBirth: '',
+          mobile: ''
+        }],
         policyHolderName: '上海保垒信息科技有限公司',
         policyHolderCerti: '91310115324619862R',
         comsRatio: 0.0,
@@ -460,7 +485,8 @@ export default {
     if (this.$route.params.temp !== undefined) {
       this.temp = this.$route.params.temp
     }
-    this.sidebar.opened = false
+    // 左侧常开
+    // this.sidebar.opened = false
     this.getBizNo()
   },
   methods: {
@@ -531,6 +557,7 @@ export default {
     getGoodsCategories() {
       fetchUserCategories(this.$store.getters.userId).then(response => {
         this.categories = response.data
+        console.log(this.categories)
         if (this.categories.length > 0) {
           const openMenu = []
           this.categories.forEach(function(item, index) {
@@ -538,7 +565,8 @@ export default {
           })
           this.defaultMenu = openMenu
           // 默认获取第一大类下第一分类的产品列表
-          this.getGoodsPlan(this.categories[0].id, this.categories[0].children[0].id)
+          this.getGoodsPlan(this.parentId, this.selfId)
+          // this.getGoodsPlan(this.categories[0].id, this.categories[0].children[0].id)
         }
       })
     },
@@ -725,6 +753,7 @@ export default {
      * 删除被保人
      */
     deleteRow(row, index) {
+      // if(this.temp.insuredList.length)
       this.temp.insuredList.splice(index, 1)
       this.recalculatePremium()
     },
@@ -951,20 +980,60 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 span {
   font-size: 12px;
 }
 
 table {
   line-height: 14px;
+  border-radius:6px;
+  border:1px solid #ddd;
+}
+
+table tr th, table tr td {
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+table tr th:first-child, table tr td:first-child {
+  border-left: 1px solid #ddd;
+}
+
+table tr:first-child th:first-child {
+    border-top-left-radius: 4px;
+}
+
+table tr:first-child th:last-child {
+    border-top-right-radius: 4px;
+}
+
+table tr:last-child td:first-child {
+    border-bottom-left-radius: 4px;
+}
+
+table tr:last-child td:last-child {
+    border-bottom-right-radius: 4px;
 }
 
 div .el-tabs__content {
   padding-top: 5px;
 }
-
+.el-table__header-wrapper .el-table th{
+  background:#f8f8f8;
+  font-weight:normal;
+  border-bottom:none;
+  border-right:none;
+}
+.el-table__header-wrapper table,.el-table__body-wrapper table{
+  border:none;
+}
 .el-picker-panel__footer .el-button--text.el-picker-panel__link-btn {
   display: none;
+}
+
+.fontWeight{
+  font-weight:bold;
+  color:#333;
 }
 </style>
