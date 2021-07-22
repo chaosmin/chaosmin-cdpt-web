@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login_top">
-      <!-- <img src="../../assets/login/template_logo.jpg" width="470" height="50" style="margin-top:20px;"> -->
+      <img src="../../assets/login/logo.svg" width="190" height="50" style="margin-top:20px;cursor:pointer;">
     </div>
 
     <div class="login_main">
@@ -104,6 +104,16 @@
         </div>
       </div>
     </div>
+
+    <footer class="footer" style="font-size:8px;">
+      <hr>
+
+      <div id="hizom_footer" class="footer_container content-align-center" hidden="" style="display: block;">
+        <p>Copyright © 2018-2021 上海森昊保险代理有限公司 &nbsp;&nbsp;备案号：沪ICP备16005694号-1
+          <!--  <br> 客服邮箱：<a href="mailto:xulin@aybao.com">xulin@aybao.com</a>&nbsp;&nbsp;客服电话(工作日9:30-17:30)：<a href="tel:021-52860188">021-52860188</a> -->
+        </p>
+      </div>
+    </footer>
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
       {{ $t('login.thirdpartyTips') }}
@@ -305,8 +315,8 @@ $light_gray:#eee;
     padding-left: 10px;
     margin-right: auto;
     margin-left: auto;
-    height:91px;//暂定
-    background:#f8f8f8;
+    height:90px;//暂定
+    //background:#f8f8f8;
   }
   .login_main{
     height:480px;
@@ -346,7 +356,7 @@ $light_gray:#eee;
        margin-right:22px;
        .panel-heading{
         color:#888;
-        padding: 8px 15px;
+        padding: 12px 15px;
         border-bottom: 1px solid #ddd;
         border-top-left-radius: 3px;
         border-top-right-radius: 3px;
@@ -372,6 +382,25 @@ $light_gray:#eee;
          }
 
        }
+    }
+  }
+  .footer{
+    margin-top:30px;
+    hr{
+      margin-top:20px;
+      margin-bottom:20px;
+      border:0;
+      border-top: 1px solid #e5e5e5;
+    }
+    .footer_container{
+      letter-spacing:0.1em;
+      max-width:1160px;
+      text-align:center;
+      padding-right:10px;
+      padding-left:10px;
+      margin:0 auto;
+      color:#353535;
+      font-size:12px;
     }
   }
 
