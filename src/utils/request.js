@@ -30,21 +30,26 @@ service.interceptors.response.use(
     if (res.code === undefined) {
       return response
     } else if (res.code !== 'SUCCESS') {
-      Message({
-        message: res.msg || '系统异常, 请稍后重试',
-        type: 'error',
-        duration: 5 * 1000
-      })
-      // TOKEN_00001: Illegal token; TOKEN_00002: Token expired; TOKEN_00003: Other clients logged in
-      if (res.code === 'TOKEN_00001' || res.code === 'TOKEN_00002' || res.code === 'TOKEN_00003') {
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
+      if (res.code === 'SYS_10002') {
+        Message({
+          message: '用户名或密码错误, 请重新登录!',
+          type: 'error',
+          duration: 5 * 1000
+        })
+      } else if (res.code === 'TOKEN_00001' || res.code === 'TOKEN_00002' || res.code === 'TOKEN_00000') {
+        MessageBox.confirm('登录失败, 请重新尝试!', '登录失败', {
+          confirmButtonText: '重新登录',
+          cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
+          this.$store.dispatch('user/logout')
+          this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+        })
+      } else {
+        Message({
+          message: res.msg || '系统异常, 请联系管理员!',
+          type: 'error',
+          duration: 5 * 1000
         })
       }
       return Promise.reject(new Error(res.message || 'Error'))
@@ -55,7 +60,7 @@ service.interceptors.response.use(
   error => {
     console.log('err: ' + error) // for debug
     Message({
-      message: error.msg || '系统异常, 请稍后重试',
+      message: error.msg || '请求失败, 请稍后重试',
       type: 'error',
       duration: 5 * 1000
     })
