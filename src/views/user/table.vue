@@ -234,6 +234,8 @@ export default {
       rules: {
         loginName: [{ required: true, message: '请输入登录名', trigger: 'change' }],
         username: [{ required: true, message: '请输入联系人名称', trigger: 'change' }],
+        phone: [{ required: true, message: '请输入联系人电话', trigger: 'change' }],
+        address: [{ required: true, message: '请输入联系人地址', trigger: 'change' }],
         roleIds: [{ required: true, message: '请分配角色', trigger: 'change' }]
       },
       downloadLoading: false
