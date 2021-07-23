@@ -64,6 +64,7 @@
 
 <script>
 import { validLoginName } from '@/utils/validate'
+import { getDAes } from '@/utils/crypto'
 import SocialSign from './components/SocialSignin'
 
 export default {
@@ -145,7 +146,7 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
+          this.$store.dispatch('user/login', { 'loginName': this.loginForm.loginName, 'password': getDAes(this.loginForm.password) })
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
