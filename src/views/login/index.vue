@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login_top">
-      <img src="../../assets/login/logo.svg" width="190" height="50" style="margin-top:20px;cursor:pointer;">
+     <!--  <img src="../../assets/login/logo.svg" width="190" height="50" style="margin-top:20px;cursor:pointer;"> -->
     </div>
 
     <div class="login_main">
@@ -61,7 +61,7 @@
     </div>
 
     <div class="login_bottom">
-      <div class="panel">
+<!--       <div class="panel">
         <div class="panel-heading">
           <div>产品丰富</div>
         </div>
@@ -102,16 +102,15 @@
             </p>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <footer class="footer" style="font-size:8px;">
       <hr>
 
       <div id="hizom_footer" class="footer_container content-align-center" hidden="" style="display: block;">
-        <p>Copyright © 2018-2021 上海森昊保险代理有限公司 &nbsp;&nbsp;备案号：沪ICP备16005694号-1
-          <!--  <br> 客服邮箱：<a href="mailto:xulin@aybao.com">xulin@aybao.com</a>&nbsp;&nbsp;客服电话(工作日9:30-17:30)：<a href="tel:021-52860188">021-52860188</a> -->
-        </p>
+<!--         <p>Copyright © 2018-2021 上海森昊保险代理有限公司 &nbsp;&nbsp;备案号：沪ICP备16005694号-1
+        </p> -->
       </div>
     </footer>
 
