@@ -1,30 +1,30 @@
 import request from '@/utils/request'
 
-export function getSltComsReport(userId, startTime, endTime) {
+export function getSltComsReport(param) {
   return request({
-    url: `/v1/api/reports/slt-coms/${userId}/${startTime}/${endTime}`,
+    url: `/v1/api/reports/slt-coms/${param.userId}/${param.startTime}/${param.endTime}?timeType=${param.timeType}`,
     method: 'GET'
   })
 }
 
-export function downloadSltComsReport(userId, startTime, endTime) {
+export function downloadSltComsReport(param) {
   return request({
-    url: `/v1/api/reports/slt-coms/${userId}/${startTime}/${endTime}`,
+    url: `/v1/api/reports/slt-coms/${param.userId}/${param.startTime}/${param.endTime}?timeType=${param.timeType}`,
     method: 'POST',
     responseType: 'blob'
   })
 }
 
-export function getSltCheckReport(startTime, endTime) {
+export function getSltCheckReport(param) {
   return request({
-    url: `/v1/api/reports/slt-check/${startTime}/${endTime}`,
+    url: `/v1/api/reports/slt-check/${param.startTime}/${param.endTime}?timeType=${param.timeType}&userId=${param.userId}`,
     method: 'GET'
   })
 }
 
-export function downloadSltCheckReport(startTime, endTime) {
+export function downloadSltCheckReport(param) {
   return request({
-    url: `/v1/api/reports/slt-check/${startTime}/${endTime}`,
+    url: `/v1/api/reports/slt-check/${param.startTime}/${param.endTime}?timeType=${param.timeType}&userId=${param.userId}`,
     method: 'POST',
     responseType: 'blob'
   })
