@@ -211,7 +211,7 @@
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>证件号码</span></td>
               <td>
                 <el-form-item prop="policyHolderCerti" size="mini" style="margin-bottom: 0;">
-                  <el-input v-model="temp.policyHolderCerti" size="mini" style="width: 100%" placeholder="请输入投保公司证件号" />
+                  <el-input v-model="temp.policyHolderCerti" size="mini" minlength="18" maxlength="18" style="width: 100%" placeholder="请输入投保公司证件号" />
                 </el-form-item>
               </td>
             </tr>
@@ -234,9 +234,9 @@
               <td>
                 <template>
                   <div style="padding-left: 10px">
-                    <el-radio-group v-model="temp.payMethod" size="mini">
-                      <el-radio label="MONTHLY"><span>月结</span></el-radio>
-                      <el-radio disabled label="WECHAT"><span>微信</span></el-radio>
+                    <el-radio-group v-model="temp.payType" size="mini">
+                      <el-radio disabled label="0"><span>月结</span></el-radio>
+                      <el-radio disabled label="1"><span>微信</span></el-radio>
                     </el-radio-group>
                   </div>
                 </template>
@@ -399,7 +399,7 @@ export default {
         unitPremium: 0.00,
         totalPremium: 0.00,
         actualPremium: 0.00,
-        payMethod: 'MONTHLY'
+        payType: 'MONTHLY'
       },
       listQuery: {
         O_id: 1,
