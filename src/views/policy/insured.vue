@@ -205,7 +205,14 @@
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>公司名称</span></td>
               <td>
                 <el-form-item prop="policyHolderName" size="mini" style="margin-bottom: 0;">
-                  <el-input v-model="temp.policyHolderName" size="mini" style="width: 100%" placeholder="请输入投保公司名称" />
+                  <el-select v-model="temp.policyHolderName" value-key="id" size="mini" style="width: 100%" placeholder="请选择投保机构" @change="changeDepartment">
+                    <el-option
+                      v-for="item in department.letterHead"
+                      :key="item.certiNo"
+                      :label="item.title"
+                      :value="item.title"
+                    />
+                  </el-select>
                 </el-form-item>
               </td>
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>证件号码</span></td>
@@ -235,8 +242,8 @@
                 <template>
                   <div style="padding-left: 10px">
                     <el-radio-group v-model="temp.payType" size="mini">
-                      <el-radio disabled label="0"><span>月结</span></el-radio>
-                      <el-radio disabled label="1"><span>微信</span></el-radio>
+                      <el-radio disabled label="OFFLINE"><span>月结</span></el-radio>
+                      <el-radio disabled label="WECHAT"><span>微信</span></el-radio>
                     </el-radio-group>
                   </div>
                 </template>
@@ -351,6 +358,7 @@
 
 <script>
 import { saveDraft } from '@/api/orders'
+import { getOneDepartment } from '@/api/departments'
 import { getBizNo, issuePolicy, saveKhsImg } from '@/api/insure'
 import { fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
 import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
@@ -393,8 +401,8 @@ export default {
         address: undefined,
         groupNo: undefined,
         insuredList: [],
-        policyHolderName: '上海保垒信息科技有限公司',
-        policyHolderCerti: '91310115324619862R',
+        policyHolderName: undefined,
+        policyHolderCerti: undefined,
         comsRatio: 0.0,
         unitPremium: 0.00,
         totalPremium: 0.00,
@@ -407,6 +415,9 @@ export default {
         EQ_categorySubName: undefined
       },
       fileList: [],
+      department: {
+        letterHead: []
+      },
       categories: [],
       goodsPlan: {
         insuranceNotice: null,
@@ -457,6 +468,7 @@ export default {
   },
   created() {
     this.getGoodsCategories()
+    this.getDepartment()
     if (this.$route.params.temp !== undefined) {
       this.temp = this.$route.params.temp
     }
@@ -540,6 +552,18 @@ export default {
           // 默认获取第一大类下第一分类的产品列表
           this.getGoodsPlan(this.categories[0].id, this.categories[0].children[0].id)
         }
+      })
+    },
+    /**
+     * 获取用户的机构信息
+     */
+    getDepartment() {
+      getOneDepartment(this.$store.getters.department).then(response => {
+        this.department = response.data
+        // 设置支付方式
+        this.temp.payType = this.department.payType
+        this.temp.policyHolderName = this.department.letterHead[0].title
+        this.temp.policyHolderCerti = this.department.letterHead[0].certiNo
       })
     },
     /**
@@ -820,6 +844,12 @@ export default {
       })
       // 重新计算保费
       this.recalculatePremium()
+    },
+    changeDepartment(data) {
+      const dep = this.department.letterHead.find(item => {
+        return item.title === data
+      })
+      this.temp.policyHolderCerti = dep.certiNo
     },
     /**
      * 从证件号加载性别及出生日期, 回写给被保人

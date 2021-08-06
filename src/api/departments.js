@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function getOneDepartment(id) {
+  return request({
+    url: `/v1/api/departments/${id}`,
+    method: 'GET'
+  })
+}
+
 export function fetchDepartment(query) {
   return request({
     url: '/v1/api/departments',

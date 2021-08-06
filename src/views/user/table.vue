@@ -110,7 +110,8 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
-        <el-form-item v-if="departmentOptions.length > 0" label="所属机构" prop="departmentId">
+        <!-- 只有管理员可以选择机构, 否则默认创建同机构下的账户 -->
+        <el-form-item v-if="isAdmin" label="所属机构" prop="departmentId">
           <el-select v-model="temp.departmentId" filterable placeholder="请选择" style="width: 200px" :disabled="dialogStatus==='update'">
             <el-option
               v-for="item in departmentOptions"
@@ -123,7 +124,7 @@
         <el-form-item label="登录名" prop="loginName">
           <el-input v-model="temp.loginName" :disabled="dialogStatus==='update'" />
         </el-form-item>
-        <el-form-item label="联系人" prop="username">
+        <el-form-item label="姓名" prop="username">
           <el-input v-model="temp.username" :disabled="dialogStatus==='update'" />
         </el-form-item>
         <el-form-item label="联系电话" prop="phone">
@@ -135,7 +136,7 @@
         <el-form-item label="联系邮箱" prop="email">
           <el-input v-model="temp.email" />
         </el-form-item>
-        <el-form-item label="角色" prop="roleId">
+        <el-form-item label="角色" prop="roleIds">
           <el-select v-model="temp.roleIds" multiple placeholder="请选择" style="width: 200px">
             <el-option
               v-for="item in roleOptions"
@@ -197,6 +198,7 @@ export default {
   },
   data() {
     return {
+      isAdmin: this.$store.getters.isAdmin,
       departmentOptions: [],
       roleOptions: [],
       showModifyInfo: false,
@@ -232,11 +234,12 @@ export default {
       },
       dialogPvVisible: false,
       rules: {
+        departmentId: [{ required: true, message: '请选择所属机构', trigger: 'change' }],
         loginName: [{ required: true, message: '请输入登录名', trigger: 'change' }],
         username: [{ required: true, message: '请输入联系人名称', trigger: 'change' }],
         phone: [{ required: true, message: '请输入联系人电话', trigger: 'change' }],
         address: [{ required: true, message: '请输入联系人地址', trigger: 'change' }],
-        roleIds: [{ required: true, message: '请分配角色', trigger: 'change' }]
+        roleIds: [{ type: 'array', required: true, message: '请分配角色', trigger: 'change' }]
       },
       downloadLoading: false
     }
