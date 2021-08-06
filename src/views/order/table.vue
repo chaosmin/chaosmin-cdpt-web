@@ -70,7 +70,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="135" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="140" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button v-if="row.status==='DRAFT'" size="mini" type="primary" @click="loadDraft(row.orderNo)">加载</el-button>
           <el-button v-if="row.status==='DRAFT'" size="mini" type="danger" @click="deleteData(row)">删除</el-button>
