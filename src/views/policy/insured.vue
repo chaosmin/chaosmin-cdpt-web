@@ -264,7 +264,8 @@
               </el-checkbox>
             </div>
             <br>
-            <div style="text-align:center">
+            <!-- 只有出单员有权限出单 -->
+            <div v-if="this.$store.getters.roles.includes('officer')" style="text-align:center">
               <el-button type="primary" size="mini" @click="issuePolicy">确定投保</el-button>
               <el-button size="mini" @click="saveToDraftBox">存草稿</el-button>
             </div>
@@ -530,11 +531,12 @@ export default {
      * 生成后端唯一保单号
      */
     getBizNo() {
-      console.log('orderNo:' + this.temp.orderNo)
-      if (this.temp.orderNo === undefined || this.temp.orderNo === null) {
-        getBizNo().then(response => {
-          this.temp.orderNo = response.data
-        })
+      if (this.$store.getters.roles.includes('officer')) {
+        if (this.temp.orderNo === undefined || this.temp.orderNo === null) {
+          getBizNo().then(response => {
+            this.temp.orderNo = response.data
+          })
+        }
       }
     },
     /**
