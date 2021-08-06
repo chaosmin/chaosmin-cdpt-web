@@ -217,7 +217,8 @@ export default {
       },
       temp: {
         id: undefined,
-        departmentId: undefined,
+        // 默认是同一渠道, 如果需要修改则更新
+        departmentId: this.$store.getters.department,
         username: undefined,
         loginName: undefined,
         phone: undefined,
