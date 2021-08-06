@@ -39,6 +39,11 @@
           <span>{{ row.numberOfUser }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="支付方式" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.payType | payTypeFilter }}</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('base.status')" class-name="status-col" width="80">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
@@ -68,10 +73,10 @@
       </el-table-column>
       <el-table-column label="操作" align="left" width="82px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-popconfirm v-if="row.status==='VALID'" title="您确定锁定该机构及名下所有用户吗?" @onConfirm="modifyStatus(row,'INVALID')">
+          <el-popconfirm v-if="row.status==='ENABLED'" title="您确定锁定该机构及名下所有用户吗?" @onConfirm="modifyStatus(row,'DISABLED')">
             <el-button slot="reference" size="mini" type="danger" style="margin-left: 5px;">锁定</el-button>
           </el-popconfirm>
-          <el-popconfirm v-if="row.status==='INVALID'" title="您确定解锁该机构吗？" @onConfirm="modifyStatus(row,'VALID')">
+          <el-popconfirm v-if="row.status==='DISABLED'" title="您确定解锁该机构吗？" @onConfirm="modifyStatus(row,'ENABLED')">
             <el-button slot="reference" size="mini" type="warning" style="margin-left: 5px;">解锁</el-button>
           </el-popconfirm>
         </template>
@@ -81,27 +86,40 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.P_NUM" :limit.sync="listQuery.P_SIZE" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 500px; margin-left:80px;">
         <el-form-item label="编码" prop="code">
           <el-input v-model="temp.code" :disabled="dialogStatus==='update'" />
         </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="投保公司" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item label="支付方式" prop="payType">
+          <el-select v-model="temp.payType" filterable placeholder="请选择" style="width: 200px">
+            <el-option key="OFFLINE" label="月结" value="OFFLINE" />
+            <el-option key="WECHAT" label="微信支付" value="WECHAT" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="证件号" prop="certiNo">
-          <el-input v-model="temp.certiNo" />
-        </el-form-item>
+        <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="addNewHead">
+          添加抬头信息
+        </el-button>
+        <el-table :data="temp.letterHead" border fit highlight-current-row style="width: 100%;margin-top: 8px">
+          <el-table-column type="index" label="序" align="center" />
+          <el-table-column label="抬头名称" align="center" style="font-size: 12px">
+            <template slot-scope="{row}"><el-input v-model="row.title" class="edit-input" size="mini" /></template>
+          </el-table-column>
+          <el-table-column label="证件号" align="center">
+            <template slot-scope="{row}"><el-input v-model="row.certiNo" class="edit-input" size="mini" /></template>
+          </el-table-column>
+          <el-table-column label="操作" align="left" width="80px" class-name="small-padding fixed-width">
+            <template slot-scope="{row,$index}">
+              <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)" />
+            </template>
+          </el-table-column>
+        </el-table>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          确认
-        </el-button>
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">确认</el-button>
       </div>
     </el-dialog>
   </div>
@@ -113,11 +131,21 @@ import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 const statusTypeOptions = [
-  { key: 'VALID', display_name: '可用' },
-  { key: 'INVALID', display_name: '不可用' }
+  { key: 'ENABLED', display_name: '可用' },
+  { key: 'DISABLED', display_name: '不可用' }
+]
+
+const payTypeOptions = [
+  { key: 'OFFLINE', display_name: '月结' },
+  { key: 'WECHAT', display_name: '微信支付' }
 ]
 
 const statusTypeKeyValue = statusTypeOptions.reduce((acc, cur) => {
+  acc[cur.key] = cur.display_name
+  return acc
+}, {})
+
+const payTypeKeyValue = payTypeOptions.reduce((acc, cur) => {
   acc[cur.key] = cur.display_name
   return acc
 }, {})
@@ -129,13 +157,16 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        'VALID': 'success',
-        'INVALID': 'danger'
+        'ENABLED': 'success',
+        'DISABLED': 'danger'
       }
       return statusMap[status]
     },
     valueFilter(type) {
       return statusTypeKeyValue[type]
+    },
+    payTypeFilter(type) {
+      return payTypeKeyValue[type]
     }
   },
   data() {
@@ -152,13 +183,12 @@ export default {
       },
       temp: {
         id: undefined,
-        numberOfUser: undefined,
         code: undefined,
         name: undefined,
-        title: undefined,
-        certiNo: undefined,
-        letterhead: [],
-        status: undefined
+        letterHead: [],
+        status: undefined,
+        payType: undefined,
+        numberOfUser: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -169,7 +199,8 @@ export default {
       dialogPvVisible: false,
       rules: {
         code: [{ required: true, message: '请输入机构编号', trigger: 'change' }],
-        name: [{ required: true, message: '请输入机构名称', trigger: 'change' }]
+        name: [{ required: true, message: '请输入机构名称', trigger: 'change' }],
+        payType: [{ required: true, message: '请选择支付方式', trigger: 'change' }]
       }
     }
   },
@@ -196,9 +227,8 @@ export default {
         id: undefined,
         code: undefined,
         name: undefined,
-        title: undefined,
-        certiNo: undefined,
-        letterhead: [],
+        payType: undefined,
+        letterHead: [],
         status: undefined
       }
     },
@@ -213,7 +243,6 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.letterhead.push({ title: this.temp.title, certiNo: this.temp.certiNo })
           createDepartment(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -266,6 +295,16 @@ export default {
           duration: 2000
         })
       })
+    },
+    addNewHead() {
+      const head = {
+        title: '',
+        certiNo: ''
+      }
+      this.temp.letterHead.push(head)
+    },
+    deleteRow(row, index) {
+      this.temp.letterHead.splice(index, 1)
     }
   }
 }

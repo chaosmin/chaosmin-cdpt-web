@@ -2,11 +2,27 @@
   <div class="app-container">
     <div class="filter-container">
       <el-form ref="dataForm" :inline="true" :rules="rules" :model="queryParam" class="demo-form-inline">
+        <el-form-item prop="userId" label="用户">
+          <el-select v-model="queryParam.userId" size="mini" placeholder="选择用户ID">
+            <el-option
+              v-for="item in userOptions"
+              :key="item.id"
+              :label="item.username"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="timeType" label="时间类型">
+          <el-select v-model="queryParam.timeType" size="mini" placeholder="选择时间范围类型">
+            <el-option key="ISSUE_TIME" label="出单时间" value="ISSUE_TIME" />
+            <el-option key="EFFECTIVE_TIME" label="生效时间" value="EFFECTIVE_TIME" />
+          </el-select>
+        </el-form-item>
         <el-form-item prop="startTime" label="开始时间">
-          <el-date-picker v-model="queryParam.startTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions" />
+          <el-date-picker v-model="queryParam.startTime" size="mini" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions" />
         </el-form-item>
         <el-form-item prop="endTime" label="结束时间">
-          <el-date-picker v-model="queryParam.endTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions" />
+          <el-date-picker v-model="queryParam.endTime" size="mini" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions" />
         </el-form-item>
         <el-form-item>
           <el-button size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
@@ -135,6 +151,7 @@
 
 <script>
 import { getSltCheckReport, downloadSltCheckReport } from '@/api/reports'
+import { fetchSubordinate } from '@/api/users'
 import waves from '@/directive/waves'
 
 export default {
@@ -148,6 +165,7 @@ export default {
   data() {
     return {
       uploading: undefined,
+      userOptions: [],
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now()
@@ -180,21 +198,32 @@ export default {
       total: 0,
       loading: false,
       queryParam: {
+        userId: null,
+        timeType: 'EFFECTIVE_TIME',
         startTime: null,
         endTime: null
       },
       rules: {
+        timeType: [{ required: true, message: '请选定时间范围类型', trigger: 'change' }],
         startTime: [{ required: true, message: '请选择报表开始时间', trigger: 'change' }],
         endTime: [{ required: true, message: '请选择报表结束时间', trigger: 'change' }]
       }
     }
   },
+  created() {
+    this.getUserOptions()
+  },
   methods: {
+    getUserOptions() {
+      fetchSubordinate(this.$store.getters.userId).then(response => {
+        this.userOptions = response.data
+      })
+    },
     getReport() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.loading = true
-          getSltCheckReport(this.queryParam.startTime, this.queryParam.endTime).then(response => {
+          getSltCheckReport(this.queryParam).then(response => {
             this.report = response.data
             setTimeout(() => {
               this.loading = false
@@ -215,7 +244,7 @@ export default {
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
           })
-          downloadSltCheckReport(this.queryParam.startTime, this.queryParam.endTime).then((res) => {
+          downloadSltCheckReport(this.queryParam).then((res) => {
             if (!res) return
             const filename = decodeURIComponent(res.headers['filename'])
             const type = res.headers['content-type'].split(';')[0]

@@ -28,7 +28,7 @@ function asyncPushRoutes(userId) {
             props: !children ? '' : { selfId: i.id, parentId: id },
             name: !children ? 'Insured' : `Insured${index}`,
             component: !children ? Layout : resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
-            meta: { title: !children ? 'Insured' : `Insured${index}`, icon: !children ? 'el-icon-location' : 'el-icon-document-add', roles: ['administrator', 'officer'] },
+            meta: { title: !children ? 'Insured' : `Insured${index}`, icon: !children ? 'el-icon-location' : 'el-icon-document-add' },
             children: i.children ? routeList(i.children, true, i.id) : []
           })
         })
