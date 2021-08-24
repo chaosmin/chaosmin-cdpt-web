@@ -206,7 +206,7 @@
             </el-table-column>
             <el-table-column label="操作" align="left" width="80px" class-name="small-padding fixed-width">
               <template slot-scope="{row,$index}">
-                <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-left: 5px;" :disabled="!$index" @click.native.prevent="deleteRow(row,$index)" />
+                <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)" />
               </template>
             </el-table-column>
           </el-table>
