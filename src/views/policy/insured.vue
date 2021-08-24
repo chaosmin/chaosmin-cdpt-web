@@ -186,10 +186,10 @@
             </el-table-column>
             <el-table-column label="出生日期" width="155px" align="center">
               <template slot-scope="{row}">
-                <el-date-picker v-model="row.dateOfBirth" size="mini" value-format="timestamp" style="width: 130px" :clearable="false" type="date" placeholder="选择生日" />
+                <el-date-picker v-model="row.dateOfBirth" size="mini" value-format="timestamp" style="width: 100%" :clearable="false" type="date" placeholder="选择生日" />
               </template>
             </el-table-column>
-            <el-table-column label="手机号" width="125px" align="center">
+            <el-table-column label="手机号" width="140px" align="center">
               <template slot-scope="{row}">
                 <el-input v-model="row.mobile" class="edit-input" size="mini" />
               </template>
@@ -215,7 +215,7 @@
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span class="fontWeight">公司名称</span></td>
               <td>
                 <el-form-item prop="policyHolderName" size="mini" style="margin-bottom: 0;">
-                  <el-select v-model="temp.policyHolderName" value-key="id" size="mini" style="width: 100%" placeholder="请选择投保机构" @change="changeDepartment">
+                  <el-select v-model="temp.policyHolderName" filterable allow-create default-first-option value-key="id" size="mini" style="width: 100%" placeholder="请选择投保机构" @change="changeDepartment">
                     <el-option
                       v-for="item in department.letterHead"
                       :key="item.certiNo"
@@ -483,7 +483,10 @@ export default {
         startTime: [{ required: true, message: '请选择起保时间', trigger: 'change' }],
         endTime: [{ required: true, message: '请选择终止时间', trigger: 'change' }],
         policyHolderName: [{ required: true, message: '请输入投保人名称', trigger: 'change' }],
-        policyHolderCerti: [{ required: true, message: '请选择投保人证件号', trigger: 'change' }]
+        policyHolderCerti: [
+          { required: true, message: '请选择投保机构证件号', trigger: 'change' },
+          { min: 18, max: 18, message: '投保机构证件号必须为18位', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -880,7 +883,9 @@ export default {
       const dep = this.department.letterHead.find(item => {
         return item.title === data
       })
-      this.temp.policyHolderCerti = dep.certiNo
+      if (dep !== undefined) {
+        this.temp.policyHolderCerti = dep.certiNo
+      }
     },
     /**
      * 从证件号加载性别及出生日期, 回写给被保人
