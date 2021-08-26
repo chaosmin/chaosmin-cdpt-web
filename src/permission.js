@@ -18,18 +18,18 @@ function asyncPushRoutes(userId) {
     console.log(data)
     sessionStorage.setItem('addRoute', JSON.stringify(routeList(data, false)))
     return routeList(data, false, '')
-    function routeList(data, children, id) {
+    function routeList(data, children, id, fatherIndex) {
       console.log(data)
       var routeArr = []
       if (data) {
         data.forEach((i, index) => {
           routeArr.push({
-            path: !children ? '/insured' : `/insured/${index}`,
+            path: !children ? `/insured${index}` : `/insured/${fatherIndex}${index}`,
             props: !children ? '' : { selfId: i.id, parentId: id },
-            name: !children ? 'Insured' : `Insured${index}`,
+            name: !children ? `/insured${index}` : `/insured/${fatherIndex}${index}`,
             component: !children ? Layout : resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
-            meta: { title: !children ? 'Insured' : `Insured${index}`, icon: !children ? 'el-icon-location' : 'el-icon-document-add' },
-            children: i.children ? routeList(i.children, true, i.id) : []
+            meta: { title: i.name, icon: !children ? 'el-icon-location' : 'el-icon-document-add' },
+            children: i.children ? routeList(i.children, true, i.id, index) : []
           })
         })
       }
