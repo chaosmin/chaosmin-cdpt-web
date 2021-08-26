@@ -41,7 +41,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: resolve => require.ensure([], () => resolve(require('@/views/dashboard/index')), 'dashboard'),
         name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', affix: true }
+        meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
   },
@@ -55,7 +55,7 @@ export const constantRoutes = [
         path: 'index',
         component: resolve => require.ensure([], () => resolve(require('@/views/profile/index')), 'Profile'),
         name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true }
+        meta: { title: '修改密码', icon: 'user', noCache: true }
       }
     ]
   }
@@ -68,7 +68,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     name: 'Admin',
     meta: {
-      title: 'Admin',
+      title: '系统管理',
       icon: 'peoples',
       roles: ['administrator', 'sales', 'manager']
     },
@@ -78,7 +78,7 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/department/table')), 'Department'),
         name: 'Department',
         meta: {
-          title: 'Department',
+          title: '机构管理',
           icon: 'user',
           roles: ['administrator']
         }
@@ -88,7 +88,7 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/user/table')), 'User'),
         name: 'User',
         meta: {
-          title: 'User',
+          title: '用户管理',
           icon: 'user',
           roles: ['administrator', 'sales', 'manager']
         }
@@ -98,7 +98,7 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/role/table')), 'Role'),
         name: 'Role',
         meta: {
-          title: 'Role',
+          title: '角色管理',
           icon: 'eye-open',
           roles: ['administrator']
         }
@@ -108,7 +108,7 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/authority/table')), 'Authority'),
         name: 'Authority',
         meta: {
-          title: 'Authority',
+          title: '权限管理',
           icon: 'lock',
           roles: ['administrator']
         }
@@ -121,7 +121,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     name: 'ProductCenter',
     meta: {
-      title: 'ProductCenter',
+      title: '产品中心',
       icon: 'el-icon-collection',
       roles: ['administrator', 'sales', 'manager']
     },
@@ -131,7 +131,7 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/partner/table')), 'Partner'),
         name: 'Partner',
         meta: {
-          title: 'Partner',
+          title: '保司管理',
           icon: 'el-icon-suitcase',
           roles: ['administrator']
         }
@@ -141,7 +141,7 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/product/table')), 'Product'),
         name: 'Product',
         meta: {
-          title: 'Product',
+          title: '产品管理',
           icon: 'component',
           roles: ['administrator']
         }
@@ -151,7 +151,7 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/product-plan/table')), 'Plan'),
         name: 'Plan',
         meta: {
-          title: 'Plan',
+          title: '计划管理',
           icon: 'list',
           roles: ['administrator']
         }
@@ -162,7 +162,7 @@ export const asyncRoutes = [
         name: 'Liability',
         hidden: true,
         meta: {
-          title: 'Liability',
+          title: '责任管理',
           roles: ['administrator']
         }
       },
@@ -172,7 +172,7 @@ export const asyncRoutes = [
         name: 'RateTable',
         hidden: true,
         meta: {
-          title: 'RateTable',
+          title: '费率表',
           roles: ['administrator']
         }
       },
@@ -181,7 +181,7 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/goods-plan/table')), 'ProductAuthorization'),
         name: 'ProductAuthorization',
         meta: {
-          title: 'ProductAuthorization',
+          title: '产品授权',
           icon: 'el-icon-s-check',
           roles: ['administrator', 'sales', 'manager']
         }
@@ -194,7 +194,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     name: 'PolicyMgmt',
     meta: {
-      title: 'PolicyMgmt',
+      title: '保单服务',
       icon: 'el-icon-document-copy',
       roles: ['administrator', 'sales', 'manager', 'officer']
     },
@@ -204,7 +204,7 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/order/table')), 'Order'),
         name: 'Order',
         meta: {
-          title: 'Order',
+          title: '订单管理',
           icon: 'el-icon-document',
           roles: ['administrator', 'sales', 'manager', 'officer']
         }
@@ -214,7 +214,7 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/policy/table')), 'Policy'),
         name: 'Policy',
         meta: {
-          title: 'Policy',
+          title: '保单管理',
           icon: 'el-icon-document-checked',
           roles: ['administrator', 'sales', 'manager', 'officer']
         }
@@ -225,7 +225,7 @@ export const asyncRoutes = [
         name: 'PolicyDetail',
         hidden: true,
         meta: {
-          title: 'PolicyDetail',
+          title: '保单详情',
           roles: ['administrator', 'sales', 'manager', 'officer']
         }
       }
@@ -237,7 +237,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     name: 'Report',
     meta: {
-      title: 'Report',
+      title: '报表管理',
       icon: 'el-icon-tickets',
       roles: ['administrator', 'sales', 'manager']
     },
@@ -246,13 +246,13 @@ export const asyncRoutes = [
         path: '/sltCheck',
         component: resolve => require.ensure([], () => resolve(require('@/views/report/sltcheck')), 'SltCheck'),
         name: 'SltCheck',
-        meta: { title: 'SltCheck', icon: 'el-icon-wallet', roles: ['administrator'] }
+        meta: { title: '结算清单', icon: 'el-icon-wallet', roles: ['administrator'] }
       },
       {
         path: '/sltComs',
         component: resolve => require.ensure([], () => resolve(require('@/views/report/sltcoms')), 'SltComs'),
         name: 'SltComs',
-        meta: { title: 'SltComs', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager'] }
+        meta: { title: '个人佣金结算表', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager'] }
       }
     ]
   },
