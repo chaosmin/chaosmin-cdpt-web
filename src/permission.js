@@ -29,7 +29,7 @@ function asyncPushRoutes(userId) {
             name: !children ? `/insured${index}` : `/insured/${fatherIndex}${index}`,
             component: !children ? Layout : resolve => require.ensure([], () => resolve(require('@/views/policy/insured')), 'Insured'),
             meta: { title: i.name, icon: !children ? 'el-icon-location' : 'el-icon-document-add' },
-            children: i.children ? routeList(i.children, true, i.id, index) : []
+            children: i.children ? routeList(i.children, true, i.id, fatherIndex || '' + index) : []
           })
         })
       }
