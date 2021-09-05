@@ -334,10 +334,10 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      cancelPolicy(id, {}).then(response => {
+      cancelPolicy(id, { 'status': 'SURRENDERED' }).then(response => {
         this.uploading.close()
         if (response.success === true) {
-          row.status = 'REFUND'
+          row.status = 'SURRENDERED'
           this.$notify({
             title: '成功',
             message: '退保成功',
