@@ -242,8 +242,8 @@
                 <template>
                   <div style="padding-left: 10px">
                     <el-radio-group v-model="temp.payType" size="mini">
-                      <el-radio disabled label="OFFLINE"><span>月结</span></el-radio>
-                      <el-radio disabled label="WECHAT"><span>微信</span></el-radio>
+                      <el-radio label="OFFLINE"><span>月结</span></el-radio>
+                      <el-radio label="ONLINE"><span>微信</span></el-radio>
                     </el-radio-group>
                   </div>
                 </template>
@@ -353,6 +353,10 @@
           <el-button size="mini" type="primary" @click="confirmPdf">我已阅读并确认</el-button>
         </span>
       </el-dialog>
+
+      <el-dialog title="请支付" :visible.sync="qrCodeVisible" width="340px">
+        <img :src="payQrCode" alt="qrCode">
+      </el-dialog>
     </div>
   </el-container>
 </template>
@@ -379,6 +383,8 @@ export default {
       uploading: undefined,
       insuredTable: undefined,
       text: '',
+      payQrCode: undefined,
+      qrCodeVisible: false,
       dialogSmartPasteFormVisible: false,
       centerDialogVisible: false,
       pdfDialogVisible: false,
@@ -725,9 +731,14 @@ export default {
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
           })
-          issuePolicy(this.temp).then(response => {
+          saveDraft(this.temp.orderNo, this.temp).then(response => {
             if (response.success === true) {
-              this.$router.push({ name: 'Policy' })
+              issuePolicy(this.temp).then(response => {
+                if (response.success === true) {
+                  // TODO 判断是否需要支付
+                  this.$router.push({ name: 'Policy' })
+                }
+              })
             }
           }).finally(() => {
             this.uploading.close()
@@ -960,6 +971,17 @@ export default {
           this.$notify.error({ title: '错误', message: '保存草稿箱失败!' })
         }
       })
+    },
+    zhifu() {
+      this.qrCodeVisible = true
+      // testPay().then(response => {
+      //   console.log(response)
+      //   if (response.success === true) {
+      //     this.payQrCode = response.data
+      //     console.log(this.payQrCode)
+      //     this.qrCodeVisible = true
+      //   }
+      // })
     },
     confirmNotice() {
       this.setImage('投保须知')

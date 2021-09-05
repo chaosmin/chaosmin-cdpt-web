@@ -15,6 +15,13 @@ export function deleteOrder(id) {
   })
 }
 
+export function createPayment(orderNo) {
+  return request({
+    url: `/v1/api/orders/${orderNo}/pay`,
+    method: 'GET'
+  })
+}
+
 export function loadDraft(orderNo) {
   return request({
     url: `/v1/api/orders/${orderNo}/draft-box`,

@@ -80,7 +80,7 @@
       </el-table-column>
       <el-table-column label="出单人" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.creator }}</span>
+          <span>{{ row.issuerName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="投保人" align="center">
@@ -209,8 +209,11 @@ import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 const statusTypeOptions = [
-  { key: 'SUCCESS', display_name: '已承保' },
-  { key: 'REFUND', display_name: '已退保' }
+  { key: 'TO_BE_INSURED', display_name: '待承保' },
+  { key: 'INSURED', display_name: '已承保' },
+  { key: 'SURRENDERED', display_name: '已退保' },
+  { key: 'CANCELLED', display_name: '已取消' },
+  { key: 'UNDERWRITING_PASS', display_name: '已核保' }
 ]
 
 const khsTypeOptions = [
@@ -237,8 +240,9 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        'SUCCESS': 'success',
-        'REFUND': 'danger'
+        'INSURED': 'success',
+        'SURRENDERED': 'danger',
+        'CANCELLED': 'danger'
       }
       return statusMap[status]
     },
