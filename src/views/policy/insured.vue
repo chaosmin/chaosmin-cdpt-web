@@ -362,7 +362,7 @@
 </template>
 
 <script>
-import { saveDraft } from '@/api/orders'
+import { createPayment, saveDraft } from '@/api/orders'
 import { getOneDepartment } from '@/api/departments'
 import { getBizNo, issuePolicy, saveKhsImg } from '@/api/insure'
 import { fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
@@ -735,13 +735,22 @@ export default {
             if (response.success === true) {
               issuePolicy(this.temp).then(response => {
                 if (response.success === true) {
-                  // TODO 判断是否需要支付
+                  if (this.temp.payType === 'ONLINE') {
+                    createPayment(this.temp.orderNo).then(response => {
+                      if (response.success === true) {
+                        this.payQrCode = response.data
+                        this.qrCodeVisible = true
+                      }
+                    })
+                  }
                   this.$router.push({ name: 'Policy' })
                 }
+              }).finally(() => {
+                this.uploading.close()
               })
+            } else {
+              this.uploading.close()
             }
-          }).finally(() => {
-            this.uploading.close()
           })
         }
       })
