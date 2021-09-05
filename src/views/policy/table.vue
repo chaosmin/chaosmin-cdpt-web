@@ -109,7 +109,7 @@
               保单
             </el-button>
           </el-link>
-          <el-popconfirm v-if="row.status === 'SUCCESS' && afterNow(row.effectiveTime)" title="您确定取消该保单吗？" @onConfirm="cancelPolicy(row.id, row)">
+          <el-popconfirm v-if="row.status === 'INSURED' && afterNow(row.effectiveTime)" title="您确定取消该保单吗？" @onConfirm="cancelPolicy(row.id, row)">
             <el-button slot="reference" size="mini" type="warning" style="margin-left: 5px;">
               退保
             </el-button>
