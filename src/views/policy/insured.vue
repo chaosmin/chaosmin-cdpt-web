@@ -362,9 +362,9 @@
 </template>
 
 <script>
-import { createPayment, saveDraft } from '@/api/orders'
+import { createPayment, saveDraft, saveOrderTrace } from '@/api/orders'
 import { getOneDepartment } from '@/api/departments'
-import { getBizNo, issuePolicy, saveKhsImg } from '@/api/insure'
+import { getBizNo, issuePolicy } from '@/api/insure'
 import { fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
 import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
 import { validGender, validNumber, validPhoneNumber } from '@/utils/validate'
@@ -500,7 +500,7 @@ export default {
         canvas.toBlob((blobObj) => {
           put(`${dateStr}/${objName}`, blobObj).then(_ => {
             signatureUrl(`${dateStr}/${objName}`).then(res => {
-              saveKhsImg(this.temp.orderNo, { 'type': step, 'time': date, 'url': res.split('?')[0] })
+              saveOrderTrace(this.temp.orderNo, { 'type': step, 'time': date, 'url': res.split('?')[0] })
             })
           })
         }, 'image/jpeg')

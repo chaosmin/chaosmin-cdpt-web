@@ -22,6 +22,14 @@ export function createPayment(orderNo) {
   })
 }
 
+export function saveOrderTrace(orderNo, data) {
+  return request({
+    url: `/v1/api/orders/${orderNo}/trace`,
+    method: 'POST',
+    data
+  })
+}
+
 export function loadDraft(orderNo) {
   return request({
     url: `/v1/api/orders/${orderNo}/draft-box`,
