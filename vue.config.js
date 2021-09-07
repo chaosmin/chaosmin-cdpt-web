@@ -1,6 +1,7 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
+const CompressionPlugin = require('compression-webpack-plugin')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -103,5 +104,13 @@ module.exports = {
           config.optimization.runtimeChunk('single')
         }
       )
+    config.plugin('compressionPlugin')
+      .use(new CompressionPlugin({
+        algorithm: 'gzip',
+        test: /\.js$|.html$|.\css/,
+        threshold: 10240,
+        minRatio: 0.8,
+        deleteOriginalAssets: false
+      }))
   }
 }
