@@ -30,6 +30,13 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
+    },
+    externals: {
+      vue: 'Vue',
+      'vue-router': 'VueRouter',
+      echarts: 'echarts',
+      axios: 'axios',
+      'element-ui': 'ELEMENT'
     }
   },
   chainWebpack(config) {
