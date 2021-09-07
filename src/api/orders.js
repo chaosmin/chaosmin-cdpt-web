@@ -30,6 +30,13 @@ export function saveOrderTrace(orderNo, data) {
   })
 }
 
+export function getOrderTrace(orderNo) {
+  return request({
+    url: `${orderNo}`,
+    method: 'GET'
+  })
+}
+
 export function loadDraft(orderNo) {
   return request({
     url: `/v1/api/orders/${orderNo}/draft-box`,

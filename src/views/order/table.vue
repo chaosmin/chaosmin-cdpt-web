@@ -63,7 +63,7 @@
           <span>{{ row.issuerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" class-name="status-col" width="90">
+      <el-table-column label="状态" class-name="status-col" width="110">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status | valueFilter }}
@@ -73,8 +73,9 @@
       <el-table-column label="操作" align="left" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button v-if="row.status==='DRAFT'" size="mini" type="primary" @click="loadDraft(row.orderNo)">加载</el-button>
+          <el-button v-if="row.status==='SUCCESSFULLY_INSURED'" size="mini" type="primary" @click="loadPolicy(row.orderNo)">查看</el-button>
           <el-button v-if="row.status==='TO_BE_PAID'" size="mini" type="primary" @click="createPayment(row.orderNo)">去支付</el-button>
-          <el-button size="mini" type="danger" @click="deleteData(row)">取消</el-button>
+          <el-button v-if="row.status==='DRAFT'" size="mini" type="danger" @click="deleteData(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -192,11 +193,14 @@ export default {
         })
       })
     },
+    loadPolicy(orderNo) {
+      this.$router.push({ name: 'PolicyDetail', params: { orderNo: orderNo }})
+    },
     loadDraft(orderNo) {
-      // Insured
       loadDraft(orderNo).then(response => {
         if (response.success === true) {
-          this.$router.push({ name: 'Insured', params: { temp: response.data }})
+          console.log('加载草稿箱成功!')
+          this.$router.push({ name: 'Insured0', params: { temp: response.data }})
         } else {
           this.$notify({
             title: '失败',

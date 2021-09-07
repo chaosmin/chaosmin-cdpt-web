@@ -218,7 +218,7 @@
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span>证件号码</span></td>
               <td>
                 <el-form-item prop="policyHolderCerti" size="mini" style="margin-bottom: 0;">
-                  <el-input v-model="temp.policyHolderCerti" size="mini" minlength="18" maxlength="18" style="width: 100%" placeholder="请输入投保公司证件号" />
+                  <el-input v-model="temp.policyHolderCerti" size="mini" style="width: 100%" placeholder="请输入投保公司证件号" />
                 </el-form-item>
               </td>
             </tr>
@@ -227,7 +227,7 @@
           <table border="1" cellspacing="0" width="100%">
             <tr style="height:25pt;">
               <td><span style="padding-left: 17px">人数合计：</span></td>
-              <td><span style="padding-left: 10px"><b>{{ temp.insuredList.length }}</b> 人</span></td>
+              <td><span style="padding-left: 10px"><b>{{ (temp.insuredList && temp.insuredList.length) || 0 }}</b> 人</span></td>
               <td><span style="padding-left: 17px">原价合计：</span></td>
               <td><span style="padding-left: 17px"><b>{{ temp.totalPremium }}</b> 元</span></td>
               <td><span style="padding-left: 17px">结算合计：</span></td>

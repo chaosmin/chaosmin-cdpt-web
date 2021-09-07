@@ -101,7 +101,7 @@
             详情
           </el-button>
           <!-- 2021-07-07 13:34:04 去除可回溯按钮 -->
-          <!-- <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="handleKhsList(row.id)"> -->
+          <!-- <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="goToTrace(row.orderNo)"> -->
           <!--  可回溯 -->
           <!-- </el-button> -->
           <el-link target="_blank" :href="row.epolicyUrl" :underline="false">
@@ -204,7 +204,8 @@
 </template>
 
 <script>
-import { fetchPolicy, fetchPolicyKhs, cancelPolicy } from '@/api/policies'
+import { getOrderTrace } from '@/api/orders'
+import { fetchPolicy, cancelPolicy } from '@/api/policies'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -288,6 +289,9 @@ export default {
       }, {
         label: '已退保',
         value: 2
+      }, {
+        label: '待承保',
+        value: 4
       }],
       listQuery: {
         P_NUM: 1,
@@ -321,8 +325,8 @@ export default {
       this.listQuery.P_NUM = 1
       this.getList()
     },
-    handleKhsList(id) {
-      fetchPolicyKhs(id).then(response => {
+    goToTrace(orderNo) {
+      getOrderTrace(orderNo).then(response => {
         this.khsObj = response.data
         this.policyKhsFormVisible = true
       })
