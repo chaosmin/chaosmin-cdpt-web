@@ -228,7 +228,7 @@
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span class="fontWeight">证件号码</span></td>
               <td>
                 <el-form-item prop="policyHolderCerti" size="mini" style="margin-bottom: 0;">
-                  <el-input v-model="temp.policyHolderCerti" size="mini" minlength="18" maxlength="18" style="width: 100%" placeholder="请输入投保公司证件号" />
+                  <el-input v-model="temp.policyHolderCerti" size="mini" style="width: 100%" placeholder="请输入投保公司证件号" />
                 </el-form-item>
               </td>
             </tr>
@@ -237,7 +237,7 @@
           <table cellspacing="0" width="100%">
             <tr style="height:25pt;">
               <td><span style="padding-left: 17px">人数合计：</span></td>
-              <td><span style="padding-left: 10px"><b>{{ temp.insuredList.length }}</b> 人</span></td>
+              <td><span style="padding-left: 10px"><b>{{ (temp.insuredList && temp.insuredList.length) || 0 }}</b> 人</span></td>
               <td><span style="padding-left: 17px">原价合计：</span></td>
               <td><span style="padding-left: 17px"><b>{{ temp.totalPremium }}</b> 元</span></td>
               <td><span style="padding-left: 17px">结算合计：</span></td>
@@ -252,8 +252,8 @@
                 <template>
                   <div style="padding-left: 10px">
                     <el-radio-group v-model="temp.payType" size="mini">
-                      <el-radio disabled label="OFFLINE"><span>月结</span></el-radio>
-                      <el-radio disabled label="WECHAT"><span>微信</span></el-radio>
+                      <el-radio label="OFFLINE"><span>月结</span></el-radio>
+                      <el-radio label="ONLINE"><span>微信</span></el-radio>
                     </el-radio-group>
                   </div>
                 </template>
@@ -363,14 +363,18 @@
           <el-button size="mini" type="primary" @click="confirmPdf">我已阅读并确认</el-button>
         </span>
       </el-dialog>
+
+      <el-dialog title="请支付" :visible.sync="qrCodeVisible" width="340px">
+        <img :src="payQrCode" alt="qrCode">
+      </el-dialog>
     </div>
   </el-container>
 </template>
 
 <script>
-import { saveDraft } from '@/api/orders'
+import { createPayment, saveDraft, saveOrderTrace } from '@/api/orders'
 import { getOneDepartment } from '@/api/departments'
-import { getBizNo, issuePolicy, saveKhsImg } from '@/api/insure'
+import { getBizNo, issuePolicy } from '@/api/insure'
 import { fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
 import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
 import { validGender, validNumber, validPhoneNumber } from '@/utils/validate'
@@ -393,6 +397,8 @@ export default {
       uploading: undefined,
       insuredTable: undefined,
       text: '',
+      payQrCode: undefined,
+      qrCodeVisible: false,
       dialogSmartPasteFormVisible: false,
       centerDialogVisible: false,
       pdfDialogVisible: false,
@@ -520,7 +526,7 @@ export default {
         canvas.toBlob((blobObj) => {
           put(`${dateStr}/${objName}`, blobObj).then(_ => {
             signatureUrl(`${dateStr}/${objName}`).then(res => {
-              saveKhsImg(this.temp.orderNo, { 'type': step, 'time': date, 'url': res.split('?')[0] })
+              saveOrderTrace(this.temp.orderNo, { 'type': step, 'time': date, 'url': res.split('?')[0] })
             })
           })
         }, 'image/jpeg')
@@ -753,12 +759,26 @@ export default {
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
           })
-          issuePolicy(this.temp).then(response => {
+          saveDraft(this.temp.orderNo, this.temp).then(response => {
             if (response.success === true) {
-              this.$router.push({ name: 'Policy' })
+              issuePolicy(this.temp).then(response => {
+                if (response.success === true) {
+                  if (this.temp.payType === 'ONLINE') {
+                    createPayment(this.temp.orderNo).then(response => {
+                      if (response.success === true) {
+                        this.payQrCode = response.data
+                        this.qrCodeVisible = true
+                      }
+                    })
+                  }
+                  this.$router.push({ name: 'Policy' })
+                }
+              }).finally(() => {
+                this.uploading.close()
+              })
+            } else {
+              this.uploading.close()
             }
-          }).finally(() => {
-            this.uploading.close()
           })
         }
       })
@@ -989,6 +1009,17 @@ export default {
           this.$notify.error({ title: '错误', message: '保存草稿箱失败!' })
         }
       })
+    },
+    zhifu() {
+      this.qrCodeVisible = true
+      // testPay().then(response => {
+      //   console.log(response)
+      //   if (response.success === true) {
+      //     this.payQrCode = response.data
+      //     console.log(this.payQrCode)
+      //     this.qrCodeVisible = true
+      //   }
+      // })
     },
     confirmNotice() {
       this.setImage('投保须知')

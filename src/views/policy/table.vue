@@ -80,7 +80,7 @@
       </el-table-column>
       <el-table-column label="出单人" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.creator }}</span>
+          <span>{{ row.issuerName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="投保人" align="center">
@@ -101,7 +101,7 @@
             详情
           </el-button>
           <!-- 2021-07-07 13:34:04 去除可回溯按钮 -->
-          <!-- <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="handleKhsList(row.id)"> -->
+          <!-- <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="goToTrace(row.orderNo)"> -->
           <!--  可回溯 -->
           <!-- </el-button> -->
           <el-link target="_blank" :href="row.epolicyUrl" :underline="false">
@@ -109,7 +109,7 @@
               保单
             </el-button>
           </el-link>
-          <el-popconfirm v-if="row.status === 'SUCCESS' && afterNow(row.effectiveTime)" title="您确定取消该保单吗？" @onConfirm="cancelPolicy(row.id, row)">
+          <el-popconfirm v-if="row.status === 'INSURED' && afterNow(row.effectiveTime)" title="您确定取消该保单吗？" @onConfirm="cancelPolicy(row.id, row)">
             <el-button slot="reference" size="mini" type="warning" style="margin-left: 5px;">
               退保
             </el-button>
@@ -204,13 +204,17 @@
 </template>
 
 <script>
-import { fetchPolicy, fetchPolicyKhs, cancelPolicy } from '@/api/policies'
+import { getOrderTrace } from '@/api/orders'
+import { fetchPolicy, cancelPolicy } from '@/api/policies'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 const statusTypeOptions = [
-  { key: 'SUCCESS', display_name: '已承保' },
-  { key: 'REFUND', display_name: '已退保' }
+  { key: 'TO_BE_INSURED', display_name: '待承保' },
+  { key: 'INSURED', display_name: '已承保' },
+  { key: 'SURRENDERED', display_name: '已退保' },
+  { key: 'CANCELLED', display_name: '已取消' },
+  { key: 'UNDERWRITING_PASS', display_name: '已核保' }
 ]
 
 const khsTypeOptions = [
@@ -237,8 +241,9 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        'SUCCESS': 'success',
-        'REFUND': 'danger'
+        'INSURED': 'success',
+        'SURRENDERED': 'danger',
+        'CANCELLED': 'danger'
       }
       return statusMap[status]
     },
@@ -284,6 +289,9 @@ export default {
       }, {
         label: '已退保',
         value: 2
+      }, {
+        label: '待承保',
+        value: 4
       }],
       listQuery: {
         P_NUM: 1,
@@ -317,8 +325,8 @@ export default {
       this.listQuery.P_NUM = 1
       this.getList()
     },
-    handleKhsList(id) {
-      fetchPolicyKhs(id).then(response => {
+    goToTrace(orderNo) {
+      getOrderTrace(orderNo).then(response => {
         this.khsObj = response.data
         this.policyKhsFormVisible = true
       })
@@ -330,10 +338,10 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      cancelPolicy(id, {}).then(response => {
+      cancelPolicy(id, { 'status': 'SURRENDERED' }).then(response => {
         this.uploading.close()
         if (response.success === true) {
-          row.status = 'REFUND'
+          row.status = 'SURRENDERED'
           this.$notify({
             title: '成功',
             message: '退保成功',
