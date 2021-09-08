@@ -332,6 +332,7 @@ export default {
       })
     },
     cancelPolicy(id, row) {
+      console.log('退保保单id=' + id)
       this.uploading = this.$loading({
         lock: true,
         text: '正在操作中, 请稍后...',
@@ -339,23 +340,16 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       })
       cancelPolicy(id, { 'status': 'SURRENDERED' }).then(response => {
+        console.log(response)
+        row.status = 'SURRENDERED'
+        this.$notify({
+          title: '成功',
+          message: '退保成功',
+          type: 'success',
+          duration: 2000
+        })
+      }).finally(() => {
         this.uploading.close()
-        if (response.success === true) {
-          row.status = 'SURRENDERED'
-          this.$notify({
-            title: '成功',
-            message: '退保成功',
-            type: 'success',
-            duration: 2000
-          })
-        } else {
-          this.$notify({
-            title: '失败',
-            message: '退保失败',
-            type: 'danger',
-            duration: 2000
-          })
-        }
       })
     },
     openKhsImg(imgName, imgUrl) {

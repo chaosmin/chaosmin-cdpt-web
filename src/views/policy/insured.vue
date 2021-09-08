@@ -759,27 +759,29 @@ export default {
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
           })
-          saveDraft(this.temp.orderNo, this.temp).then(response => {
-            if (response.success === true) {
-              issuePolicy(this.temp).then(response => {
-                if (response.success === true) {
-                  if (this.temp.payType === 'ONLINE') {
-                    createPayment(this.temp.orderNo).then(response => {
-                      if (response.success === true) {
-                        this.payQrCode = response.data
-                        this.qrCodeVisible = true
-                      }
-                    })
-                  }
-                  this.$router.push({ name: 'Policy' })
-                }
-              }).finally(() => {
-                this.uploading.close()
-              })
-            } else {
+          saveDraft(this.temp.orderNo, this.temp).then(_ => {
+            issuePolicy(this.temp).then(response => {
+              console.log('出单成功, 保单号: ' + response.data.policyNo)
+            }).finally(() => {
               this.uploading.close()
-            }
+            })
           })
+          if (this.temp.payType === 'ONLINE') {
+            this.$confirm('是否需要现在支付保单费用?', '支付确认', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              createPayment(this.temp.orderNo).then(response => {
+                this.payQrCode = response.data
+                this.qrCodeVisible = true
+              })
+            }).catch(() => {
+              this.$router.push({ name: 'Order' })
+            })
+          } else {
+            this.$router.push({ name: 'Policy' })
+          }
         }
       })
     },
@@ -1009,17 +1011,6 @@ export default {
           this.$notify.error({ title: '错误', message: '保存草稿箱失败!' })
         }
       })
-    },
-    zhifu() {
-      this.qrCodeVisible = true
-      // testPay().then(response => {
-      //   console.log(response)
-      //   if (response.success === true) {
-      //     this.payQrCode = response.data
-      //     console.log(this.payQrCode)
-      //     this.qrCodeVisible = true
-      //   }
-      // })
     },
     confirmNotice() {
       this.setImage('投保须知')
