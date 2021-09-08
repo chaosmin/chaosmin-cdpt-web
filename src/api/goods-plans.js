@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function getOneGoodsPlan(id) {
+  return request({
+    url: `/v1/api/goods-plans/${id}`,
+    method: 'GET'
+  })
+}
+
 export function fetchGoodsPlan(query) {
   return request({
     url: '/v1/api/goods-plans',

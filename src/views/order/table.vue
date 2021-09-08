@@ -60,19 +60,21 @@
       </el-table-column>
       <el-table-column label="出单人">
         <template slot-scope="{row}">
-          <span>{{ row.issuer }}</span>
+          <span>{{ row.issuerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" class-name="status-col" width="90">
+      <el-table-column label="状态" class-name="status-col" width="110">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status | valueFilter }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="140" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button v-if="row.status==='DRAFT'" size="mini" type="primary" @click="loadDraft(row.orderNo)">加载</el-button>
+          <el-button v-if="row.status==='SUCCESSFULLY_INSURED'" size="mini" type="primary" @click="loadPolicy(row.orderNo)">查看</el-button>
+          <el-button v-if="row.status==='TO_BE_PAID'" size="mini" type="primary" @click="createPayment(row.orderNo)">去支付</el-button>
           <el-button v-if="row.status==='DRAFT'" size="mini" type="danger" @click="deleteData(row)">删除</el-button>
         </template>
       </el-table-column>
@@ -80,20 +82,23 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.P_NUM" :limit.sync="listQuery.P_SIZE" @pagination="getList" />
 
+    <el-dialog title="请支付" :visible.sync="qrCodeVisible" width="340px">
+      <img :src="payQrCode" alt="qrCode">
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchOrder, deleteOrder, loadDraft } from '@/api/orders'
+import { fetchOrder, createPayment, deleteOrder, loadDraft } from '@/api/orders'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 const statusTypeOptions = [
   { key: 'DRAFT', display_name: '草稿箱' },
-  { key: 'INIT', display_name: '待出单' },
-  { key: 'SUCCESS', display_name: '已出单' },
-  { key: 'FAILED', display_name: '已取消' },
-  { key: 'PROCESS', display_name: '出单中' }
+  { key: 'TO_BE_PAID', display_name: '待支付' },
+  { key: 'PROCESSING', display_name: '出单中' },
+  { key: 'SUCCESSFULLY_INSURED', display_name: '投保成功' },
+  { key: 'FAILED_INSURED', display_name: '投保失败' }
 ]
 
 const statusTypeKeyValue = statusTypeOptions.reduce((acc, cur) => {
@@ -108,11 +113,10 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        'DRAFT': 'info',
-        'INIT': 'info',
-        'SUCCESS': 'success',
-        'FAILED': 'danger',
-        'PROCESS': 'warning'
+        'TO_BE_PAID': 'warning',
+        'PROCESSING': 'warning',
+        'SUCCESSFULLY_INSURED': 'success',
+        'FAILED_INSURED': 'danger'
       }
       return statusMap[status]
     },
@@ -129,6 +133,8 @@ export default {
   },
   data() {
     return {
+      qrCodeVisible: false,
+      payQrCode: undefined,
       orderStatusOptions: [{
         value: '-1',
         label: '草稿'
@@ -187,11 +193,14 @@ export default {
         })
       })
     },
+    loadPolicy(orderNo) {
+      this.$router.push({ name: 'PolicyDetail', params: { orderNo: orderNo }})
+    },
     loadDraft(orderNo) {
-      // Insured
       loadDraft(orderNo).then(response => {
         if (response.success === true) {
-          this.$router.push({ name: 'Insured', params: { temp: response.data }})
+          console.log('加载草稿箱成功!')
+          this.$router.push({ name: 'Insured0', params: { temp: response.data }})
         } else {
           this.$notify({
             title: '失败',
@@ -199,6 +208,14 @@ export default {
             type: 'danger',
             duration: 2000
           })
+        }
+      })
+    },
+    createPayment(orderNo) {
+      createPayment(orderNo).then(response => {
+        if (response.success === true) {
+          this.payQrCode = response.data
+          this.qrCodeVisible = true
         }
       })
     }

@@ -5,16 +5,16 @@
     </el-aside>
 
     <el-main>
-      <el-form ref="dataForm" :model="policy" :inline-message="true">
-        <el-link :href="policy.goodsPlan.clauseUrl" target="_blank" style="float:right;padding-bottom: 5px;"><svg-icon icon-class="pdf" /> 详细条款下载</el-link>
+      <el-form ref="dataForm" :model="policy" :inline-message="true" style="width: 1080px">
+        <el-link :href="(policy.goodsPlan && policy.goodsPlan.clauseUrl)" target="_blank" style="float:right;padding-bottom: 5px;"><svg-icon icon-class="pdf" /> 详细条款下载</el-link>
         <table border="1" cellspacing="0" width="100%">
           <tr style="height:25pt;">
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险公司</span></td>
-            <td colspan="5"><span>{{ policy.goodsPlan.partnerName }}</span></td>
+            <td colspan="5"><span>{{ (policy.goodsPlan && policy.goodsPlan.partnerName) || '加载中' }}</span></td>
           </tr>
           <tr style="height:25pt;">
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险产品</span></td>
-            <td colspan="5"><span>[{{ policy.goodsPlan.productName }}]-{{ policy.goodsPlan.productPlanName }}-{{ policy.goodsPlan.primaryCoverage }}</span></td>
+            <td colspan="5"><span>{{ goodsName }}</span></td>
           </tr>
           <tr style="height:25pt;">
             <td><span style="padding: 5px;color: red;"><b>*</b></span><span>保险期限</span></td>
@@ -33,7 +33,7 @@
           <tr style="height:25pt;">
             <td><span style="padding-left: 17px">投保提示</span></td>
             <td colspan="5">
-              <div v-html="policy.goodsPlan.insuranceNotice" />
+              <div v-html="( policy.goodsPlan && policy.goodsPlan.insuranceNotice)" />
             </td>
           </tr>
         </table>
@@ -94,26 +94,26 @@
           <!-- `checked` 为 true 或 false -->
           <el-checkbox v-model="checked" disabled>我已详细阅读并理解</el-checkbox>
           <el-button type="text" @click="centerDialogVisible = true">投保注意事项</el-button> |
-          <el-link icon="el-icon-document" :href="policy.goodsPlan.clauseUrl" target="_blank">保险条款</el-link>
+          <el-link icon="el-icon-document" :href="(policy.goodsPlan && policy.goodsPlan.clauseUrl)" target="_blank">保险条款</el-link>
         </div>
         <div style="text-align:center">
           <el-button type="primary" size="mini" @click="goToList()">返回列表</el-button>
         </div>
         <br>
-        <el-table :data="policy.goodsPlan.liabilities" style="width: 100%;font-size: 12px">
-          <el-table-column align="center" :label="'[' + policy.goodsPlan.productName+ ']-' + policy.goodsPlan.productPlanName + '-' + policy.goodsPlan.primaryCoverage">
+        <el-table :data="(policy.goodsPlan && policy.goodsPlan.liabilities)" style="width: 100%;font-size: 12px">
+          <el-table-column align="center" :label="goodsName">
             <el-table-column align="center" prop="liabilityName" label="保障内容" />
             <el-table-column align="center" prop="amount" label="保障金额（人民币：元）" />
           </el-table-column>
         </el-table>
-        <el-table :data="policy.goodsPlan.rateTable" style="width: 100%;font-size: 12px">
+        <el-table :data="(policy.goodsPlan && policy.goodsPlan.rateTable)" style="width: 100%;font-size: 12px">
           <el-table-column align="center" label="保障金额/人 （人民币：元）">
             <el-table-column align="center" prop="remark" label="旅行天数" />
             <el-table-column align="center" prop="premium" label="价格" />
           </el-table-column>
         </el-table>
         <br>
-        <div v-html="policy.goodsPlan.productExternal" />
+        <div v-html="(policy.goodsPlan && policy.goodsPlan.productExternal)" />
       </el-form>
 
       <el-dialog title="投保注意事项" :visible.sync="centerDialogVisible" width="30%" center>
@@ -137,7 +137,8 @@
 </template>
 
 <script>
-import { getPolicyDetail } from '@/api/policies'
+import { getOneGoodsPlan } from '@/api/goods-plans'
+import { loadDraft } from '@/api/orders'
 import jschardet from 'jschardet'
 
 export default {
@@ -147,11 +148,13 @@ export default {
       checked: true,
       centerDialogVisible: false,
       defaultMenu: [],
-      orderNo: this.$route.params.orderNo,
+      goodsName: '加载中',
       policy: {
         insuredList: [],
         goodsPlan: {
-          partnerName: null
+          clauseUrl: '',
+          liabilities: [],
+          rateTable: []
         }
       },
       rowStyle: {
@@ -160,14 +163,21 @@ export default {
     }
   },
   created() {
-    this.getPolicyDetail(this.orderNo)
+    loadDraft(this.$route.params.orderNo).then(response => {
+      if (response.success === true) {
+        this.policy = response.data
+        getOneGoodsPlan(response.data.goodsPlanId).then(response => {
+          this.policy.goodsPlan = response.data
+          this.goodsName = '[' + response.data.productName + '] - ' + response.data.productPlanName + ' - ' + response.data.primaryCoverage
+        }).catch(err => {
+          console.error(err)
+        })
+      }
+    }).catch(err => {
+      console.error(err)
+    })
   },
   methods: {
-    getPolicyDetail(orderNo) {
-      getPolicyDetail(orderNo).then(response => {
-        this.policy = response.data
-      })
-    },
     goToList() {
       this.$router.push({ name: 'Policy' })
     },
