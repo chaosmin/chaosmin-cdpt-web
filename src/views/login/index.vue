@@ -1,8 +1,6 @@
 <template>
   <div class="login-container">
-    <div class="login_top">
-     <!--  <img src="../../assets/login/logo.svg" width="190" height="50" style="margin-top:20px;cursor:pointer;"> -->
-    </div>
+    <div class="login_top" />
 
     <div class="login_main">
       <div class="main_container">
@@ -60,57 +58,13 @@
       </div>
     </div>
 
-    <div class="login_bottom">
-<!--       <div class="panel">
-        <div class="panel-heading">
-          <div>产品丰富</div>
-        </div>
-        <div class="panel-body">
-          <div class="row">
-            <i class="el-icon-connection" />
-            <p class="col col-md-9 feature-description">
-              险种丰富多样，全面保障<br>
-              优选保险公司，紧密合作<br>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-heading">
-          <div>操作简单</div>
-        </div>
-        <div class="panel-body">
-          <div class="row">
-            <i class="el-icon-edit-outline" />
-            <p class="col col-md-9 feature-description">
-              团单批量投保，省时省心<br>
-              系统接口直连，实时出单<br>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-heading">
-          <div>服务专业</div>
-        </div>
-        <div class="panel-body">
-          <div class="row">
-            <i class="el-icon-service" />
-            <p class="col col-md-9 feature-description">
-              专业一对一客服，急您所急<br>
-              理赔材料在线传，快速简单<br>
-            </p>
-          </div>
-        </div>
-      </div> -->
-    </div>
+    <div class="login_bottom" />
 
     <footer class="footer" style="font-size:8px;">
       <hr>
 
       <div id="hizom_footer" class="footer_container content-align-center" hidden="" style="display: block;">
-<!--         <p>Copyright © 2018-2021 上海森昊保险代理有限公司 &nbsp;&nbsp;备案号：沪ICP备16005694号-1
-        </p> -->
+        <p>Copyright © 2018-2021 上海森昊保险代理有限公司 &nbsp;&nbsp;备案号：沪ICP备16005694号-1</p>
       </div>
     </footer>
 

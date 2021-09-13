@@ -59,12 +59,12 @@
       </el-table-column>
       <el-table-column label="原价" prop="originalPrice" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.originalPrice | rounding }}</span>
+          <span>{{ row.originalPremium | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="结算价" prop="settlementPrice" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.settlementPrice | rounding }}</span>
+          <span>{{ row.settlementPremium | rounding }}</span>
         </template>
       </el-table-column>
       <el-table-column label="折扣" prop="discount" align="center">
@@ -138,6 +138,7 @@ export default {
       loading: false,
       queryParam: {
         first: {
+          status: 'INSURED',
           timeType: 'EFFECTIVE_TIME',
           startTime: null,
           endTime: null
