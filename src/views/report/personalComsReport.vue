@@ -2,8 +2,8 @@
   <div class="app-container">
     <div class="filter-container">
       <el-form ref="dataForm" :inline="true" :rules="rules" :model="queryParam" class="demo-form-inline">
-        <el-form-item prop="userId" label="用户">
-          <el-select v-model="queryParam.userId" size="mini" placeholder="选择用户ID">
+        <el-form-item prop="second.userId" label="用户">
+          <el-select v-model="queryParam.second.userId" size="mini" placeholder="选择用户ID">
             <el-option
               v-for="item in userOptions"
               :key="item.id"
@@ -12,17 +12,17 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item prop="timeType" label="时间类型">
-          <el-select v-model="queryParam.timeType" size="mini" placeholder="选择时间范围类型">
+        <el-form-item prop="first.timeType" label="时间类型">
+          <el-select v-model="queryParam.first.timeType" size="mini" placeholder="选择时间范围类型">
             <el-option key="ISSUE_TIME" label="出单时间" value="ISSUE_TIME" />
             <el-option key="EFFECTIVE_TIME" label="生效时间" value="EFFECTIVE_TIME" />
           </el-select>
         </el-form-item>
-        <el-form-item prop="startTime" label="开始时间">
-          <el-date-picker v-model="queryParam.startTime" size="mini" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions" />
+        <el-form-item prop="first.startTime" label="开始时间">
+          <el-date-picker v-model="queryParam.first.startTime" size="mini" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions" />
         </el-form-item>
-        <el-form-item prop="endTime" label="结束时间">
-          <el-date-picker v-model="queryParam.endTime" size="mini" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions" />
+        <el-form-item prop="first.endTime" label="结束时间">
+          <el-date-picker v-model="queryParam.first.endTime" size="mini" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions" />
         </el-form-item>
         <el-form-item>
           <el-button size="mini" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
@@ -92,8 +92,8 @@
 </template>
 
 <script>
+import { getPersonalComsSet, downloadPersonalComsSet } from '@/api/reports'
 import { fetchSubordinate } from '@/api/users'
-import { getSltComsReport, downloadSltComsReport } from '@/api/reports'
 import waves from '@/directive/waves'
 
 export default {
@@ -137,16 +137,20 @@ export default {
       total: 0,
       loading: false,
       queryParam: {
-        userId: null,
-        timeType: 'EFFECTIVE_TIME',
-        startTime: null,
-        endTime: null
+        first: {
+          timeType: 'EFFECTIVE_TIME',
+          startTime: null,
+          endTime: null
+        },
+        second: {
+          userId: null
+        }
       },
       rules: {
-        userId: [{ required: true, message: '请指定出单员', trigger: 'change' }],
-        timeType: [{ required: true, message: '请选定时间范围类型', trigger: 'change' }],
-        startTime: [{ required: true, message: '请选择报表开始时间', trigger: 'change' }],
-        endTime: [{ required: true, message: '请选择报表结束时间', trigger: 'change' }]
+        'second.userId': [{ required: true, message: '请指定出单员', trigger: 'change' }],
+        'first.timeType': [{ required: true, message: '请选定时间范围类型', trigger: 'change' }],
+        'first.startTime': [{ required: true, message: '请选择报表开始时间', trigger: 'change' }],
+        'first.endTime': [{ required: true, message: '请选择报表结束时间', trigger: 'change' }]
       }
     }
   },
@@ -163,7 +167,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.loading = true
-          getSltComsReport(this.queryParam).then(response => {
+          getPersonalComsSet(this.queryParam).then(response => {
             this.report = response.data
             setTimeout(() => {
               this.loading = false
@@ -184,7 +188,7 @@ export default {
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
           })
-          downloadSltComsReport(this.queryParam).then((res) => {
+          downloadPersonalComsSet({ first: [this.queryParam.first], second: [this.queryParam.second] }).then((res) => {
             if (!res) return
             const filename = decodeURIComponent(res.headers['filename'])
             const type = res.headers['content-type'].split(';')[0]

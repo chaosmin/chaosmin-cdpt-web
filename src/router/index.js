@@ -243,16 +243,16 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: '/sltCheck',
-        component: resolve => require.ensure([], () => resolve(require('@/views/report/sltcheck')), 'SltCheck'),
-        name: 'SltCheck',
-        meta: { title: '结算清单', icon: 'el-icon-wallet', roles: ['administrator'] }
+        path: '/billing-list',
+        component: resolve => require.ensure([], () => resolve(require('@/views/report/billingList')), 'BillingList'),
+        name: '结算清单',
+        meta: { title: 'BillingList', icon: 'el-icon-wallet', roles: ['administrator'] }
       },
       {
-        path: '/sltComs',
-        component: resolve => require.ensure([], () => resolve(require('@/views/report/sltcoms')), 'SltComs'),
-        name: 'SltComs',
-        meta: { title: '个人佣金结算表', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager'] }
+        path: '/personal-coms-report',
+        component: resolve => require.ensure([], () => resolve(require('@/views/report/personalComsReport')), 'PersonalComsReport'),
+        name: '个人佣金报表',
+        meta: { title: 'PersonalComsReport', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager'] }
       }
     ]
   },
