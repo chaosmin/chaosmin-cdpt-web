@@ -243,16 +243,16 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: '/sltCheck',
-        component: resolve => require.ensure([], () => resolve(require('@/views/report/sltcheck')), 'SltCheck'),
-        name: 'SltCheck',
-        meta: { title: 'SltCheck', icon: 'el-icon-wallet', roles: ['administrator'] }
+        path: '/billing-list',
+        component: resolve => require.ensure([], () => resolve(require('@/views/report/billingList')), 'BillingList'),
+        name: 'BillingList',
+        meta: { title: 'BillingList', icon: 'el-icon-wallet', roles: ['administrator'] }
       },
       {
-        path: '/sltComs',
-        component: resolve => require.ensure([], () => resolve(require('@/views/report/sltcoms')), 'SltComs'),
-        name: 'SltComs',
-        meta: { title: 'SltComs', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager'] }
+        path: '/personal-coms-report',
+        component: resolve => require.ensure([], () => resolve(require('@/views/report/personalComsReport')), 'PersonalComsReport'),
+        name: 'PersonalComsReport',
+        meta: { title: 'PersonalComsReport', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager'] }
       }
     ]
   },

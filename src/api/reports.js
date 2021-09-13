@@ -1,31 +1,35 @@
 import request from '@/utils/request'
 
-export function getSltComsReport(param) {
+export function getPersonalComsSet(params) {
   return request({
-    url: `/v1/api/reports/slt-coms/${param.userId}/${param.startTime}/${param.endTime}?timeType=${param.timeType}`,
-    method: 'GET'
+    url: '/v1/api/reports/personal-commission-settlement',
+    method: 'GET',
+    params
   })
 }
 
-export function downloadSltComsReport(param) {
+export function downloadPersonalComsSet(params) {
   return request({
-    url: `/v1/api/reports/slt-coms/${param.userId}/${param.startTime}/${param.endTime}?timeType=${param.timeType}`,
+    url: '/v1/api/reports/personal-commission-settlement',
     method: 'POST',
-    responseType: 'blob'
+    responseType: 'blob',
+    params
   })
 }
 
-export function getSltCheckReport(param) {
+export function getBillingList(params) {
   return request({
-    url: `/v1/api/reports/slt-check/${param.startTime}/${param.endTime}?timeType=${param.timeType}&userId=${param.userId}`,
-    method: 'GET'
+    url: '/v1/api/reports/billing-list',
+    method: 'GET',
+    params
   })
 }
 
-export function downloadSltCheckReport(param) {
+export function downloadBillingList(params) {
   return request({
-    url: `/v1/api/reports/slt-check/${param.startTime}/${param.endTime}?timeType=${param.timeType}&userId=${param.userId}`,
+    url: '/v1/api/reports/billing-list',
     method: 'POST',
-    responseType: 'blob'
+    responseType: 'blob',
+    params
   })
 }
