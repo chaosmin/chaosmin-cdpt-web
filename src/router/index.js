@@ -245,14 +245,14 @@ export const asyncRoutes = [
       {
         path: '/billing-list',
         component: resolve => require.ensure([], () => resolve(require('@/views/report/billingList')), 'BillingList'),
-        name: '结算清单',
-        meta: { title: 'BillingList', icon: 'el-icon-wallet', roles: ['administrator'] }
+        name: 'BillingList',
+        meta: { title: '结算清单', icon: 'el-icon-wallet', roles: ['administrator'] }
       },
       {
         path: '/personal-coms-report',
         component: resolve => require.ensure([], () => resolve(require('@/views/report/personalComsReport')), 'PersonalComsReport'),
-        name: '个人佣金报表',
-        meta: { title: 'PersonalComsReport', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager'] }
+        name: 'PersonalComsReport',
+        meta: { title: '个人佣金报表', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager'] }
       }
     ]
   },

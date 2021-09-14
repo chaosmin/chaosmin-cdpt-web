@@ -75,9 +75,9 @@
       style="width: 100%;"
     >
       <el-table-column type="index" width="50" align="center" />
-      <el-table-column label="订单号" prop="orderNo" align="center">
+      <el-table-column label="保单号" prop="orderNo" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.orderNo }}</span>
+          <span>{{ row.policyNo }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品名称" prop="goodsPlanName" align="center">
@@ -196,6 +196,7 @@ export default {
       loading: false,
       queryParam: {
         first: {
+          status: 'INSURED',
           timeType: 'EFFECTIVE_TIME',
           startTime: null,
           endTime: null

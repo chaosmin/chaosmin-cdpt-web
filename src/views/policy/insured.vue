@@ -506,6 +506,14 @@ export default {
     this.getDepartment()
     if (this.$route.params.temp !== undefined) {
       this.temp = this.$route.params.temp
+      this.temp.insuredList.forEach(u => {
+        const position = this.temp.insuredList.indexOf(u)
+        u.dateOfBirth = Date.parse(u.dateOfBirth)
+        this.$set(this.temp.insuredList, position, u)
+      })
+      this.temp.startTime = Date.parse(this.temp.startTime)
+      this.setEndTime()
+      // this.temp.endTime = Date.parse(this.temp.endTime)
     }
     // 左侧常开
     // this.sidebar.opened = false
@@ -533,12 +541,14 @@ export default {
       })
     },
     setStartAndEndTime(n) {
-      if (n === 0) {
-        this.temp.startTime = new Date().getTime()
-        this.setEndTime()
-      } else {
-        this.temp.startTime = new Date(new Date(new Date().setDate(new Date().getDate() + n)).toLocaleDateString()).getTime()
-        this.setEndTime()
+      if (this.temp.startTime === undefined) {
+        if (n === 0) {
+          this.temp.startTime = new Date().getTime()
+          this.setEndTime()
+        } else {
+          this.temp.startTime = new Date(new Date(new Date().setDate(new Date().getDate() + n)).toLocaleDateString()).getTime()
+          this.setEndTime()
+        }
       }
     },
     setEndTime() {
