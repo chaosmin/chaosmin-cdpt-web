@@ -506,6 +506,10 @@ export default {
     this.getDepartment()
     if (this.$route.params.temp !== undefined) {
       this.temp = this.$route.params.temp
+      console.log(this.temp.insuredList)
+      if (this.temp.insuredList === undefined || this.temp.insuredList === null) {
+        this.temp.insuredList = []
+      }
       this.temp.insuredList.forEach(u => {
         const position = this.temp.insuredList.indexOf(u)
         u.dateOfBirth = Date.parse(u.dateOfBirth)
@@ -514,10 +518,11 @@ export default {
       this.temp.startTime = Date.parse(this.temp.startTime)
       this.setEndTime()
       // this.temp.endTime = Date.parse(this.temp.endTime)
+    } else {
+      // 左侧常开
+      // this.sidebar.opened = false
+      this.getBizNo()
     }
-    // 左侧常开
-    // this.sidebar.opened = false
-    this.getBizNo()
   },
   methods: {
     /**
@@ -762,7 +767,7 @@ export default {
             })
             return
           }
-          this.setImage('投保确认')
+          this.setImage('INSU_CONFIRM')
           this.uploading = this.$loading({
             lock: true,
             text: '正在出单中, 请稍后...',
@@ -771,27 +776,29 @@ export default {
           })
           saveDraft(this.temp.orderNo, this.temp).then(_ => {
             issuePolicy(this.temp).then(response => {
-              console.log('出单成功, 保单号: ' + response.data.policyNo)
+              if (response.success === true) {
+                console.log('出单成功, 保单号: ' + response.data.policyNo)
+                if (this.temp.payType === 'ONLINE') {
+                  this.$confirm('是否需要现在支付保单费用?', '支付确认', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                  }).then(() => {
+                    createPayment(this.temp.orderNo).then(response => {
+                      this.payQrCode = response.data
+                      this.qrCodeVisible = true
+                    })
+                  }).catch(() => {
+                    this.$router.push({ name: 'Order' })
+                  })
+                } else {
+                  this.$router.push({ name: 'Policy' })
+                }
+              }
             }).finally(() => {
               this.uploading.close()
             })
           })
-          if (this.temp.payType === 'ONLINE') {
-            this.$confirm('是否需要现在支付保单费用?', '支付确认', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }).then(() => {
-              createPayment(this.temp.orderNo).then(response => {
-                this.payQrCode = response.data
-                this.qrCodeVisible = true
-              })
-            }).catch(() => {
-              this.$router.push({ name: 'Order' })
-            })
-          } else {
-            this.$router.push({ name: 'Policy' })
-          }
         }
       })
     },
@@ -1023,13 +1030,13 @@ export default {
       })
     },
     confirmNotice() {
-      this.setImage('投保须知')
+      this.setImage('POLICY_NOTICE')
       this.centerDialogVisible = false
       this.check_1 = true
       this.checked = this.check_1 && this.check_2
     },
     confirmPdf() {
-      this.setImage('保险条款')
+      this.setImage('INSU_CLAUSES')
       this.pdfDialogVisible = false
       this.check_2 = true
       this.checked = this.check_1 && this.check_2
