@@ -200,7 +200,7 @@ export default {
       loadDraft(orderNo).then(response => {
         if (response.success === true) {
           console.log('加载草稿箱成功!')
-          this.$router.push({ name: 'Insured0', params: { temp: response.data }})
+          this.$router.push({ name: '/insured/00', params: { temp: response.data }})
         } else {
           this.$notify({
             title: '失败',
