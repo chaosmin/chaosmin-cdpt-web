@@ -776,27 +776,29 @@ export default {
           })
           saveDraft(this.temp.orderNo, this.temp).then(_ => {
             issuePolicy(this.temp).then(response => {
-              console.log('出单成功, 保单号: ' + response.data.policyNo)
+              if (response.success === true) {
+                console.log('出单成功, 保单号: ' + response.data.policyNo)
+                if (this.temp.payType === 'ONLINE') {
+                  this.$confirm('是否需要现在支付保单费用?', '支付确认', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                  }).then(() => {
+                    createPayment(this.temp.orderNo).then(response => {
+                      this.payQrCode = response.data
+                      this.qrCodeVisible = true
+                    })
+                  }).catch(() => {
+                    this.$router.push({ name: 'Order' })
+                  })
+                } else {
+                  this.$router.push({ name: 'Policy' })
+                }
+              }
             }).finally(() => {
               this.uploading.close()
             })
           })
-          if (this.temp.payType === 'ONLINE') {
-            this.$confirm('是否需要现在支付保单费用?', '支付确认', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }).then(() => {
-              createPayment(this.temp.orderNo).then(response => {
-                this.payQrCode = response.data
-                this.qrCodeVisible = true
-              })
-            }).catch(() => {
-              this.$router.push({ name: 'Order' })
-            })
-          } else {
-            this.$router.push({ name: 'Policy' })
-          }
         }
       })
     },
