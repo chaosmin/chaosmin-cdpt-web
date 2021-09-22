@@ -364,8 +364,17 @@
         </span>
       </el-dialog>
 
-      <el-dialog title="请支付" :visible.sync="qrCodeVisible" width="340px">
-        <img :src="payQrCode" alt="qrCode">
+      <el-dialog title="请支付" :visible.sync="qrCodeVisible" width="380px" center>
+        <div style="padding-bottom: 10px;">
+          <span style="font-size: 15px"><b>订单号：</b>{{ paymentOrderNo }}，</span>
+          <span style="font-size: 15px"><b>金额：</b>{{ paymentAmount }} <b>元</b></span>
+        </div>
+        <div style="padding-bottom: 10px;">
+          <span style="font-size: 15px"><b>微信支付</b></span>
+        </div>
+        <div style="padding-bottom: 10px;">
+          <img :src="payQrCode" alt="qrCode">
+        </div>
       </el-dialog>
     </div>
   </el-container>
@@ -376,6 +385,7 @@ import { createPayment, saveDraft, saveOrderTrace } from '@/api/orders'
 import { getOneDepartment } from '@/api/departments'
 import { getBizNo, issuePolicy } from '@/api/insure'
 import { fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
+import { getOneTrans } from '@/api/payment-trans'
 import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
 import { validGender, validNumber, validPhoneNumber } from '@/utils/validate'
 import { parseTime } from '@/utils'
@@ -399,6 +409,8 @@ export default {
       text: '',
       payQrCode: undefined,
       qrCodeVisible: false,
+      paymentOrderNo: '',
+      paymentAmount: '',
       dialogSmartPasteFormVisible: false,
       centerDialogVisible: false,
       pdfDialogVisible: false,
@@ -785,8 +797,12 @@ export default {
                     type: 'warning'
                   }).then(() => {
                     createPayment(this.temp.orderNo).then(response => {
-                      this.payQrCode = response.data
+                      const result = response.data
+                      this.paymentOrderNo = result.orderNo
+                      this.paymentAmount = result.amount
+                      this.payQrCode = result.payUrl
                       this.qrCodeVisible = true
+                      this.listenPayStatus(this.paymentOrderNo)
                     })
                   }).catch(() => {
                     this.$router.push({ name: 'Order' })
@@ -1012,6 +1028,24 @@ export default {
           }
         })
       }
+    },
+    listenPayStatus(orderNo) {
+      let timer
+      getOneTrans(orderNo).then(res => {
+        if (res.success === true) {
+          if (res.data.status === 'SUCCESS') {
+            clearTimeout(timer) // 清理定时任务
+            this.$router.push({ name: 'Policy' })
+          } else {
+            timer = setTimeout(() => {
+              this.listenPayStatus(orderNo)
+            }, 2000) // 每个两秒重试
+          }
+        }
+      }).catch(e => {
+        console.log(e)
+        this.$router.push({ name: 'Order' })
+      })
     },
     saveToDraftBox() {
       saveDraft(this.temp.orderNo, this.temp).then(response => {
