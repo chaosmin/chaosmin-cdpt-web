@@ -253,6 +253,12 @@ export const asyncRoutes = [
         component: resolve => require.ensure([], () => resolve(require('@/views/report/personalComsReport')), 'PersonalComsReport'),
         name: 'PersonalComsReport',
         meta: { title: '个人佣金报表', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager'] }
+      },
+      {
+        path: '/business-report',
+        component: resolve => require.ensure([], () => resolve(require('@/views/report/businessReport')), 'BusinessReport'),
+        name: 'BusinessReport',
+        meta: { title: '业管系统报表', icon: 'el-icon-wallet', roles: ['administrator'] }
       }
     ]
   },
