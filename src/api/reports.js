@@ -33,3 +33,20 @@ export function downloadBillingList(params) {
     params
   })
 }
+
+export function getBusiness(params) {
+  return request({
+    url: '/v1/api/reports/business',
+    method: 'GET',
+    params
+  })
+}
+
+export function downloadBusiness(params) {
+  return request({
+    url: '/v1/api/reports/business',
+    method: 'POST',
+    responseType: 'blob',
+    params
+  })
+}
