@@ -104,7 +104,7 @@
           <!-- <el-button slot="reference" size="mini" type="primary" style="margin-left: 5px;" @click="goToTrace(row.orderNo)"> -->
           <!--  可回溯 -->
           <!-- </el-button> -->
-          <el-link target="_blank" :href="row.epolicyUrl" :underline="false">
+          <el-link v-if="row.status === 'INSURED'" target="_blank" :href="row.epolicyUrl" :underline="false">
             <el-button v-waves class="filter-item" size="mini" style="margin-left: 5px;" type="primary" icon="el-icon-download">
               保单
             </el-button>
