@@ -882,45 +882,28 @@ export default {
             dateOfBirth: '',
             mobile: ''
           }
-          v.split(/[\s]/).forEach(s => {
-            if (s !== undefined && s !== '') {
-              // 优先判断是否包含数字, 若包含数字则初步定义为【证件号】【生日】【手机号】
-              if (validNumber(s)) {
-                // 包含'日'或'月'或'年'或'-', 则定义为【生日】
-                if (/[/\u65e5\u6708\u5e74-]+/.test(s)) {
-                  s = s.replace(/([\u6708\u5e74])/g, '-')
-                  s = s.replace(/\u65e5/g, '')
-                  s = s.replace(/\//g, '-')
-                  insured.dateOfBirth = Date.parse(s)
-                  // 11位数字且1开头, 则定义为【手机号】
-                } else if (validPhoneNumber(s)) {
-                  insured.mobile = s
-                  // 定义为【证件号】
-                } else {
-                  insured.certiNo = s
-                }
-                // 如果不包含数字, 则初步定义为【姓名】【性别】【证件类型】
-              } else {
-                // 如果在证件类型列表里面, 则定义为【证件类型】
-                if (this.certiTypeOptions.map((v, i) => { return v.value }).indexOf(s) !== -1) {
-                  insured.certiType = s
-                  // 如果包含性别关键字, 则定义为【性别】
-                } else if (validGender(s)) {
-                  const lc = s.toLowerCase()
-                  if (lc.indexOf('男') !== -1 || lc === 'male' || lc === 'm') {
-                    insured.gender = '男'
-                  } else if (lc.indexOf('女') !== -1 || lc === 'female' || lc === 'f') {
-                    insured.gender = '女'
-                  } else {
-                    insured.gender = '未知'
-                  }
-                  // 定义为【姓名】
-                } else {
-                  insured.name = s
-                }
-              }
+          const strList = v.split(/[\s]/)
+          if (strList.length === 1) {
+            const str = strList[0]
+            if (str.indexOf('-') !== -1) {
+              str.split('-').forEach(t => {
+                this.fillInInsured(t, insured)
+              })
+            } else if (str.indexOf('/') !== -1) {
+              str.split('/').forEach(t => {
+                this.fillInInsured(t, insured)
+              })
+            } else {
+              this.fillInInsured(str.replace(/[^0-9]/ig, ''), insured)
+              this.fillInInsured(str.replace(/\d+/g, ''), insured)
             }
-          })
+          } else {
+            strList.forEach(s => {
+              if (s !== undefined && s !== '') {
+                this.fillInInsured(s, insured)
+              }
+            })
+          }
           // 2021-07-04 16:30:47 15或18位的证件号尝试解析为【身份证】
           if (insured.certiNo.length === 15 || insured.certiNo.length === 18) {
             insured.certiType = '身份证'
@@ -933,6 +916,45 @@ export default {
       })
       // 重新计算保费
       this.recalculatePremium()
+    },
+    fillInInsured(s, insured) {
+      // 优先判断是否包含数字, 若包含数字则初步定义为【证件号】【生日】【手机号】
+      if (validNumber(s)) {
+        // 包含'日'或'月'或'年'或'-', 则定义为【生日】
+        if (/[/\u65e5\u6708\u5e74-]+/.test(s)) {
+          s = s.replace(/([\u6708\u5e74])/g, '-')
+          s = s.replace(/\u65e5/g, '')
+          s = s.replace(/\//g, '-')
+          insured.dateOfBirth = Date.parse(s)
+          // 11位数字且1开头, 则定义为【手机号】
+        } else if (validPhoneNumber(s)) {
+          insured.mobile = s
+          // 定义为【证件号】
+        } else {
+          insured.certiNo = s
+        }
+        // 如果不包含数字, 则初步定义为【姓名】【性别】【证件类型】
+      } else {
+        // 如果在证件类型列表里面, 则定义为【证件类型】
+        if (this.certiTypeOptions.map((v, i) => {
+          return v.value
+        }).indexOf(s) !== -1) {
+          insured.certiType = s
+          // 如果包含性别关键字, 则定义为【性别】
+        } else if (validGender(s)) {
+          const lc = s.toLowerCase()
+          if (lc.indexOf('男') !== -1 || lc === 'male' || lc === 'm') {
+            insured.gender = '男'
+          } else if (lc.indexOf('女') !== -1 || lc === 'female' || lc === 'f') {
+            insured.gender = '女'
+          } else {
+            insured.gender = '未知'
+          }
+          // 定义为【姓名】
+        } else {
+          insured.name = s
+        }
+      }
     },
     changeDepartment(data) {
       const dep = this.department.letterHead.find(item => {
