@@ -196,7 +196,7 @@ export const asyncRoutes = [
     meta: {
       title: '保单服务',
       icon: 'el-icon-document-copy',
-      roles: ['administrator', 'sales', 'manager', 'officer']
+      roles: ['administrator', 'sales', 'manager', 'officer', 'watcher']
     },
     children: [
       {
@@ -216,7 +216,7 @@ export const asyncRoutes = [
         meta: {
           title: '保单管理',
           icon: 'el-icon-document-checked',
-          roles: ['administrator', 'sales', 'manager', 'officer']
+          roles: ['administrator', 'sales', 'manager', 'officer', 'watcher']
         }
       },
       {
@@ -226,7 +226,7 @@ export const asyncRoutes = [
         hidden: true,
         meta: {
           title: '保单详情',
-          roles: ['administrator', 'sales', 'manager', 'officer']
+          roles: ['administrator', 'sales', 'manager', 'officer', 'watcher']
         }
       }
     ]
@@ -239,26 +239,26 @@ export const asyncRoutes = [
     meta: {
       title: '报表管理',
       icon: 'el-icon-tickets',
-      roles: ['administrator', 'sales', 'manager']
+      roles: ['administrator', 'sales', 'manager', 'watcher']
     },
     children: [
       {
         path: '/billing-list',
         component: resolve => require.ensure([], () => resolve(require('@/views/report/billingList')), 'BillingList'),
         name: 'BillingList',
-        meta: { title: '结算清单', icon: 'el-icon-wallet', roles: ['administrator'] }
+        meta: { title: '结算清单', icon: 'el-icon-wallet', roles: ['administrator', 'watcher'] }
       },
       {
         path: '/personal-coms-report',
         component: resolve => require.ensure([], () => resolve(require('@/views/report/personalComsReport')), 'PersonalComsReport'),
         name: 'PersonalComsReport',
-        meta: { title: '个人佣金报表', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager'] }
+        meta: { title: '个人佣金报表', icon: 'el-icon-wallet', roles: ['administrator', 'sales', 'manager', 'watcher'] }
       },
       {
         path: '/business-report',
         component: resolve => require.ensure([], () => resolve(require('@/views/report/businessReport')), 'BusinessReport'),
         name: 'BusinessReport',
-        meta: { title: '业管系统报表', icon: 'el-icon-wallet', roles: ['administrator'] }
+        meta: { title: '业管系统报表', icon: 'el-icon-wallet', roles: ['administrator', 'watcher'] }
       }
     ]
   },
