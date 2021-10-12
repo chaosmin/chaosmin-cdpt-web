@@ -86,6 +86,16 @@
           <span>{{ row.coms }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="保单状态" prop="status" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.status }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="支付方式" prop="payType" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.payType }}</span>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -135,7 +145,6 @@ export default {
       loading: false,
       queryParam: {
         first: {
-          status: 'INSURED',
           timeType: 'EFFECTIVE_TIME',
           startTime: null,
           endTime: null
@@ -210,7 +219,7 @@ export default {
       columns.forEach((column, index) => {
         if (index === 0) {
           sums[index] = '合计'
-        } else if (index === 3 || index === 4 || index === 8) {
+        } else if (index === 9 || index === 11) {
           const values = data.map(item => Number(item[column.property]))
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
