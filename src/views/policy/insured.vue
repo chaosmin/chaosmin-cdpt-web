@@ -252,8 +252,8 @@
                 <template>
                   <div style="padding-left: 10px">
                     <el-radio-group v-model="temp.payType" size="mini">
-                      <el-radio label="OFFLINE"><span>月结</span></el-radio>
-                      <el-radio label="ONLINE"><span>微信</span></el-radio>
+                      <el-radio disabled label="OFFLINE"><span>月结</span></el-radio>
+                      <el-radio disabled label="ONLINE"><span>微信</span></el-radio>
                     </el-radio-group>
                   </div>
                 </template>
@@ -451,7 +451,7 @@ export default {
         unitPremium: 0.00,
         totalPremium: 0.00,
         actualPremium: 0.00,
-        payType: 'MONTHLY'
+        payType: this.$store.getters.payType
       },
       listQuery: {
         O_id: 1,

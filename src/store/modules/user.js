@@ -10,7 +10,8 @@ const state = {
   department: '',
   introduction: '',
   roles: [],
-  isAdmin: false
+  isAdmin: false,
+  payType: ''
 }
 
 const mutations = {
@@ -37,6 +38,9 @@ const mutations = {
   },
   SET_DEPARTMENT: (state, department) => {
     state.department = department
+  },
+  SET_PAY_TYPE: (state, payType) => {
+    state.payType = payType
   }
 }
 
@@ -61,7 +65,7 @@ const actions = {
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-        const { roles, isAdmin, avatar, introduction, departmentId, userId, userName } = data
+        const { roles, isAdmin, avatar, introduction, departmentId, userId, userName, payType } = data
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
@@ -72,6 +76,7 @@ const actions = {
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
         commit('SET_DEPARTMENT', departmentId)
+        commit('SET_PAY_TYPE', payType)
         resolve(data)
       }).catch(error => {
         reject(error)
