@@ -1,6 +1,8 @@
 <template>
   <div class="login-container">
-    <div class="login_top" />
+    <div class="login_top">
+      <img style="height: 50px;margin-top: 20px" src="../../assets/login/WechatIMG437.jpeg" alt="logo">
+    </div>
 
     <div class="login_main">
       <div class="main_container">
@@ -267,8 +269,8 @@ $light_gray:#eee;
     max-width:1160px;
     padding-right: 10px;
     padding-left: 10px;
-    margin-right: auto;
-    margin-left: auto;
+    margin-right: 50px;
+    margin-left: 50px;
     height:90px;//暂定
     //background:#f8f8f8;
   }
