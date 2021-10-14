@@ -96,7 +96,7 @@
         <el-form-item label="支付方式" prop="payType">
           <el-select v-model="temp.payType" filterable placeholder="请选择" style="width: 200px">
             <el-option key="OFFLINE" label="月结" value="OFFLINE" />
-            <el-option key="WECHAT" label="微信支付" value="WECHAT" />
+            <el-option key="ONLINE" label="微信支付" value="ONLINE" />
           </el-select>
         </el-form-item>
         <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="addNewHead">
