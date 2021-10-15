@@ -384,7 +384,7 @@
 import { createPayment, saveDraft, saveOrderTrace } from '@/api/orders'
 import { getOneDepartment } from '@/api/departments'
 import { getBizNo, issuePolicy } from '@/api/insure'
-import { fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
+import { getOneGoodsPlan, fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
 import { getOneTrans } from '@/api/payment-trans'
 import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
 import { validGender, validNumber, validPhoneNumber } from '@/utils/validate'
@@ -690,6 +690,10 @@ export default {
       this.setStartAndEndTime(this.goodsPlan.waitingDays)
       // 每次切换产品时都记录一下进入页面时间
       // saveKhsImg(this.temp.orderNo, { 'type': '进入页面', 'time': new Date(), 'url': '' })
+      getOneGoodsPlan(this.goodsPlan.id).then(response => {
+        this.goodsPlan.insuranceNotice = response.data.insuranceNotice
+        this.goodsPlan.productExternal = response.data.productExternal
+      })
     },
     /**
      * 更新单位保费及结算保费
