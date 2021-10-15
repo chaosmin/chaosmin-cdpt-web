@@ -566,6 +566,8 @@ export default {
           this.temp.startTime = new Date(new Date(new Date().setDate(new Date().getDate() + n)).toLocaleDateString()).getTime()
           this.setEndTime()
         }
+      } else {
+        this.recalculatePremium()
       }
     },
     setEndTime() {
@@ -700,14 +702,22 @@ export default {
      * 更新被保人列表+保费总计栏
      */
     recalculatePremium() {
+      console.log('重新计算保费..')
       const days = this.temp.days
       const ratio = (100 - this.temp.comsRatio) / 100
       if (this.goodsPlan !== undefined && this.goodsPlan.rateTable !== undefined) {
+        let flag = true
         this.goodsPlan.rateTable.forEach(item => {
           if (days >= item.dayStart && days <= item.dayEnd) {
+            flag = false
             this.temp.unitPremium = item.premium
           }
         })
+        if (flag) {
+          const last = this.goodsPlan.rateTable[this.goodsPlan.rateTable.length - 1]
+          this.temp.days = last.dayEnd
+          this.temp.unitPremium = last.premium
+        }
       }
       this.temp.totalPremium = (this.temp.insuredList.length * this.temp.unitPremium).toFixed(2)
       this.temp.actualPremium = (this.temp.totalPremium * ratio).toFixed(2)
