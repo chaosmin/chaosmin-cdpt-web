@@ -640,6 +640,7 @@ export default {
     getGoodsPlan(category, subCategory) {
       this.listQuery.EQ_categoryName = category
       this.listQuery.EQ_categorySubName = subCategory
+      this.listQuery.O_productPlanId = 1
       // 先清空当前产品列表
       this.goodsPlanList = []
       fetchUserGoods(this.$store.getters.userId, this.listQuery).then(response => {
