@@ -14,18 +14,18 @@
           <span class="right-menu-item" style="font-size: 15px;"><svg-icon icon-class="edit-password" /> 修改密码 </span>
         </el-button>
       </router-link>
-      <el-button type="text">
-        <span class="right-menu-item" style="font-size: 15px;">余额: <svg-icon icon-class="money" /> 0.00</span>
-      </el-button>
-      <el-button type="text">
-        <span class="right-menu-item" style="font-size: 15px;"><svg-icon icon-class="alipay" /> 充值 </span>
-      </el-button>
-      <el-button type="text">
-        <span class="right-menu-item" style="font-size: 15px;"><svg-icon icon-class="list" /> 充值记录 </span>
-      </el-button>
-      <el-button type="text">
-        <span class="right-menu-item" style="font-size: 15px;"><i class="el-icon-s-data" /> 消费明细 </span>
-      </el-button>
+      <!--      <el-button type="text">-->
+      <!--        <span class="right-menu-item" style="font-size: 15px;">余额: <svg-icon icon-class="money" /> 0.00</span>-->
+      <!--      </el-button>-->
+      <!--      <el-button type="text">-->
+      <!--        <span class="right-menu-item" style="font-size: 15px;"><svg-icon icon-class="alipay" /> 充值 </span>-->
+      <!--      </el-button>-->
+      <!--      <el-button type="text">-->
+      <!--        <span class="right-menu-item" style="font-size: 15px;"><svg-icon icon-class="list" /> 充值记录 </span>-->
+      <!--      </el-button>-->
+      <!--      <el-button type="text">-->
+      <!--        <span class="right-menu-item" style="font-size: 15px;"><i class="el-icon-s-data" /> 消费明细 </span>-->
+      <!--      </el-button>-->
       <el-button type="text" style="margin-right: 10px;" @click.native="logout">
         <span class="right-menu-item" style="font-size: 15px;"><svg-icon icon-class="logout" /> 退出 </span>
       </el-button>
