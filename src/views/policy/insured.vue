@@ -215,9 +215,9 @@
               <td><span style="padding: 5px;color: red;"><b>*</b></span><span class="fontWeight">公司名称</span></td>
               <td>
                 <el-form-item prop="policyHolderName" size="mini" style="margin-bottom: 0;">
-                  <el-select v-model="temp.policyHolderName" filterable allow-create default-first-option value-key="id" size="mini" style="width: 100%" placeholder="请选择投保机构" @change="changeDepartment">
+                  <el-select v-model="temp.policyHolderName" filterable allow-create default-first-option value-key="id" size="mini" style="width: 100%" placeholder="请选择投保机构" @change="changeTitle">
                     <el-option
-                      v-for="item in department.letterHead"
+                      v-for="item in letterHead"
                       :key="item.certiNo"
                       :label="item.title"
                       :value="item.title"
@@ -382,9 +382,9 @@
 
 <script>
 import { createPayment, saveDraft, saveOrderTrace } from '@/api/orders'
-import { getOneDepartment } from '@/api/departments'
 import { getBizNo, issuePolicy } from '@/api/insure'
 import { getOneGoodsPlan, fetchUserCategories, fetchUserGoods } from '@/api/goods-plans'
+import { fetchByUser } from '@/api/letter-head'
 import { getOneTrans } from '@/api/payment-trans'
 import { getFileNameUUID, put, signatureUrl } from '@/utils/oss'
 import { validGender, validNumber, validPhoneNumber } from '@/utils/validate'
@@ -426,6 +426,7 @@ export default {
         color: '#444',
         background: '#f8f8f8'
       },
+      letterHead: [],
       defaultMenu: [],
       dateSelectionOption: [],
       temp: {
@@ -459,9 +460,6 @@ export default {
         EQ_categorySubName: undefined
       },
       fileList: [],
-      department: {
-        letterHead: []
-      },
       categories: [],
       goodsPlan: {
         insuranceNotice: null,
@@ -514,8 +512,8 @@ export default {
     })
   },
   created() {
+    this.getLetterHead()
     this.getGoodsCategories()
-    this.getDepartment()
     if (this.$route.params.temp !== undefined) {
       this.temp = this.$route.params.temp
       console.log(this.temp.insuredList)
@@ -603,6 +601,11 @@ export default {
         }
       }
     },
+    getLetterHead() {
+      fetchByUser(this.$store.getters.userId).then(response => {
+        this.letterHead = response.data
+      })
+    },
     /**
      * 获取当前用户可用的产品的分类信息
      */
@@ -620,18 +623,6 @@ export default {
           this.getGoodsPlan(this.parentId, this.selfId)
           // this.getGoodsPlan(this.categories[0].id, this.categories[0].children[0].id)
         }
-      })
-    },
-    /**
-     * 获取用户的机构信息
-     */
-    getDepartment() {
-      getOneDepartment(this.$store.getters.department).then(response => {
-        this.department = response.data
-        // 设置支付方式
-        this.temp.payType = this.department.payType
-        this.temp.policyHolderName = this.department.letterHead[0].title
-        this.temp.policyHolderCerti = this.department.letterHead[0].certiNo
       })
     },
     /**
@@ -971,8 +962,8 @@ export default {
         }
       }
     },
-    changeDepartment(data) {
-      const dep = this.department.letterHead.find(item => {
+    changeTitle(data) {
+      const dep = this.letterHead.find(item => {
         return item.title === data
       })
       if (dep !== undefined) {

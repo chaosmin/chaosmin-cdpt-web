@@ -25,19 +25,9 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="机构" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.departmentName }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="用户名" align="center">
         <template slot-scope="{row}">
           <span>{{ row.userName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="角色" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.roleName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品编码" align="center">
@@ -99,20 +89,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="机构" prop="departmentName">
-              <el-input v-model="temp.departmentName" disabled />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
             <el-form-item label="用户名" prop="userName">
               <el-input v-model="temp.userName" disabled />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="角色" prop="roleName">
-              <el-input v-model="temp.roleName" disabled />
             </el-form-item>
           </el-col>
         </el-row>

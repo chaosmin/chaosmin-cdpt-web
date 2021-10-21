@@ -74,16 +74,6 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: '/departments',
-        component: resolve => require.ensure([], () => resolve(require('@/views/department/table')), 'Department'),
-        name: 'Department',
-        meta: {
-          title: '机构管理',
-          icon: 'user',
-          roles: ['administrator']
-        }
-      },
-      {
         path: '/users',
         component: resolve => require.ensure([], () => resolve(require('@/views/user/table')), 'User'),
         name: 'User',

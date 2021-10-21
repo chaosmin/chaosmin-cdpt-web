@@ -32,11 +32,6 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.loginName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="机构" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.department }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="用户名" align="center">
         <template slot-scope="{row}">
           <span>{{ row.username }}</span>
@@ -50,6 +45,11 @@
       <el-table-column label="电子邮箱" align="center">
         <template slot-scope="{row}">
           <span>{{ row.email }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="支付方式" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.payType | payTypeFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="角色" align="center">
@@ -84,7 +84,7 @@
           <span style="color:red;">{{ row.updater }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="138px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="left" width="210px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handleReset(row)">重置</el-button>
           <el-popconfirm v-if="row.status==='INIT'" title="您确定激活该用户吗?" @onConfirm="modifyStatus(row,'VALID')">
@@ -102,6 +102,11 @@
               解锁
             </el-button>
           </el-popconfirm>
+          <el-popconfirm v-if="isAdmin" title="您确定删除该用户吗?" @onConfirm="removeData(row)">
+            <el-button slot="reference" size="mini" type="danger" style="margin-left: 5px;">
+              删除
+            </el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -109,18 +114,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.P_NUM" :limit.sync="listQuery.P_SIZE" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 300px; margin-left:80px;">
-        <!-- 只有管理员可以选择机构, 否则默认创建同机构下的账户 -->
-        <el-form-item v-if="isAdmin" label="所属机构" prop="departmentId">
-          <el-select v-model="temp.departmentId" filterable placeholder="请选择" style="width: 200px" :disabled="dialogStatus==='update'">
-            <el-option
-              v-for="item in departmentOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 500px; margin-left:60px;">
         <el-form-item label="登录名" prop="loginName">
           <el-input v-model="temp.loginName" :disabled="dialogStatus==='update'" />
         </el-form-item>
@@ -136,6 +130,16 @@
         <el-form-item label="联系邮箱" prop="email">
           <el-input v-model="temp.email" />
         </el-form-item>
+        <el-form-item label="支付方式" prop="payType">
+          <el-select v-model="temp.payType" filterable placeholder="请选择" style="width: 200px" :disabled="this.$store.getters.roles.includes('manager')">
+            <el-option
+              v-for="item in payTypeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="角色" prop="roleIds">
           <el-select v-model="temp.roleIds" multiple placeholder="请选择" style="width: 200px">
             <el-option
@@ -146,6 +150,23 @@
             />
           </el-select>
         </el-form-item>
+        <el-button v-waves style="margin-left: 10px;" class="filter-item" size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="addNewHead">
+          添加抬头信息
+        </el-button>
+        <el-table :data="temp.letterHead" border fit highlight-current-row style="width: 100%;margin-top: 8px">
+          <el-table-column type="index" label="序" align="center" />
+          <el-table-column label="抬头名称" align="center" style="font-size: 12px">
+            <template slot-scope="{row}"><el-input v-model="row.title" class="edit-input" size="mini" /></template>
+          </el-table-column>
+          <el-table-column label="证件号" align="center">
+            <template slot-scope="{row}"><el-input v-model="row.certiNo" class="edit-input" size="mini" /></template>
+          </el-table-column>
+          <el-table-column label="操作" align="left" width="80px" class-name="small-padding fixed-width">
+            <template slot-scope="{row,$index}">
+              <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-left: 5px;" @click.native.prevent="deleteRow(row,$index)" />
+            </template>
+          </el-table-column>
+        </el-table>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -160,9 +181,9 @@
 </template>
 
 <script>
-import { fetchUser, createUser, updateUser } from '@/api/users'
-import { fetchDepartment } from '@/api/departments'
+import { fetchUser, createUser, updateUser, deleteUser } from '@/api/users'
 import { fetchRole } from '@/api/roles'
+import { fetchByUser } from '@/api/letter-head'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -173,7 +194,17 @@ const statusTypeOptions = [
   { key: 'FROZEN', display_name: '锁定' }
 ]
 
+const payTypeOptions = [
+  { key: 'ONLINE', display_name: '微信支付' },
+  { key: 'OFFLINE', display_name: '月结' }
+]
+
 const statusTypeKeyValue = statusTypeOptions.reduce((acc, cur) => {
+  acc[cur.key] = cur.display_name
+  return acc
+}, {})
+
+const payTypeKeyValue = payTypeOptions.reduce((acc, cur) => {
   acc[cur.key] = cur.display_name
   return acc
 }, {})
@@ -194,12 +225,21 @@ export default {
     },
     valueFilter(type) {
       return statusTypeKeyValue[type]
+    },
+    payTypeFilter(type) {
+      return payTypeKeyValue[type]
     }
   },
   data() {
     return {
       isAdmin: this.$store.getters.isAdmin,
-      departmentOptions: [],
+      payTypeOptions: [{
+        value: 'OFFLINE',
+        label: '月结'
+      }, {
+        value: 'ONLINE',
+        label: '微信支付'
+      }],
       roleOptions: [],
       showModifyInfo: false,
       tableKey: 0,
@@ -217,14 +257,14 @@ export default {
       },
       temp: {
         id: undefined,
-        // 默认是同一渠道, 如果需要修改则更新
-        departmentId: this.$store.getters.department,
         username: undefined,
         loginName: undefined,
         phone: undefined,
         email: undefined,
         address: undefined,
         status: undefined,
+        payType: undefined,
+        letterHead: [],
         roleIds: []
       },
       dialogFormVisible: false,
@@ -235,11 +275,11 @@ export default {
       },
       dialogPvVisible: false,
       rules: {
-        departmentId: [{ required: true, message: '请选择所属机构', trigger: 'change' }],
         loginName: [{ required: true, message: '请输入登录名', trigger: 'change' }],
         username: [{ required: true, message: '请输入联系人名称', trigger: 'change' }],
         phone: [{ required: true, message: '请输入联系人电话', trigger: 'change' }],
         address: [{ required: true, message: '请输入联系人地址', trigger: 'change' }],
+        payType: [{ required: true, message: '请选择支付方式', trigger: 'change' }],
         roleIds: [{ type: 'array', required: true, message: '请分配角色', trigger: 'change' }]
       },
       downloadLoading: false
@@ -247,7 +287,6 @@ export default {
   },
   created() {
     this.getList()
-    this.loadDepartmentOptions()
     this.loadRoleOptions()
   },
   methods: {
@@ -268,7 +307,6 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        departmentId: undefined,
         username: undefined,
         loginName: undefined,
         password: undefined,
@@ -276,11 +314,17 @@ export default {
         phone: undefined,
         email: undefined,
         status: undefined,
-        roleIds: []
+        payType: undefined,
+        roleIds: [],
+        letterHead: []
       }
     },
     handleCreate() {
       this.resetTemp()
+      fetchByUser(this.$store.getters.userId).then(response => {
+        this.temp.letterHead = response.data
+      })
+      this.temp.payType = this.$store.getters.payType
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -330,6 +374,18 @@ export default {
         }
       })
     },
+    removeData(row) {
+      deleteUser(row.id).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success',
+          duration: 2000
+        })
+      }).then(() => {
+        this.handleFilter()
+      })
+    },
     handleReset(row) {
       this.$confirm('确认重置该用户密码?', '提示', {
         confirmButtonText: '确定',
@@ -364,20 +420,6 @@ export default {
         })
       })
     },
-    loadDepartmentOptions() {
-      const listQuery = {}
-      listQuery.P_NUM = 1
-      listQuery.P_SIZE = 500
-      this.optionsLoading = true
-      fetchDepartment(listQuery).then(response => {
-        this.departmentOptions = response.data.records.map(item => {
-          return { value: item.id, label: `${item.name}` }
-        })
-        setTimeout(() => {
-          this.optionsLoading = false
-        }, 750)
-      })
-    },
     loadRoleOptions() {
       const listQuery = {}
       listQuery.P_NUM = 1
@@ -391,6 +433,19 @@ export default {
           this.optionsLoading = false
         }, 750)
       })
+    },
+    addNewHead() {
+      const head = {
+        title: '',
+        certiNo: ''
+      }
+      if (this.temp.letterHead === undefined || this.temp.letterHead === null) {
+        this.temp.letterHead = []
+      }
+      this.temp.letterHead.push(head)
+    },
+    deleteRow(row, index) {
+      this.temp.letterHead.splice(index, 1)
     }
   }
 }

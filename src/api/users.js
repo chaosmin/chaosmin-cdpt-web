@@ -45,3 +45,10 @@ export function updateUser(id, data) {
     data
   })
 }
+
+export function deleteUser(id) {
+  return request({
+    url: `/v1/api/users/${id}`,
+    method: 'DELETE'
+  })
+}
