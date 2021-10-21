@@ -145,6 +145,11 @@
           <span>{{ row.address }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="支付方式" prop="payType" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.payType }}</span>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
