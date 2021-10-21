@@ -1,8 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.ALIKE_productName" size="mini" placeholder="所属产品" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.ALIKE_planCode" size="mini" placeholder="计划编码" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ALIKE_planCode" size="mini" placeholder="计划编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.ALIKE_planName" size="mini" placeholder="计划名称" style="width: 200px;margin-left: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.EQ_productPlan_status" size="mini" placeholder="状态" style="width: 100px;margin-left: 10px;" class="filter-item" @change="handleFilter">
         <el-option
@@ -199,7 +198,7 @@ export default {
     }
   },
   created() {
-    this.listQuery.ALIKE_productName = this.$route.params.productName
+    this.listQuery.EQ_productId = this.$route.params.productId
     this.getList()
   },
   methods: {

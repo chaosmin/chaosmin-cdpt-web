@@ -87,7 +87,7 @@
       </el-table-column>
       <el-table-column label="操作" align="left" width="152px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="goTo(row.productName)">查看计划</el-button>
+          <el-button size="mini" type="primary" @click="goTo(row.id)">查看计划</el-button>
           <el-popconfirm v-if="row.status==='DISABLED'" title="您确定启用该产品吗?" @onConfirm="modifyStatus(row,'ENABLED')">
             <el-button slot="reference" size="mini" type="success" style="margin-left: 5px;">
               生效
@@ -320,8 +320,8 @@ export default {
         duration: 2000
       })
     },
-    goTo(productName) {
-      this.$router.push({ name: 'Plan', params: { productName: productName }})
+    goTo(productId) {
+      this.$router.push({ name: 'Plan', params: { productId: productId }})
     }
   }
 }
