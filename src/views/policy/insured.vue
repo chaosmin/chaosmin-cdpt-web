@@ -900,8 +900,8 @@ export default {
                 this.fillInInsured(t, insured)
               })
             } else {
-              this.fillInInsured(str.replace(/[^0-9]/ig, ''), insured)
-              this.fillInInsured(str.replace(/\d+/g, ''), insured)
+              this.fillInInsured(str.replace(/[\d|xX]/ig, ''), insured)
+              this.fillInInsured(str.replace(/[^\d|xX]/g, ''), insured)
             }
           } else {
             strList.forEach(s => {
