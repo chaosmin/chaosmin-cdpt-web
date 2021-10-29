@@ -516,7 +516,8 @@ export default {
     this.getGoodsCategories()
     if (this.$route.params.temp !== undefined) {
       this.temp = this.$route.params.temp
-      console.log(this.temp.insuredList)
+      console.log('当前计划:' + this.temp.goodsPlanId)
+      console.log('当前被保人列表:' + this.temp.insuredList)
       if (this.temp.insuredList === undefined || this.temp.insuredList === null) {
         this.temp.insuredList = []
       }
@@ -642,7 +643,11 @@ export default {
         })))
         // 默认第一个为当前选中保司
         this.partner = this.partners[0]
-        this.changePartner()
+        if (this.temp.goodsPlanId === undefined || this.temp.goodsPlanId === null) {
+          this.changePartner()
+        } else {
+          this.changeGoodsPlan()
+        }
       })
     },
     /**
@@ -663,6 +668,7 @@ export default {
       this.goodsPlan = this.goodsPlanList.filter(v => {
         return v.id === this.temp.goodsPlanId
       })[0]
+      console.log('切换产品:' + this.goodsPlan.id)
       this.temp.comsRatio = this.goodsPlan.comsRatio
       // 更换产品刷新时间内范围
       this.dateSelectionOption = []
