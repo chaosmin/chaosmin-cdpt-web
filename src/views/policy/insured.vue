@@ -513,6 +513,7 @@ export default {
   created() {
     this.getLetterHead()
     this.initGoodsCategories()
+
     if (this.$route.params.temp !== undefined) {
       this.temp = this.$route.params.temp
       console.log('当前计划:' + this.temp.goodsPlanId)
@@ -526,7 +527,7 @@ export default {
         this.$set(this.temp.insuredList, position, u)
       })
       this.temp.startTime = Date.parse(this.temp.startTime)
-      this.changeGoodsPlan()
+      this.getGoodsPlan(this.temp.categoryName, this.temp.categorySubName)
       this.setEndTime()
       // this.temp.endTime = Date.parse(this.temp.endTime)
     } else {
@@ -614,11 +615,12 @@ export default {
      * 获取当前用户可用的产品的分类信息
      */
     initGoodsCategories() {
+      console.log('初始化产品大类..')
       fetchUserCategories(this.$store.getters.userId).then(response => {
         this.categories = response.data
         if (this.categories.length > 0) {
           const openMenu = []
-          this.categories.forEach(function(item, index) {
+          this.categories.forEach(function(item, _) {
             openMenu.push(item.id)
           })
           this.defaultMenu = openMenu
@@ -1077,6 +1079,8 @@ export default {
       })
     },
     saveToDraftBox() {
+      console.log(this.$route.path)
+      this.temp.path = this.$route.path
       saveDraft(this.temp.orderNo, this.temp).then(response => {
         if (response.success === true) {
           this.$confirm('保存草稿箱成功, 是否退出当前页面?', '提示', {

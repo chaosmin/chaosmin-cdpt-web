@@ -214,8 +214,9 @@ export default {
     loadDraft(orderNo) {
       loadDraft(orderNo).then(response => {
         if (response.success === true) {
-          console.log('加载草稿箱成功!')
-          this.$router.push({ name: '/insured/00', params: { temp: response.data }})
+          const path = response.data.path
+          console.log('加载草稿箱成功! 跳转路径: ' + path)
+          this.$router.push({ name: path, params: { temp: response.data }})
         } else {
           this.$notify({
             title: '失败',
