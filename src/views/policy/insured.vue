@@ -455,7 +455,6 @@ export default {
         payType: this.$store.getters.payType
       },
       listQuery: {
-        O_id: 1,
         EQ_categoryName: undefined,
         EQ_categorySubName: undefined
       },
@@ -513,7 +512,7 @@ export default {
   },
   created() {
     this.getLetterHead()
-    this.getGoodsCategories()
+    this.initGoodsCategories()
     if (this.$route.params.temp !== undefined) {
       this.temp = this.$route.params.temp
       console.log('当前计划:' + this.temp.goodsPlanId)
@@ -527,12 +526,14 @@ export default {
         this.$set(this.temp.insuredList, position, u)
       })
       this.temp.startTime = Date.parse(this.temp.startTime)
+      this.changeGoodsPlan()
       this.setEndTime()
       // this.temp.endTime = Date.parse(this.temp.endTime)
     } else {
       // 左侧常开
       // this.sidebar.opened = false
       this.getBizNo()
+      this.getGoodsPlan(this.parentId, this.selfId)
     }
   },
   methods: {
@@ -560,9 +561,11 @@ export default {
       if (this.temp.startTime === undefined) {
         if (n === 0) {
           this.temp.startTime = new Date().getTime()
+          console.log('即时投保产品, 设置为当前时间: ' + this.temp.startTime)
           this.setEndTime()
         } else {
           this.temp.startTime = new Date(new Date(new Date().setDate(new Date().getDate() + n)).toLocaleDateString()).getTime()
+          console.log('犹豫期产品, 设置为当天: ' + this.temp.startTime)
           this.setEndTime()
         }
       } else {
@@ -610,19 +613,15 @@ export default {
     /**
      * 获取当前用户可用的产品的分类信息
      */
-    getGoodsCategories() {
+    initGoodsCategories() {
       fetchUserCategories(this.$store.getters.userId).then(response => {
         this.categories = response.data
-        console.log(this.categories)
         if (this.categories.length > 0) {
           const openMenu = []
           this.categories.forEach(function(item, index) {
             openMenu.push(item.id)
           })
           this.defaultMenu = openMenu
-          // 默认获取第一大类下第一分类的产品列表
-          this.getGoodsPlan(this.parentId, this.selfId)
-          // this.getGoodsPlan(this.categories[0].id, this.categories[0].children[0].id)
         }
       })
     },
@@ -665,35 +664,31 @@ export default {
      */
     changeGoodsPlan() {
       // 获取当前产品
-      this.goodsPlan = this.goodsPlanList.filter(v => {
-        return v.id === this.temp.goodsPlanId
-      })[0]
-      console.log('切换产品:' + this.goodsPlan.id)
-      this.temp.comsRatio = this.goodsPlan.comsRatio
-      // 更换产品刷新时间内范围
-      this.dateSelectionOption = []
-      let max = 1
-      let min = 99999
-      this.goodsPlan.rateTable.forEach(function(item, index) {
-        if (item.dayStart < min) {
-          min = item.dayStart
+      console.log('切换产品:' + this.temp.goodsPlanId)
+      getOneGoodsPlan(this.temp.goodsPlanId).then(response => {
+        this.goodsPlan = response.data
+        this.temp.comsRatio = response.data.comsRatio
+        // 更换产品刷新时间内范围
+        this.dateSelectionOption = []
+        let max = 1
+        let min = 99999
+        this.goodsPlan.rateTable.forEach(function(item, index) {
+          if (item.dayStart < min) {
+            min = item.dayStart
+          }
+          if (item.dayEnd > max) {
+            max = item.dayEnd
+          }
+        })
+        for (let i = min; i <= max; i++) {
+          const option = { label: i + '天', value: i }
+          this.dateSelectionOption.push(option)
         }
-        if (item.dayEnd > max) {
-          max = item.dayEnd
-        }
+        // 根据产品的等待期重设起止时间
+        // 每次切换产品时都记录一下进入页面时间
+        this.setStartAndEndTime(this.goodsPlan.waitingDays)
       })
-      for (let i = min; i <= max; i++) {
-        const option = { label: i + '天', value: i }
-        this.dateSelectionOption.push(option)
-      }
-      // 根据产品的等待期重设起止时间
-      this.setStartAndEndTime(this.goodsPlan.waitingDays)
-      // 每次切换产品时都记录一下进入页面时间
       // saveKhsImg(this.temp.orderNo, { 'type': '进入页面', 'time': new Date(), 'url': '' })
-      getOneGoodsPlan(this.goodsPlan.id).then(response => {
-        this.goodsPlan.insuranceNotice = response.data.insuranceNotice
-        this.goodsPlan.productExternal = response.data.productExternal
-      })
     },
     /**
      * 更新单位保费及结算保费
