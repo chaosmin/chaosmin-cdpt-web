@@ -518,6 +518,7 @@ export default {
       this.temp = this.$route.params.temp
       console.log('当前计划:' + this.temp.goodsPlanId)
       console.log('当前被保人列表:' + this.temp.insuredList)
+      console.log('当前产品分类:' + this.temp.categoryName + ', ' + this.temp.categorySubName)
       if (this.temp.insuredList === undefined || this.temp.insuredList === null) {
         this.temp.insuredList = []
       }
@@ -669,6 +670,8 @@ export default {
       console.log('切换产品:' + this.temp.goodsPlanId)
       getOneGoodsPlan(this.temp.goodsPlanId).then(response => {
         this.goodsPlan = response.data
+        this.temp.categoryName = response.data.categoryName
+        this.temp.categorySubName = response.data.categorySubName
         this.temp.comsRatio = response.data.comsRatio
         // 更换产品刷新时间内范围
         this.dateSelectionOption = []
