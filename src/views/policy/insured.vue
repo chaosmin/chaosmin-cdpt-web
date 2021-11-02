@@ -669,9 +669,12 @@ export default {
       // 获取当前产品
       console.log('切换产品:' + this.temp.goodsPlanId)
       getOneGoodsPlan(this.temp.goodsPlanId).then(response => {
+        const categoryName = response.data.categoryName
+        const categorySubName = response.data.categorySubName
+        console.log('切换至产品分类:' + categoryName + ', ' + categorySubName)
         this.goodsPlan = response.data
-        this.temp.categoryName = response.data.categoryName
-        this.temp.categorySubName = response.data.categorySubName
+        this.temp.categoryName = categoryName
+        this.temp.categorySubName = categorySubName
         this.temp.comsRatio = response.data.comsRatio
         // 更换产品刷新时间内范围
         this.dateSelectionOption = []
