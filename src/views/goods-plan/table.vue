@@ -335,7 +335,10 @@ export default {
       })
     },
     getUserList() {
-      const cond = { EQ_user_creator: this.$store.getters.name }
+      const cond = {
+        EQ_user_creator: this.$store.getters.name,
+        P_SIZE: 500
+      }
       fetchUser(cond).then(response => {
         this.users = response.data.records
         setTimeout(() => {
